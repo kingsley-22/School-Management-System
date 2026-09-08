@@ -1,0 +1,425 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Instructor Dashboard | School Management System</title>
+
+    <link rel="stylesheet" href="../../css/instructor-dashboard.css">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"> 
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="logo">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>EduManage</span>
+            </div>
+
+            <nav class="sidebar-menu">
+
+                <a href="#" class="menu-item active">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>My Courses</span>
+                </a>
+
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Students</span>
+                </a>
+
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span>Assignments</span>
+                </a>
+
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>Schedule</span>
+                </a>
+
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-chart-column"></i>
+                    <span>Performance</span>
+                </a>
+
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-bullhorn"></i>
+                    <span>Announcements</span>
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+
+                <a href="#" class="menu-item logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+
+        </aside>
+
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- TOP NAVBAR -->
+            <header class="topbar">
+
+                <div class="topbar-left">
+
+                    <button class="menu-toggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+
+                    <div>
+                        <h1>Instructor Dashboard</h1>
+                        <p>Welcome back, JUNGLE 👋</p>
+                    </div>
+
+                </div>
+
+                <div class="topbar-right">
+
+    <button class="notification-btn">
+        <i class="fa-regular fa-bell"></i>
+        <span class="notification-dot"></span>
+    </button>
+
+    <div class="profile">
+
+        <div class="profile-avatar">JM</div>
+
+        <div class="profile-info">
+            <h4>JUNGLE MAN</h4>
+            <span>Instructor</span>
+        </div>
+
+        <i class="fa-solid fa-chevron-down"></i>
+
+    </div>
+
+</div>
+
+
+
+            </header>
+
+
+            <!-- DASHBOARD CONTENT -->
+            <section class="content">
+
+
+                <!-- STATISTICS CARDS -->
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon blue">
+                            <i class="fa-solid fa-book"></i>
+                        </div>
+
+                        <div>
+                            <p>Total Courses</p>
+                            <h2>6</h2>
+                            <span class="increase">
+                                <i class="fa-solid fa-arrow-up"></i>
+                                12% this month
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon purple">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+
+                        <div>
+                            <p>Total Students</p>
+                            <h2>248</h2>
+                            <span class="increase">
+                                <i class="fa-solid fa-arrow-up"></i>
+                                8% this month
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon orange">
+                            <i class="fa-solid fa-file-circle-check"></i>
+                        </div>
+
+                        <div>
+                            <p>Assignments</p>
+                            <h2>18</h2>
+                            <span class="pending">3 pending review</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon green">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+
+                        <div>
+                            <p>Average Performance</p>
+                            <h2>82%</h2>
+                            <span class="increase">
+                                <i class="fa-solid fa-arrow-up"></i>
+                                5% improvement
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                
+                <div class="dashboard-grid">
+
+
+                   
+                    <div class="dashboard-card">
+
+                        <div class="card-header">
+                            <div>
+                                <h2>Recent Activity</h2>
+                                <p>Latest activities from your courses</p>
+                            </div>
+
+                            <a href="#">View All</a>
+                        </div>
+
+
+                        <div class="activity-list">
+
+                            <div class="activity-item">
+
+                                <div class="activity-icon">
+                                    <i class="fa-solid fa-file-arrow-up"></i>
+                                </div>
+
+                                <div class="activity-info">
+                                    <h4>New assignment submitted</h4>
+                                    <p>JUNGLE MAN submitted Web Development Assignment</p>
+                                    <span>10 minutes ago</span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="activity-item">
+
+                                <div class="activity-icon">
+                                    <i class="fa-solid fa-user-plus"></i>
+                                </div>
+
+                                <div class="activity-info">
+                                    <h4>New student enrolled</h4>
+                                    <p>JUNGLE MAN joined your Python Programming course</p>
+                                    <span>1 hour ago</span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="activity-item">
+
+                                <div class="activity-icon">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </div>
+
+                                <div class="activity-info">
+                                    <h4>Assignment graded</h4>
+                                    <p>You graded 12 student assignments</p>
+                                    <span>3 hours ago</span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                
+                    <div class="dashboard-card upcoming-card">
+
+                        <div class="card-header">
+                            <div>
+                                <h2>Upcoming Classes</h2>
+                                <p>Your next scheduled classes</p>
+                            </div>
+                        </div>
+
+
+                        <div class="class-list">
+
+                            <div class="class-item">
+
+                                <div class="class-time">
+                                    <strong>10:00</strong>
+                                    <span>AM</span>
+                                </div>
+
+                                <div class="class-info">
+                                    <h4>Web Development</h4>
+                                    <p>Room 204 • 35 Students</p>
+                                </div>
+
+                            </div>
+
+
+                            <div class="class-item">
+
+                                <div class="class-time">
+                                    <strong>1:00</strong>
+                                    <span>PM</span>
+                                </div>
+
+                                <div class="class-info">
+                                    <h4>Python Programming</h4>
+                                    <p>Room 108 • 28 Students</p>
+                                </div>
+
+                            </div>
+
+
+                            <div class="class-item">
+
+                                <div class="class-time">
+                                    <strong>3:30</strong>
+                                    <span>PM</span>
+                                </div>
+
+                                <div class="class-info">
+                                    <h4>Database Systems</h4>
+                                    <p>Online • 42 Students</p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <section class="dashboard-card course-progress">
+
+                    <div class="card-header">
+
+                        <div>
+                            <h2>Course Overview</h2>
+                            <p>Monitor your active courses</p>
+                        </div>
+
+                        <a href="#">View Courses</a>
+
+                    </div>
+
+
+                    <div class="course-table">
+
+                        <div class="table-header">
+                            <span>Course</span>
+                            <span>Students</span>
+                            <span>Progress</span>
+                            <span>Performance</span>
+                        </div>
+
+
+                        <div class="table-row">
+
+                            <span class="course-name">
+                                Web Development
+                            </span>
+
+                            <span>35 Students</span>
+
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 75%;"></div>
+                            </div>
+
+                            <span class="performance good">85%</span>
+
+                        </div>
+
+
+                        <div class="table-row">
+
+                            <span class="course-name">
+                                Python Programming
+                            </span>
+
+                            <span>28 Students</span>
+
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 60%;"></div>
+                            </div>
+
+                            <span class="performance good">81%</span>
+
+                        </div>
+
+
+                        <div class="table-row">
+
+                            <span class="course-name">
+                                Database Systems
+                            </span>
+
+                            <span>42 Students</span>
+
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 45%;"></div>
+                            </div>
+
+                            <span class="performance average">74%</span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+        </main>
+
+    </div>
+ <script src="../../js/instructor-dashboard.js"></script>
+
+</body>
+</html>
