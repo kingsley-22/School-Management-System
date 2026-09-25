@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="../../css/announcements.css">
+
+    <title>Announcements | School Management System</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>IFEXA MANAGE</span>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="dashboard.html" class="menu-item">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="courses.html" class="menu-item">
+                <i class="fa-solid fa-book-open"></i>
+                <span>My Courses</span>
+            </a>
+
+            <a href="students.html" class="menu-item">
+                <i class="fa-solid fa-users"></i>
+                <span>Students</span>
+            </a>
+
+            <a href="assignments.html" class="menu-item">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Assignments</span>
+            </a>
+
+            <!-- <a href="#" class="menu-item">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span>Schedule</span>
+            </a>
+
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-chart-column"></i>
+                <span>Performance</span>
+            </a> -->
+
+            <a href="announcements.html" class="menu-item active">
+                <i class="fa-solid fa-bullhorn"></i>
+                <span>Announcements</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </a>
+
+            <a href="#" class="menu-item logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOP NAVBAR -->
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <!-- MOBILE MENU BUTTON -->
+                <button class="menu-toggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div>
+                    <h1>Announcements</h1>
+                    <p>View and manage school announcements</p>
+                </div>
+
+            </div>
+
+
+            <!-- PROFILE -->
+            <div class="profile">
+
+                <div class="profile-avatar">
+                    <p>JM</p>
+                </div>
+
+                <div class="profile-info">
+                    <strong>Instructor</strong>
+                    <small>JUNGLE MAN</small>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+
+            <div>
+                <h1>Announcements</h1>
+                <p>Create and manage announcements for your students.</p>
+            </div>
+
+            <button class="create-announcement-btn">
+                <i class="fa-solid fa-plus"></i>
+                Create Announcement
+            </button>
+
+        </div>
+
+
+        <!-- ANNOUNCEMENT STATISTICS -->
+        <section class="announcement-stats">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    <i class="fa-solid fa-bullhorn"></i>
+                </div>
+
+                <div>
+                    <p>Total Announcements</p>
+                    <h2>18</h2>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    <i class="fa-solid fa-calendar-day"></i>
+                </div>
+
+                <div>
+                    <p>This Month</p>
+                    <h2>6</h2>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    <i class="fa-solid fa-eye"></i>
+                </div>
+
+                <div>
+                    <p>Students Reached</p>
+                    <h2>20</h2>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+
+                <div>
+                    <p>Recent Posts</p>
+                    <h2>4</h2>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ANNOUNCEMENTS SECTION -->
+        <section class="announcements-section">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>All Announcements</h2>
+                    <p>Stay connected with students through announcements.</p>
+                </div>
+
+
+                <div class="announcement-actions">
+
+                    <input
+                        type="text"
+                        id="announcementSearch"
+                        placeholder="Search announcements..."
+                    >
+
+                    <select id="announcementFilter">
+
+                        <option value="all">
+                            All Categories
+                        </option>
+
+                        <option value="general">
+                            General
+                        </option>
+
+                        <option value="course">
+                            Course Update
+                        </option>
+
+                        <option value="important">
+                            Important
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- ANNOUNCEMENT CARDS -->
+            <div class="announcements-grid" id="announcementsGrid">
+
+
+                <!-- ANNOUNCEMENT 1 -->
+                <div class="announcement-card" data-category="important">
+
+                    <div class="announcement-card-header">
+
+                        <div class="announcement-icon important-icon">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+
+                        <span class="announcement-category important-category">
+                            Important
+                        </span>
+
+                    </div>
+
+
+                    <h3>Assignment Submission Deadline</h3>
+
+                    <p>
+                        All students should ensure they submit their assignments
+                        before the deadline.
+                    </p>
+
+
+                    <div class="announcement-meta">
+
+                        <span>
+                            <i class="fa-solid fa-calendar"></i>
+                            Sept 20, 2026
+                        </span>
+
+                        <span>
+                            <i class="fa-solid fa-users"></i>
+                            All Students
+                        </span>
+
+                    </div>
+
+
+                    <div class="announcement-buttons">
+
+                        <button class="view-announcement-btn">
+                            View
+                        </button>
+
+                        <button class="edit-announcement-btn">
+                            Edit
+                        </button>
+
+                        <button class="delete-announcement-btn">
+                            Delete
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ANNOUNCEMENT 2 -->
+                <div class="announcement-card" data-category="course">
+
+                    <div class="announcement-card-header">
+
+                        <div class="announcement-icon course-icon">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+
+                        <span class="announcement-category course-category">
+                            Course Update
+                        </span>
+
+                    </div>
+
+
+                    <h3>New Web Development Module</h3>
+
+                    <p>
+                        A new module has been added to the Web Development course.
+                        Students can now access the materials.
+                    </p>
+
+
+                    <div class="announcement-meta">
+
+                        <span>
+                            <i class="fa-solid fa-calendar"></i>
+                            Sept 18, 2026
+                        </span>
+
+                        <span>
+                            <i class="fa-solid fa-users"></i>
+                            Web Development Students
+                        </span>
+
+                    </div>
+
+
+                    <div class="announcement-buttons">
+
+                        <button class="view-announcement-btn">
+                            View
+                        </button>
+
+                        <button class="edit-announcement-btn">
+                            Edit
+                        </button>
+
+                        <button class="delete-announcement-btn">
+                            Delete
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ANNOUNCEMENT 3 -->
+                <div class="announcement-card" data-category="general">
+
+                    <div class="announcement-card-header">
+
+                        <div class="announcement-icon general-icon">
+                            <i class="fa-solid fa-bullhorn"></i>
+                        </div>
+
+                        <span class="announcement-category general-category">
+                            General
+                        </span>
+
+                    </div>
+
+
+                    <h3>Welcome Back Students</h3>
+
+                    <p>
+                        Welcome back to a new learning session. We wish every
+                        student a successful academic experience.
+                    </p>
+
+
+                    <div class="announcement-meta">
+
+                        <span>
+                            <i class="fa-solid fa-calendar"></i>
+                            Sept 15, 2026
+                        </span>
+
+                        <span>
+                            <i class="fa-solid fa-users"></i>
+                            All Students
+                        </span>
+
+                    </div>
+
+
+                    <div class="announcement-buttons">
+
+                        <button class="view-announcement-btn">
+                            View
+                        </button>
+
+                        <button class="edit-announcement-btn">
+                            Edit
+                        </button>
+
+                        <button class="delete-announcement-btn">
+                            Delete
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- JAVASCRIPT -->
+    <script src="../../js/announcements.js"></script>
+
+</body>
+</html>

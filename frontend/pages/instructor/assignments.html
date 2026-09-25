@@ -1,0 +1,906 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Assignments | School Management System</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Assignments CSS -->
+    <link rel="stylesheet" href="../../css/assignments.css">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- ================================
+             SIDEBAR
+        ================================= -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>IFEXA MANAGE</span>
+            </div>
+
+            <nav class="sidebar-menu">
+
+                <a href="dashboard.html" class="menu-item">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="courses.html" class="menu-item">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>My Courses</span>
+                </a>
+
+                <a href="students.html" class="menu-item">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Students</span>
+                </a>
+
+                <a href="assignments.html" class="menu-item active">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span>Assignments</span>
+                </a>
+
+                <!-- <a href="#" class="menu-item">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>Schedule</span>
+                </a>
+
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-chart-column"></i>
+                    <span>Performance</span>
+                </a> -->
+
+                <a href="announcements.html" class="menu-item">
+                    <i class="fa-solid fa-bullhorn"></i>
+                    <span>Announcements</span>
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <a href="#" class="menu-item">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+
+                <a href="#" class="menu-item logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <!-- ================================
+             MAIN CONTENT
+        ================================= -->
+
+        <main class="main-content">
+
+
+            <!-- TOPBAR -->
+
+            <header class="topbar">
+
+                <div class="topbar-left">
+
+                    <button class="menu-toggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+
+                    <div>
+                        <h1>Assignments</h1>
+                        <p>Manage assignments and track student submissions.</p>
+                    </div>
+
+                </div>
+
+
+                <div class="topbar-right">
+
+                    <button class="notification-btn">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+
+                    <div class="profile">
+
+                        <div class="profile-avatar">
+                            JM
+                        </div>
+
+                        <div class="profile-info">
+                            <h4>JUNGLE MAN</h4>
+                            <span>Instructor</span>
+                        </div>
+
+                        <i class="fa-solid fa-chevron-down"></i>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- ================================
+                 PAGE HEADER
+            ================================= -->
+
+            <section class="page-header">
+
+                <div>
+                    <h2>Assignments</h2>
+                    <p>Manage assignments and track student submissions.</p>
+                </div>
+
+                <button class="create-assignment-btn">
+                    <i class="fa-solid fa-plus"></i>
+                    Create Assignment
+                </button>
+
+            </section>
+
+
+            <!-- ================================
+                 STATISTICS
+            ================================= -->
+
+            <section class="assignment-stats">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+
+                    <div>
+                        <p>Total Assignments</p>
+                        <h2>24</h2>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+
+                    <div>
+                        <p>Active Assignments</p>
+                        <h2>8</h2>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-check-circle"></i>
+                    </div>
+
+                    <div>
+                        <p>Completed</p>
+                        <h2>12</h2>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+
+                    <div>
+                        <p>Total Submissions</p>
+                        <h2>18</h2>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================================
+                 ASSIGNMENTS
+            ================================= -->
+
+            <section class="assignments-section">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>All Assignments</h2>
+                        <p>View and manage assignments for your courses.</p>
+                    </div>
+
+
+                    <div class="assignment-actions">
+
+                        <input
+                            type="text"
+                            id="assignmentSearch"
+                            placeholder="Search assignments..."
+                        >
+
+
+                        <select id="assignmentFilter">
+
+                            <option value="all">
+                                All Courses
+                            </option>
+
+                            <option value="web-development">
+                                Web Development
+                            </option>
+
+                            <option value="python">
+                                Python
+                            </option>
+
+                            <option value="ui-ux">
+                                UI/UX Design
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TABLE -->
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Assignment</th>
+                                <th>Course</th>
+                                <th>Due Date</th>
+                                <th>Submissions</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="assignmentsTable">
+
+
+                            <!-- ASSIGNMENT 1 -->
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="assignment-name">
+
+                                        <div class="assignment-icon">
+                                            <i class="fa-solid fa-code"></i>
+                                        </div>
+
+                                        <div>
+                                            <strong>
+                                                Build a Portfolio Website
+                                            </strong>
+
+                                            <small>
+                                                Assignment ID: AS001
+                                            </small>
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    Web Development
+                                </td>
+
+
+                                <td>
+                                    25 Sept 2026
+                                </td>
+
+
+                                <td>
+                                    <strong>32 / 40</strong>
+                                </td>
+
+
+                                <td>
+                                    <span class="status active-status">
+                                        Active
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+                                        <button class="view-btn">
+                                            <i class="fa-solid fa-eye"></i>
+                                            View
+                                        </button>
+
+                                        <button class="edit-btn">
+                                            <i class="fa-solid fa-pen"></i>
+                                            Edit
+                                        </button>
+
+                                        <button class="delete-btn">
+                                            <i class="fa-solid fa-trash"></i>
+                                            Delete
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                            <!-- ASSIGNMENT 2 -->
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="assignment-name">
+
+                                        <div class="assignment-icon">
+                                            <i class="fa-solid fa-laptop-code"></i>
+                                        </div>
+
+                                        <div>
+                                            <strong>
+                                                Python Calculator
+                                            </strong>
+
+                                            <small>
+                                                Assignment ID: AS002
+                                            </small>
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    Python
+                                </td>
+
+
+                                <td>
+                                    28 Sept 2026
+                                </td>
+
+
+                                <td>
+                                    <strong>20 / 35</strong>
+                                </td>
+
+
+                                <td>
+                                    <span class="status active-status">
+                                        Active
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+                                        <button class="view-btn">
+                                            <i class="fa-solid fa-eye"></i>
+                                            View
+                                        </button>
+
+                                        <button class="edit-btn">
+                                            <i class="fa-solid fa-pen"></i>
+                                            Edit
+                                        </button>
+
+                                        <button class="delete-btn">
+                                            <i class="fa-solid fa-trash"></i>
+                                            Delete
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                            <!-- ASSIGNMENT 3 -->
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="assignment-name">
+
+                                        <div class="assignment-icon">
+                                            <i class="fa-solid fa-pen-ruler"></i>
+                                        </div>
+
+                                        <div>
+                                            <strong>
+                                                Mobile App Wireframe
+                                            </strong>
+
+                                            <small>
+                                                Assignment ID: AS003
+                                            </small>
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    UI/UX Design
+                                </td>
+
+
+                                <td>
+                                    15 Sept 2026
+                                </td>
+
+
+                                <td>
+                                    <strong>30 / 30</strong>
+                                </td>
+
+
+                                <td>
+                                    <span class="status completed-status">
+                                        Completed
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+                                        <button class="view-btn">
+                                            <i class="fa-solid fa-eye"></i>
+                                            View
+                                        </button>
+
+                                        <button class="edit-btn">
+                                            <i class="fa-solid fa-pen"></i>
+                                            Edit
+                                        </button>
+
+                                        <button class="delete-btn">
+                                            <i class="fa-solid fa-trash"></i>
+                                            Delete
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                            <!-- ASSIGNMENT 4 -->
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="assignment-name">
+
+                                        <div class="assignment-icon">
+                                            <i class="fa-solid fa-globe"></i>
+                                        </div>
+
+                                        <div>
+                                            <strong>
+                                                Responsive Website Design
+                                            </strong>
+
+                                            <small>
+                                                Assignment ID: AS004
+                                            </small>
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    Web Development
+                                </td>
+
+
+                                <td>
+                                    30 Sept 2026
+                                </td>
+
+
+                                <td>
+                                    <strong>15 / 40</strong>
+                                </td>
+
+
+                                <td>
+                                    <span class="status active-status">
+                                        Active
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+                                        <button class="view-btn">
+                                            <i class="fa-solid fa-eye"></i>
+                                            View
+                                        </button>
+
+                                        <button class="edit-btn">
+                                            <i class="fa-solid fa-pen"></i>
+                                            Edit
+                                        </button>
+
+                                        <button class="delete-btn">
+                                            <i class="fa-solid fa-trash"></i>
+                                            Delete
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- ================================
+         CREATE ASSIGNMENT MODAL
+    ================================= -->
+
+    <div class="modal" id="assignmentModal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+                    <h2>Create Assignment</h2>
+                    <p>Create a new assignment for your students.</p>
+                </div>
+
+                <button class="close-modal" id="closeModal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+
+            <form id="assignmentForm">
+
+                <div class="form-group">
+
+                    <label for="assignmentTitle">
+                        Assignment Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="assignmentTitle"
+                        placeholder="Enter assignment title"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="assignmentCourse">
+                        Course
+                    </label>
+
+                    <select id="assignmentCourse" required>
+
+                        <option value="">
+                            Select Course
+                        </option>
+
+                        <option value="web-development">
+                            Web Development
+                        </option>
+
+                        <option value="python">
+                            Python
+                        </option>
+
+                        <option value="ui-ux">
+                            UI/UX Design
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="assignmentDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="assignmentDescription"
+                        rows="4"
+                        placeholder="Describe the assignment..."
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="assignmentDueDate">
+                            Due Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="assignmentDueDate"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="assignmentScore">
+                            Maximum Score
+                        </label>
+
+                        <input
+                            type="number"
+                            id="assignmentScore"
+                            placeholder="100"
+                            min="1"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="cancel-btn"
+                        id="cancelModal"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="submit-assignment-btn"
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                        Create Assignment
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================
+         EDIT ASSIGNMENT MODAL
+    ================================= -->
+
+    <div class="modal" id="editAssignmentModal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+                    <h2>Edit Assignment</h2>
+                    <p>Update assignment information.</p>
+                </div>
+
+                <button class="close-modal" id="closeEditModal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+
+            <form id="editAssignmentForm">
+
+                <div class="form-group">
+
+                    <label for="editAssignmentTitle">
+                        Assignment Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editAssignmentTitle"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="editAssignmentCourse">
+                        Course
+                    </label>
+
+                    <select id="editAssignmentCourse" required>
+
+                        <option value="">
+                            Select Course
+                        </option>
+
+                        <option value="web-development">
+                            Web Development
+                        </option>
+
+                        <option value="python">
+                            Python
+                        </option>
+
+                        <option value="ui-ux">
+                            UI/UX Design
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="editAssignmentDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="editAssignmentDescription"
+                        rows="4"
+                        required
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="editAssignmentDueDate">
+                            Due Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="editAssignmentDueDate"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="editAssignmentScore">
+                            Maximum Score
+                        </label>
+
+                        <input
+                            type="number"
+                            id="editAssignmentScore"
+                            min="1"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="cancel-btn"
+                        id="cancelEditModal"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="submit-assignment-btn"
+                    >
+                        <i class="fa-solid fa-save"></i>
+                        Save Changes
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+    <script src="../../js/assignments.js"></script>
+
+</body>
+
+</html>

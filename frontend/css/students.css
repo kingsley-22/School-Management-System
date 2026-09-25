@@ -1,0 +1,850 @@
+/* ========================================
+   STUDENTS PAGE
+======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f7fb;
+    color: #1e293b;
+}
+
+button,
+input,
+select {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+
+/* ========================================
+   SIDEBAR
+======================================== */
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 250px;
+    height: 100vh;
+    background: #f8fafd;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.logo {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.logo i {
+    font-size: 25px;
+    color: #3b82f6;
+}
+
+.logo span {
+    font-size: 18px;
+    font-weight: 700;
+    color: #3b82f6;
+}
+
+.sidebar-menu {
+    padding: 20px 12px;
+    flex: 1;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+     color: #6b7280;
+    padding: 13px 15px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    transition: 0.2s;
+}
+
+.menu-item i {
+    width: 20px;
+    text-align: center;
+}
+
+.menu-item:hover {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.menu-item.active {
+    background: #2563eb;
+    color: white;
+}
+
+.sidebar-bottom {
+    padding: 12px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.menu-item.logout:hover {
+    background: #7f1d1d;
+}
+
+
+/* ========================================
+   MAIN CONTENT
+======================================== */
+
+.main-content {
+    margin-left: 250px;
+    min-height: 100vh;
+}
+
+
+/* ========================================
+   TOPBAR
+======================================== */
+
+.topbar {
+    height: 70px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.topbar-left h1 {
+    font-size: 22px;
+    margin-bottom: 4px;
+}
+
+.topbar-left p {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.menu-toggle {
+    display: none;
+    border: none;
+    background: #eff6ff;
+    color: #2563eb;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.notification-btn {
+    position: relative;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    color: #475569;
+}
+
+.notification-dot {
+    position: absolute;
+    top: 0;
+    right: -2px;
+    width: 7px;
+    height: 7px;
+    background: #ef4444;
+    border-radius: 50%;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-avatar {
+    width: 40px;
+    height: 40px;
+    background: #2563eb;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.profile-info h4 {
+    font-size: 13px;
+}
+
+.profile-info span {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.profile > i {
+    color: #64748b;
+    font-size: 12px;
+}
+
+
+/* ========================================
+   CONTENT
+======================================== */
+
+.student-stats,
+.students-section {
+    padding: 25px 30px 0;
+}
+
+
+/* ========================================
+   STAT CARDS
+======================================== */
+
+.student-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.stat-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.stat-card p {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.stat-card h2 {
+    font-size: 24px;
+}
+
+
+/* ========================================
+   STUDENTS SECTION
+======================================== */
+
+.students-section {
+    padding-bottom: 30px;
+}
+
+.section-header {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    padding: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.section-title h2 {
+    font-size: 20px;
+    margin-bottom: 6px;
+}
+
+.section-title p {
+    color: #64748b;
+    font-size: 13px;
+}
+
+
+/* ========================================
+   ACTIONS
+======================================== */
+
+.student-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.add-student-btn {
+    border: none;
+    background: #2563eb;
+    color: white;
+    padding: 11px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.add-student-btn:hover {
+    background: #1d4ed8;
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+.search-box input {
+    width: 210px;
+    height: 40px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 0 12px 0 35px;
+    outline: none;
+}
+
+.search-box input:focus {
+    border-color: #2563eb;
+}
+
+#courseFilter {
+    height: 40px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 0 12px;
+    outline: none;
+    background: white;
+}
+
+#courseFilter:focus {
+    border-color: #2563eb;
+}
+
+
+/* ========================================
+   TABLE
+======================================== */
+
+.table-container {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0 0 12px 12px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
+}
+
+thead {
+    background: #f8fafc;
+}
+
+th {
+    text-align: left;
+    padding: 15px 18px;
+    font-size: 12px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+td {
+    padding: 17px 18px;
+    border-top: 1px solid #eef2f7;
+    font-size: 14px;
+}
+
+tbody tr:hover {
+    background: #f8fbff;
+}
+
+
+/* ========================================
+   STUDENT NAME
+======================================== */
+
+.student-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.student-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #dbeafe;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.student-name strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.student-name small {
+    display: block;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+
+/* ========================================
+   PROGRESS
+======================================== */
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+}
+
+.progress-bar {
+    width: 90px;
+    height: 7px;
+    background: #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-bar span {
+    display: block;
+    height: 100%;
+    background: #2563eb;
+    border-radius: 20px;
+}
+
+.progress-container small {
+    color: #64748b;
+    font-size: 12px;
+}
+
+
+/* ========================================
+   STATUS
+======================================== */
+
+.status {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.active-status {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.inactive-status {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+
+/* ========================================
+   VIEW BUTTON
+======================================== */
+
+.view-btn {
+    border: none;
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 8px 14px;
+    border-radius: 7px;
+    font-weight: 600;
+}
+
+.view-btn:hover {
+    background: #dbeafe;
+}
+
+
+/* ========================================
+   STUDENT MODALS
+======================================== */
+
+.student-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.student-modal.show {
+    display: flex;
+}
+
+.student-modal-content {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    animation: modalOpen 0.25s ease;
+}
+
+@keyframes modalOpen {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.close-modal {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 16px;
+}
+
+.close-modal:hover {
+    background: #e2e8f0;
+}
+
+
+/* ========================================
+   MODAL HEADER
+======================================== */
+
+.modal-student-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 25px;
+    padding-right: 40px;
+}
+
+.modal-student-avatar {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: #2563eb;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.modal-student-header h2 {
+    font-size: 21px;
+    margin-bottom: 5px;
+}
+
+.modal-student-header p {
+    color: #64748b;
+    font-size: 13px;
+}
+
+
+/* ========================================
+   STUDENT DETAILS
+======================================== */
+
+.student-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    background: #f8fafc;
+    border-radius: 10px;
+}
+
+.detail-item > i {
+    color: #2563eb;
+    font-size: 17px;
+}
+
+.detail-item div {
+    min-width: 0;
+}
+
+.detail-item span {
+    display: block;
+    color: #64748b;
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+.detail-item strong {
+    display: block;
+    font-size: 13px;
+    word-break: break-word;
+}
+
+
+/* ========================================
+   MODAL BUTTONS
+======================================== */
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 25px;
+}
+
+.modal-close-btn,
+.modal-cancel-btn,
+.modal-save-btn {
+    border: none;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.modal-close-btn {
+    background: #2563eb;
+    color: white;
+}
+
+.modal-close-btn:hover {
+    background: #1d4ed8;
+}
+
+.modal-cancel-btn {
+    background: #e2e8f0;
+    color: #334155;
+    margin-right: 8px;
+}
+
+.modal-cancel-btn:hover {
+    background: #cbd5e1;
+}
+
+.modal-save-btn {
+    background: #2563eb;
+    color: white;
+}
+
+.modal-save-btn:hover {
+    background: #1d4ed8;
+}
+
+
+/* ========================================
+   FORM
+======================================== */
+
+.form-group {
+    margin-bottom: 17px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    height: 42px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 0 12px;
+    outline: none;
+    font-size: 14px;
+    background: white;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px #dbeafe;
+}
+
+
+/* ========================================
+   MOBILE SIDEBAR
+======================================== */
+
+@media (max-width: 768px) {
+
+    .sidebar {
+        width: 250px;
+        height: calc(100vh - 70px);
+        top: 70px;
+        left: 0;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 900;
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .topbar {
+        position: relative;
+        z-index: 1000;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .topbar {
+        padding: 0 18px;
+    }
+
+    .topbar-left h1 {
+        font-size: 18px;
+    }
+
+    .profile-info,
+    .profile > i {
+        display: none;
+    }
+
+    .student-stats {
+        grid-template-columns: 1fr 1fr;
+        padding: 18px;
+        gap: 12px;
+    }
+
+    .students-section {
+        padding: 18px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .student-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-box input,
+    #courseFilter,
+    .add-student-btn {
+        width: 100%;
+    }
+
+    .add-student-btn {
+        justify-content: center;
+    }
+
+}
+
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 500px) {
+
+    .student-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .student-modal {
+        padding: 12px;
+    }
+
+    .student-modal-content {
+        padding: 24px 18px;
+    }
+
+    .student-details {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-student-avatar {
+        width: 58px;
+        height: 58px;
+    }
+
+    .modal-student-header h2 {
+        font-size: 18px;
+    }
+
+}

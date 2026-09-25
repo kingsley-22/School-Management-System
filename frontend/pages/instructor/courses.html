@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Courses | IFEXA MANAGE</title>
+<link rel="stylesheet" href="../../css/instructor-dashboard.css">
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>IFEXA MANAGE</span>
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <!-- Dashboard -->
+            <a href="dashboard.html" class="menu-item">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+
+
+            <!-- My Courses -->
+            <a href="courses.html" class="menu-item active">
+                <i class="fa-solid fa-book-open"></i>
+                <span>My Courses</span>
+            </a>
+
+
+            <!-- Students -->
+            <a href="students.html" class="menu-item">
+                <i class="fa-solid fa-users"></i>
+                <span>Students</span>
+            </a>
+
+
+            <!-- Assignments -->
+            <a href="assignments.html" class="menu-item">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Assignments</span>
+            </a>
+
+
+            <!-- Schedule -->
+            <!-- <a href="#" class="menu-item">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span>Schedule</span>
+            </a> -->
+
+
+            <!-- Performance -->
+            <!-- <a href="#" class="menu-item">
+                <i class="fa-solid fa-chart-column"></i>
+                <span>Performance</span>
+            </a> -->
+
+
+            <!-- Announcements -->
+            <a href="announcements.html" class="menu-item">
+                <i class="fa-solid fa-bullhorn"></i>
+                <span>Announcements</span>
+            </a>
+        </nav>
+
+        <!-- Sidebar Bottom -->
+        <div class="sidebar-bottom">
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </a>
+            <a href="#" class="menu-item logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+
+    </aside>
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================= -->
+    <main class="main-content">
+
+
+        <!-- =========================
+             TOPBAR
+        ========================= -->
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <!-- Mobile Menu -->
+                <button class="menu-toggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div>
+                    <h1>My Courses</h1>
+                    <p>Manage and monitor all your courses</p>
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <!-- Notification -->
+                <button class="notification-btn">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="notification-dot"></span>
+                </button>
+
+                <!-- Profile -->
+                <div class="profile">
+                    <div class="profile-avatar">
+                        JM
+                    </div>
+                    <div class="profile-info">
+                        <h4>JUNGLE MAN</h4>
+                        <span>Instructor</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- =========================
+             COURSES CONTENT
+        ========================= -->
+        <section class="content">
+            <!-- Page Header -->
+            <div class="courses-header">
+                <div>
+                    <h2>My Courses</h2>
+                    <p>Manage, edit and monitor your courses</p>
+                </div>
+
+                <button class="create-course-btn">
+                    <i class="fa-solid fa-plus"></i>
+                    Create Course
+                </button>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="course-tools">
+                <!-- Search -->
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input
+    type="text"
+    id="courseSearch"
+    placeholder="Search courses...">
+                </div>
+                <!-- Filter -->
+<div class="filter-box">
+
+    <select id="courseFilter">
+
+        <option value="all">All Courses</option>
+        <option value="active">Active</option>
+        <option value="draft">Draft</option>
+
+    </select>
+
+</div>
+            </div>
+
+            <!-- =========================
+                 COURSES GRID
+            ========================= -->
+<div class="courses-grid" id="coursesGrid">
+                <!-- =========================
+                     COURSE 1
+                ========================= -->
+                <div class="course-card">
+                    <div class="course-image web">
+                        <i class="fa-solid fa-code"></i>
+                    </div>
+
+                    <div class="course-card-content">
+                        <div class="course-status">
+                            <span class="status active-status">
+                                Active
+                            </span>
+                            <button class="course-menu">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+
+                        </div>
+                        <h3>Web Development</h3>
+                        <p>
+                            Learn modern web development with HTML,
+                            CSS and JavaScript.
+                        </p>
+
+                        <!-- Course Information -->
+                        <div class="course-meta">
+                            <span>
+                                <i class="fa-solid fa-users"></i>
+                                35 Students
+                            </span>
+                            <span>
+                                <i class="fa-solid fa-book-open"></i>
+                                24 Lessons
+                            </span>
+                        </div>
+
+                        <!-- Course Progress -->
+                        <div class="course-progress-info">
+                            <div>
+                                <span>Course Progress</span>
+                                <strong>75%</strong>
+                            </div>
+
+                            <div class="progress">
+                                <div
+                                    class="progress-bar"
+                                    style="width: 75%;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Course Actions -->
+                        <div class="course-actions">
+                            <button class="view-course">
+                                View Course
+                            </button>
+
+                            <button class="edit-course">
+                                <i class="fa-solid fa-pen"></i>
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- =========================
+                     COURSE 2
+                ========================= -->
+                <div class="course-card">
+                    <div class="course-image python">
+                        <i class="fa-brands fa-python"></i>
+                    </div>
+
+                    <div class="course-card-content">
+                        <div class="course-status">
+                            <span class="status active-status">
+                                Active
+                            </span>
+
+                            <button class="course-menu">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+                        </div>
+                        <h3>Python Programming</h3>
+                        <p>
+                            Learn Python programming from beginner
+                            to advanced level.
+                        </p>
+
+                        <!-- Course Information -->
+                        <div class="course-meta">
+                            <span>
+                                <i class="fa-solid fa-users"></i>
+                                28 Students
+                            </span>
+
+                            <span>
+                                <i class="fa-solid fa-book-open"></i>
+                                18 Lessons
+                            </span>
+                        </div>
+                        <!-- Course Progress -->
+                        <div class="course-progress-info">
+
+                            <div>
+                                <span>Course Progress</span>
+                                <strong>60%</strong>
+                            </div>
+                            <div class="progress">
+                                <div
+                                    class="progress-bar"
+                                    style="width: 60%;">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Course Actions -->
+                        <div class="course-actions">
+                            <button class="view-course">
+                                View Course
+                            </button>
+
+                            <button class="edit-course">
+                                <i class="fa-solid fa-pen"></i>
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- =========================
+                     COURSE 3
+                ========================= -->
+                <div class="course-card">
+
+                    <div class="course-image database">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+
+                    <div class="course-card-content">
+                        <div class="course-status">
+                            <span class="status draft-status">
+                                Draft
+                            </span>
+                            <button class="course-menu">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+
+                        </div>
+                        <h3>Database Systems</h3>
+                        <p>
+                            Understand databases, SQL and modern
+                            database management systems.
+                        </p>
+                        <!-- Course Information -->
+                        <div class="course-meta">
+                            <span>
+                                <i class="fa-solid fa-users"></i>
+                                42 Students
+                            </span>
+
+                            <span>
+                                <i class="fa-solid fa-book-open"></i>
+                                20 Lessons
+                            </span>
+                        </div>
+
+                        <!-- Course Progress -->
+                        <div class="course-progress-info">
+                            <div>
+                                <span>Course Progress</span>
+                                <strong>45%</strong>
+                            </div>
+                            <div class="progress">
+                                <div
+                                    class="progress-bar"
+                                    style="width: 45%;">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Course Actions -->
+                        <div class="course-actions">
+                            <button class="view-course">
+                                View Course
+                            </button>
+
+                            <button class="edit-course">
+                                <i class="fa-solid fa-pen"></i>
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- =========================
+                     COURSE 4
+                ========================= -->
+                <div class="course-card">
+
+                    <div class="course-image web">
+                        <i class="fa-solid fa-laptop-code"></i>
+                    </div>
+
+                    <div class="course-card-content">
+                        <div class="course-status">
+
+                            <span class="status active-status">
+                                Active
+                            </span>
+
+                            <button class="course-menu">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+
+                        </div>
+
+                        <h3>JavaScript Fundamentals</h3>
+                        <p>
+                            Learn the fundamentals of JavaScript
+                            and build interactive websites.
+                        </p>
+                        <div class="course-meta">
+                            <span>
+                                <i class="fa-solid fa-users"></i>
+                                30 Students
+                            </span>
+
+                            <span>
+                                <i class="fa-solid fa-book-open"></i>
+                                16 Lessons
+                            </span>
+
+                        </div>
+
+                        <div class="course-progress-info">
+
+                            <div>
+                                <span>Course Progress</span>
+                                <strong>80%</strong>
+                            </div>
+
+                            <div class="progress">
+                                <div
+                                    class="progress-bar"
+                                    style="width: 80%;">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="course-actions">
+
+                            <button class="view-course">
+                                View Course
+                            </button>
+
+                            <button class="edit-course">
+                                <i class="fa-solid fa-pen"></i>
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================
+                     COURSE 5
+                ========================= -->
+                <div class="course-card">
+
+                    <div class="course-image database">
+                        <i class="fa-solid fa-server"></i>
+                    </div>
+                    <div class="course-card-content">
+
+                        <div class="course-status">
+
+                            <span class="status draft-status">
+                                Draft
+                            </span>
+
+                            <button class="course-menu">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+
+                        </div>
+
+                        <h3>Backend Development</h3>
+                        <p>
+                            Learn how to build powerful backend
+                            applications and APIs.
+                        </p>
+
+                        <div class="course-meta">
+
+                            <span>
+                                <i class="fa-solid fa-users"></i>
+                                20 Students
+                            </span>
+
+                            <span>
+                                <i class="fa-solid fa-book-open"></i>
+                                22 Lessons
+                            </span>
+
+                        </div>
+
+                        <div class="course-progress-info">
+
+                            <div>
+                                <span>Course Progress</span>
+                                <strong>35%</strong>
+                            </div>
+
+
+                            <div class="progress">
+                                <div
+                                    class="progress-bar"
+                                    style="width: 35%;">
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="course-actions">
+
+                            <button class="view-course">
+                                View Course
+                            </button>
+
+                            <button class="edit-course">
+                                <i class="fa-solid fa-pen"></i>
+                                Edit
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <!-- =========================
+                     COURSE 6
+                ========================= -->
+                <div class="course-card">
+
+                    <div class="course-image python">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+
+
+                    <div class="course-card-content">
+
+
+                        <div class="course-status">
+
+                            <span class="status active-status">
+                                Active
+                            </span>
+
+                            <button class="course-menu">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+
+                        </div>
+
+
+                        <h3>Cybersecurity Basics</h3>
+
+                        <p>
+                            Learn the fundamentals of cybersecurity
+                            and protecting digital systems.
+                        </p>
+
+                        <div class="course-meta">
+
+                            <span>
+                                <i class="fa-solid fa-users"></i>
+                                25 Students
+                            </span>
+
+
+                            <span>
+                                <i class="fa-solid fa-book-open"></i>
+                                15 Lessons
+                            </span>
+
+                        </div>
+                        <div class="course-progress-info">
+
+                            <div>
+                                <span>Course Progress</span>
+                                <strong>70%</strong>
+                            </div>
+                            <div class="progress">
+                                <div
+                                    class="progress-bar"
+                                    style="width: 70%;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="course-actions">
+                            <button class="view-course">
+                                View Course
+                            </button>
+                            <button class="edit-course">
+                                <i class="fa-solid fa-pen"></i>
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+<!-- JavaScript -->
+<script src="../../js/instructor-dashboard.js"></script>
+
+</body>
+
+</html>
