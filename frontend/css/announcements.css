@@ -82,10 +82,18 @@ select {
 
     border-radius: 10px;
 
-    background: #2563eb;
+    background: rgb(83, 5, 156);
     color: white;
 
     font-size: 20px;
+}
+
+img{
+    width: 150px;
+    height: 42px;
+    border-radius: 10px;
+    background: rgb(83, 5, 156);
+    color: white;
 }
 
 .sidebar-menu {
@@ -119,11 +127,11 @@ select {
 
 .menu-item:hover {
     background: #eff6ff;
-    color: #2563eb;
+    color: rgb(83, 5, 156);
 }
 
 .menu-item.active {
-    background: #2563eb;
+    background: rgb(83, 5, 156);
     color: white;
 
     box-shadow: 0 6px 15px rgba(37, 99, 235, 0.25);
@@ -188,7 +196,7 @@ select {
 .menu-toggle {
     display: none;
     border: none;
-    background: #2563eb;
+    background: rgb(83, 5, 156);
     color: white;
     width: 42px;
     height: 42px;
@@ -213,7 +221,7 @@ select {
 
     border-radius: 50%;
 
-    background: blue;
+    background: rgb(83, 5, 156);
     color: white;
 
     font-size: 14px;
@@ -264,7 +272,7 @@ select {
 
 .create-announcement-btn {
     border: none;
-    background: #2563eb;
+    background: rgb(83, 5, 156);
     color: white;
     padding: 12px 18px;
     border-radius: 8px;
@@ -277,7 +285,7 @@ select {
 }
 
 .create-announcement-btn:hover {
-    background: #1d4ed8;
+    background: rgb(83, 5, 156);
 }
 
 

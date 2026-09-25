@@ -81,7 +81,7 @@ button {
 
     font-size: 22px;
     font-weight: 700;
-    color: #2563eb;
+    color: rgb(83, 5, 156);
 }
 
 .logo i {
@@ -94,10 +94,17 @@ button {
 
     border-radius: 10px;
 
-    background: #2563eb;
+    background: rgb(83, 5, 156);
     color: white;
 
     font-size: 20px;
+}
+img{
+    width: 150px;
+    height: 42px;
+    border-radius: 10px;
+    background: rgb(83, 5, 156);
+    color: white;
 }
 
 
@@ -164,11 +171,11 @@ button {
 
 .menu-item:hover {
     background: #eff6ff;
-    color: #2563eb;
+    color: rgb(83, 5, 156);
 }
 
 .menu-item.active {
-    background: #2563eb;
+    background: rgb(83, 5, 156);
     color: white;
 
     box-shadow: 0 6px 15px rgba(37, 99, 235, 0.25);
@@ -297,7 +304,7 @@ button {
 
     border-radius: 50%;
 
-    background: blue;
+    background: rgb(83, 5, 156);
     color: white;
 
     font-size: 14px;
@@ -375,7 +382,7 @@ button {
 
 .stat-icon.blue {
     background: rgb(215, 215, 253);
-    color: blue;
+    color: rgb(83, 5, 156);
 }
 
 .stat-icon.purple {
@@ -469,7 +476,7 @@ button {
 .card-header a {
     font-size: 13px;
     font-weight: 600;
-    color: #2563eb;
+    color: rgb(83, 5, 156);
 }
 
 
@@ -510,7 +517,7 @@ button {
     border-radius: 10px;
 
     background: #eff6ff;
-    color: #2563eb;
+    color: rgb(83, 5, 156);
 }
 
 .activity-info h4 {
@@ -573,7 +580,7 @@ button {
     border-radius: 8px;
 
     background: #eff6ff;
-    color: #2563eb;
+    color: rgb(83, 5, 156);
 }
 
 .class-time strong {
@@ -664,7 +671,7 @@ button {
 
     border-radius: 20px;
 
-    background: #2563eb;
+    background: rgb(83, 5, 156);
 }
 
 .performance {
@@ -727,7 +734,7 @@ button {
     }
     .menu-item:hover {
     background: #eff6ff;
-    color: #2563eb;
+    color: rgb(83, 5, 156);
 }
 
 .menu-item.active {
@@ -818,7 +825,7 @@ button {
 
     border-radius: 8px;
 
-    background: #2563eb;
+    background: rgb(83, 5, 156);
     color: white;
 
     font-size: 14px;
@@ -828,7 +835,7 @@ button {
 }
 
 .create-course-btn:hover {
-    background: #1d4ed8;
+    background: rgb(83, 5, 156);
 }
 
 
@@ -943,7 +950,7 @@ button {
 
 .course-image.web {
     background: #dbeafe;
-    color: #2563eb;
+    color: rgb(83, 5, 156);
 }
 
 
@@ -1050,7 +1057,7 @@ button {
 
 
 .course-meta i {
-    color: #2563eb;
+    color: rgb(83, 5, 156);
 }
 
 
@@ -1074,7 +1081,7 @@ button {
 
 
 .course-progress-info strong {
-    color: #2563eb;
+    color: rgb(83, 5, 156);
 }
 
 
@@ -1103,7 +1110,7 @@ button {
 .view-course {
     background: #eff6ff;
 
-    color: #2563eb;
+    color: rgb(83, 5, 156);
 }
 
 

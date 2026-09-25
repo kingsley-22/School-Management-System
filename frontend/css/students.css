@@ -24,6 +24,14 @@ button {
     cursor: pointer;
 }
 
+img{
+    width: 150px;
+    height: 42px;
+    border-radius: 10px;
+    background: rgb(83, 5, 156);
+    color: white;
+}
+
 
 /* ========================================
    SIDEBAR
@@ -53,14 +61,9 @@ button {
 
 .logo i {
     font-size: 25px;
-    color: #3b82f6;
+    color: rgb(83, 5, 156);
 }
 
-.logo span {
-    font-size: 18px;
-    font-weight: 700;
-    color: #3b82f6;
-}
 
 .sidebar-menu {
     padding: 20px 12px;
@@ -86,11 +89,11 @@ button {
 
 .menu-item:hover {
     background: #eff6ff;
-    color: #2563eb;
+    color: rgb(83, 5, 156);
 }
 
 .menu-item.active {
-    background: #2563eb;
+    background: rgb(83, 5, 156);
     color: white;
 }
 
@@ -148,7 +151,7 @@ button {
     display: none;
     border: none;
     background: #eff6ff;
-    color: #2563eb;
+    color: rgb(83, 5, 156);
     width: 40px;
     height: 40px;
     border-radius: 8px;
@@ -188,7 +191,7 @@ button {
 .profile-avatar {
     width: 40px;
     height: 40px;
-    background: #2563eb;
+    background: rgb(83, 5, 156);
     color: white;
     border-radius: 50%;
     display: flex;
@@ -247,7 +250,7 @@ button {
     height: 48px;
     border-radius: 10px;
     background: #eff6ff;
-    color: #2563eb;
+    color: rgb(83, 5, 156);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -308,7 +311,7 @@ button {
 
 .add-student-btn {
     border: none;
-    background: #2563eb;
+    background: rgb(83, 5, 156);
     color: white;
     padding: 11px 16px;
     border-radius: 8px;
@@ -319,7 +322,7 @@ button {
 }
 
 .add-student-btn:hover {
-    background: #1d4ed8;
+    background: rgb(83, 5, 156);
 }
 
 .search-box {
@@ -357,7 +360,7 @@ button {
 }
 
 #courseFilter:focus {
-    border-color: #2563eb;
+    border-color: rgb(83, 5, 156);
 }
 
 
@@ -417,7 +420,7 @@ tbody tr:hover {
     height: 40px;
     border-radius: 50%;
     background: #dbeafe;
-    color: #2563eb;
+    color: rgb(83, 5, 156);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -459,7 +462,7 @@ tbody tr:hover {
 .progress-bar span {
     display: block;
     height: 100%;
-    background: #2563eb;
+    background: rgb(83, 5, 156);
     border-radius: 20px;
 }
 
@@ -499,7 +502,7 @@ tbody tr:hover {
 .view-btn {
     border: none;
     background: #eff6ff;
-    color: #2563eb;
+    color: rgb(83, 5, 156);
     padding: 8px 14px;
     border-radius: 7px;
     font-weight: 600;
@@ -629,7 +632,7 @@ tbody tr:hover {
 }
 
 .detail-item > i {
-    color: #2563eb;
+    color: rgb(83, 5, 156);
     font-size: 17px;
 }
 
@@ -671,12 +674,12 @@ tbody tr:hover {
 }
 
 .modal-close-btn {
-    background: #2563eb;
+    background: rgb(83, 5, 156);
     color: white;
 }
 
 .modal-close-btn:hover {
-    background: #1d4ed8;
+    background: rgb(83, 5, 156);
 }
 
 .modal-cancel-btn {
@@ -690,12 +693,12 @@ tbody tr:hover {
 }
 
 .modal-save-btn {
-    background: #2563eb;
+    background: rgb(83, 5, 156);
     color: white;
 }
 
 .modal-save-btn:hover {
-    background: #1d4ed8;
+    background: rgb(83, 5, 156);
 }
 
 
@@ -729,7 +732,7 @@ tbody tr:hover {
 
 .form-group input:focus,
 .form-group select:focus {
-    border-color: #2563eb;
+    border-color: rgb(83, 5, 156);
     box-shadow: 0 0 0 3px #dbeafe;
 }
 
