@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="announcement.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css">
+    <title>Announcement Panel</title>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+     
+    <aside class="Sidebar">
+        <button class="Hamburger" onclick="HamButton()">
+            <i class="fa fa-bars"></i>
+        </button>
+        <h1 class="Admin">Announcement Panel</h1>
+        <nav>
+            <a href="#" class="Dash"><i class="fa fa-home" aria-hidden="true"></i> Dashboard</a>
+            <a href="#"><i class="fa fa-users" aria-hidden="true"></i> Students</a>
+            <a href="#"><i class="fa fa-chalkboard-teacher" aria-hidden="true"></i> Instructor</a>
+            <a href="admin.html"><i class="fa fa-user" aria-hidden="true"></i> Admin</a>
+            <a href="#"><i class="fa fa-book" aria-hidden="true"></i> Courses</a>
+            <a href="announcement.html"><i class="fa fa-bell" aria-hidden="true"></i> Announcement</a>
+        </nav>
+
+        <div class="Sidebar_down">
+        <a href="#"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+        </div>
+    </aside>
+
+
+        <section class="Second_Statement">
+
+            <header class="header_info" id="header_info">
+                <div>
+                    <h1>Announcements</h1>
+                    <p>Stay updated with the latest information</p>
+                </div>
+
+                <div>
+                    
+                    <button onclick="editAnnouncement()" class="New"> <i class=" fa fa-plus"></i> New Announcement</button>
+                    
+                </div>
+            </header>
+
+            <div class="form_Container" id="form_Container">
+                <h1 class="Create">Create Announcement</h1>
+                <form> 
+                    <div class="form_group" >
+                        <input type="text" id="inputText" placeholder="Annoncement Title">
+                    </div>
+
+                    <div class="form_group" id="inputTextarea">
+                        <textarea id="inputTextarea" placeholder="Write your announcement"></textarea>
+                    </div>
+
+                    <div class="form_group" id="">
+                        <button class="Publish" id="Publish"><i class=" fa fa-paper-plane"></i> Publish</button>
+                        <button class="Cancel" id="Cancel">Cancel</button>
+                    </div>
+                    
+                </form>
+            </div>
+
+
+            <div class="phase" id="phase">
+              
+                <div class="phase_one">
+                      <i class="fa fa-bell"></i>
+                    <h1> Welcome to the new semester</h1>
+                    <p>Welcome everyone! We are excited to begin a new semester. Please ensure that you check the timetable and prepare for your classes</p>
+                    <button>Delete</button>
+                </div>
+            </div>
+
+
+        </section>
+
+</body>
+</html>
+
+<script src="announcement.js"></script>
