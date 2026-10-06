@@ -4,481 +4,233 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // ========================================
-    // 1. MOBILE SIDEBAR
-    // ========================================
+    // ---- STORAGE ----
+    const STORAGE_KEY = "createdStudents";
 
+    function loadSaved() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+        catch { return []; }
+    }
+    function persistSaved(arr) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    }
+
+
+    // ---- MOBILE SIDEBAR ----
     const menuToggle = document.querySelector(".menu-toggle");
     const sidebar = document.querySelector(".sidebar");
 
     if (menuToggle && sidebar) {
-        menuToggle.addEventListener("click", () => {
-            sidebar.classList.toggle("show");
-        });
+        menuToggle.addEventListener("click", () => sidebar.classList.toggle("show"));
     }
 
+    document.querySelectorAll(".sidebar .menu-item").forEach(link => {
+        link.addEventListener("click", () => {
+            if (window.innerWidth <= 768) sidebar.classList.remove("show");
+        });
+    });
 
-    // ========================================
-    // 2. SEARCH STUDENTS
-    // ========================================
 
+    // ---- ELEMENTS ----
     const studentSearch = document.getElementById("studentSearch");
     const studentsTable = document.getElementById("studentsTable");
+    const courseFilter = document.getElementById("courseFilter");
 
+    const studentModal = document.getElementById("studentModal");
+    const closeStudentModal = document.getElementById("closeStudentModal");
+    const modalCloseButton = document.getElementById("modalCloseButton");
+
+    const addStudentBtn = document.getElementById("addStudentBtn");
+    const addStudentModal = document.getElementById("addStudentModal");
+    const closeAddStudentModal = document.getElementById("closeAddStudentModal");
+    const cancelAddStudent = document.getElementById("cancelAddStudent");
+    const addStudentForm = document.getElementById("addStudentForm");
+
+
+    // ---- SEARCH ----
     if (studentSearch && studentsTable) {
-
         studentSearch.addEventListener("input", () => {
-
-            const searchValue =
-                studentSearch.value.toLowerCase().trim();
-
-            const rows = studentsTable.querySelectorAll("tr");
-
-            rows.forEach(row => {
-
-                const rowText =
-                    row.textContent.toLowerCase();
-
-                if (rowText.includes(searchValue)) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-
+            const v = studentSearch.value.toLowerCase().trim();
+            studentsTable.querySelectorAll("tr").forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(v) ? "" : "none";
             });
-
         });
-
     }
 
 
-    // ========================================
-    // 3. COURSE FILTER
-    // ========================================
-
-    const courseFilter =
-        document.getElementById("courseFilter");
-
-    if (courseFilter && studentsTable) {
-
-        courseFilter.addEventListener("change", () => {
-
-            const selectedCourse =
-                courseFilter.value.toLowerCase();
-
-            const rows =
-                studentsTable.querySelectorAll("tr");
-
-            rows.forEach(row => {
-
-                const courseCell =
-                    row.querySelector("td:nth-child(3)");
-
-                if (!courseCell) return;
-
-                const course =
-                    courseCell.textContent.toLowerCase().trim();
-
-                if (
-                    selectedCourse === "all" ||
-                    courseMatches(course, selectedCourse)
-                ) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-
-            });
-
-        });
-
-    }
-
-
-    // ========================================
-    // 4. COURSE MATCHING
-    // ========================================
-
-    function courseMatches(course, selectedCourse) {
-
-        if (selectedCourse === "web") {
-            return course.includes("web");
-        }
-
-        if (selectedCourse === "python") {
-            return course.includes("python");
-        }
-
-        if (selectedCourse === "design") {
-            return course.includes("ui/ux");
-        }
-
-        if (selectedCourse === "forex") {
-            return course.includes("forex");
-        }
-
+    // ---- COURSE FILTER ----
+    function courseMatches(course, selected) {
+        if (selected === "web") return course.includes("web");
+        if (selected === "python") return course.includes("python");
+        if (selected === "design") return course.includes("ui/ux");
+        if (selected === "forex") return course.includes("forex");
         return true;
     }
 
-// ========================================
-// 5. VIEW STUDENT MODAL
-// ========================================
-
-const viewButtons =
-    document.querySelectorAll(".view-btn");
-
-const studentModal =
-    document.getElementById("studentModal");
-
-const closeStudentModal =
-    document.getElementById("closeStudentModal");
-
-const modalCloseButton =
-    document.getElementById("modalCloseButton");
-
-
-viewButtons.forEach(button => {
-
-    button.addEventListener("click", () => {
-
-        const row = button.closest("tr");
-
-        if (!row) return;
-
-        const name =
-            row.querySelector(".student-name strong")
-                ?.textContent.trim();
-
-        const studentId =
-            row.querySelector(".student-name small")
-                ?.textContent.trim();
-
-        const avatar =
-            row.querySelector(".student-avatar")
-                ?.textContent.trim();
-
-        const email =
-            row.children[1]?.textContent.trim();
-
-        const course =
-            row.children[2]?.textContent.trim();
-
-        const progress =
-            row.children[3]?.textContent.trim();
-
-        const status =
-            row.children[4]?.textContent.trim();
-
-
-        // Put student information inside modal
-
-        document.getElementById("modalStudentName")
-            .textContent = name;
-
-        document.getElementById("modalStudentId")
-            .textContent = studentId;
-
-        document.getElementById("modalStudentAvatar")
-            .textContent = avatar;
-
-        document.getElementById("modalStudentEmail")
-            .textContent = email;
-
-        document.getElementById("modalStudentCourse")
-            .textContent = course;
-
-        document.getElementById("modalStudentProgress")
-            .textContent = progress;
-
-        document.getElementById("modalStudentStatus")
-            .textContent = status;
-
-
-        // Show modal
-
-        studentModal.classList.add("show");
-
-    });
-
-});
-
-
-// ========================================
-// CLOSE MODAL
-// ========================================
-
-function closeModal() {
-    studentModal.classList.remove("show");
-}
-
-
-if (closeStudentModal) {
-    closeStudentModal.addEventListener("click", closeModal);
-}
-
-if (modalCloseButton) {
-    modalCloseButton.addEventListener("click", closeModal);
-}
-
-
-// Close when clicking outside modal
-
-if (studentModal) {
-
-    studentModal.addEventListener("click", (event) => {
-
-        if (event.target === studentModal) {
-            closeModal();
-        }
-
-    });
-
-}
-
-
-// Close with ESC key
-
-document.addEventListener("keydown", (event) => {
-
-    if (event.key === "Escape") {
-        closeModal();
+    if (courseFilter && studentsTable) {
+        courseFilter.addEventListener("change", () => {
+            const selected = courseFilter.value.toLowerCase();
+            studentsTable.querySelectorAll("tr").forEach(row => {
+                const cell = row.querySelector("td:nth-child(3)");
+                if (!cell) return;
+                const course = cell.textContent.toLowerCase().trim();
+                row.style.display =
+                    (selected === "all" || courseMatches(course, selected)) ? "" : "none";
+            });
+        });
     }
 
-});
 
-    // ========================================
-    // 6. CLOSE SIDEBAR ON MOBILE
-    // ========================================
+    // ---- VIEW MODAL ----
+    function openViewModal(row) {
+        document.getElementById("modalStudentName").textContent =
+            row.querySelector(".student-name strong")?.textContent.trim();
+        document.getElementById("modalStudentId").textContent =
+            row.querySelector(".student-name small")?.textContent.trim();
+        document.getElementById("modalStudentAvatar").textContent =
+            row.querySelector(".student-avatar")?.textContent.trim();
+        document.getElementById("modalStudentEmail").textContent =
+            row.children[1]?.textContent.trim();
+        document.getElementById("modalStudentCourse").textContent =
+            row.children[2]?.textContent.trim();
+        document.getElementById("modalStudentProgress").textContent =
+            row.children[3]?.textContent.trim();
+        document.getElementById("modalStudentStatus").textContent =
+            row.children[4]?.textContent.trim();
 
-    const sidebarLinks =
-        document.querySelectorAll(".sidebar .menu-item");
+        studentModal.classList.add("show");
+    }
 
-    sidebarLinks.forEach(link => {
+    function closeViewModal() {
+        studentModal.classList.remove("show");
+    }
 
-        link.addEventListener("click", () => {
+    function attachViewButton(row) {
+        const btn = row.querySelector(".view-btn");
+        if (btn) btn.addEventListener("click", () => openViewModal(row));
+    }
 
-            if (window.innerWidth <= 768) {
-                sidebar.classList.remove("show");
-            }
+    document.querySelectorAll(".view-btn").forEach(btn => {
+        btn.addEventListener("click", () => openViewModal(btn.closest("tr")));
+    });
 
+    if (closeStudentModal) closeStudentModal.addEventListener("click", closeViewModal);
+    if (modalCloseButton) modalCloseButton.addEventListener("click", closeViewModal);
+
+    if (studentModal) {
+        studentModal.addEventListener("click", (e) => {
+            if (e.target === studentModal) closeViewModal();
         });
+    }
 
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeViewModal();
     });
 
-    // ========================================
-// 7. ADD STUDENT
-// ========================================
 
-const addStudentBtn =
-    document.getElementById("addStudentBtn");
+    // ---- ADD MODAL ----
+    function openAddModal() { addStudentModal.classList.add("show"); }
+    function closeAddModal() { addStudentModal.classList.remove("show"); }
 
-const addStudentModal =
-    document.getElementById("addStudentModal");
+    if (addStudentBtn) addStudentBtn.addEventListener("click", openAddModal);
+    if (closeAddStudentModal) closeAddStudentModal.addEventListener("click", closeAddModal);
+    if (cancelAddStudent) cancelAddStudent.addEventListener("click", closeAddModal);
 
-const closeAddStudentModal =
-    document.getElementById("closeAddStudentModal");
-
-const cancelAddStudent =
-    document.getElementById("cancelAddStudent");
-
-const addStudentForm =
-    document.getElementById("addStudentForm");
+    if (addStudentModal) {
+        addStudentModal.addEventListener("click", (e) => {
+            if (e.target === addStudentModal) closeAddModal();
+        });
+    }
 
 
-if (addStudentBtn) {
+    // ---- BUILD ROW ----
+    function buildStudentRow(data) {
+        const rowCount = studentsTable.querySelectorAll("tr").length + 1;
+        const studentId = "ST" + String(rowCount).padStart(3, "0");
+        const initials = data.name.split(" ")
+            .map(w => w.charAt(0)).join("")
+            .substring(0, 2).toUpperCase();
+        const statusClass = data.status === "Active" ? "active-status" : "inactive-status";
+        const progress = data.progress || 0;
 
-    addStudentBtn.addEventListener("click", () => {
-        addStudentModal.classList.add("show");
-    });
-
-}
-
-
-function closeAddModal() {
-    addStudentModal.classList.remove("show");
-}
-
-
-if (closeAddStudentModal) {
-    closeAddStudentModal.addEventListener(
-        "click",
-        closeAddModal
-    );
-}
-
-
-if (cancelAddStudent) {
-    cancelAddStudent.addEventListener(
-        "click",
-        closeAddModal
-    );
-}
-
-
-// ========================================
-// SUBMIT NEW STUDENT
-// ========================================
-
-if (addStudentForm) {
-
-    addStudentForm.addEventListener("submit", (event) => {
-
-        event.preventDefault();
-
-        const name =
-            document.getElementById("studentNameInput")
-                .value.trim();
-
-        const email =
-            document.getElementById("studentEmailInput")
-                .value.trim();
-
-        const course =
-            document.getElementById("studentCourseInput")
-                .value;
-
-        const status =
-            document.getElementById("studentStatusInput")
-                .value;
-
-
-        if (!name || !email || !course) {
-            alert("Please fill in all required fields.");
-            return;
-        }
-
-
-        // Generate simple student ID
-
-        const studentCount =
-            studentsTable.querySelectorAll("tr").length + 1;
-
-        const studentId =
-            "ST" + String(studentCount).padStart(3, "0");
-
-
-        // Generate initials
-
-        const initials =
-            name
-                .split(" ")
-                .map(word => word.charAt(0))
-                .join("")
-                .substring(0, 2)
-                .toUpperCase();
-
-
-        // Create new row
-
-        const newRow =
-            document.createElement("tr");
-
-        const statusClass =
-            status === "Active"
-                ? "active-status"
-                : "inactive-status";
-
-
-        newRow.innerHTML = `
+        const row = document.createElement("tr");
+        row.innerHTML = `
             <td>
                 <div class="student-name">
-
-                    <div class="student-avatar">
-                        ${initials}
-                    </div>
-
+                    <div class="student-avatar">${initials}</div>
                     <div>
-                        <strong>${name}</strong>
+                        <strong>${data.name}</strong>
                         <small>ID: ${studentId}</small>
                     </div>
-
                 </div>
             </td>
-
-            <td>${email}</td>
-
-            <td>${course}</td>
-
+            <td>${data.email}</td>
+            <td>${data.course}</td>
             <td>
                 <div class="progress-container">
-
                     <div class="progress-bar">
-                        <span style="width: 0%;"></span>
+                        <span style="width: ${progress}%;"></span>
                     </div>
-
-                    <small>0%</small>
-
+                    <small>${progress}%</small>
                 </div>
             </td>
-
-            <td>
-                <span class="status ${statusClass}">
-                    ${status}
-                </span>
-            </td>
-
-            <td>
-                <button class="view-btn">
-                    View
-                </button>
-            </td>
+            <td><span class="status ${statusClass}">${data.status}</span></td>
+            <td><button class="view-btn">View</button></td>
         `;
+        return row;
+    }
 
 
-        studentsTable.appendChild(newRow);
+    // ---- SUBMIT NEW STUDENT ----
+        if (addStudentForm) {
+        addStudentForm.addEventListener("submit", (e) => {
+            e.preventDefault();
 
+            const name = document.getElementById("studentNameInput").value.trim();
+            const email = document.getElementById("studentEmailInput").value.trim();
+            const course = document.getElementById("studentCourseInput").value;
+            const status = document.getElementById("studentStatusInput").value;
 
-        // Add View button functionality
+            if (!name || !email || !course) {
+                alert("Please fill in all required fields.");
+                return;
+            }
 
-        const newViewButton =
-            newRow.querySelector(".view-btn");
+            const record = { name, email, course, status, progress: 0 };
 
-        newViewButton.addEventListener("click", () => {
-
-            const name =
-                newRow.querySelector(".student-name strong")
-                    .textContent.trim();
-
-            alert(
-                `Student: ${name}\n\n` +
-                `Student added successfully.`
+            const saved = loadSaved();
+            saved.push(record);
+            persistSaved(saved);
+                        window.logActivity?.(
+                "student",
+                "New student added",
+                `${name} joined ${course}`,
+                "/instructor/students/"
             );
 
+            const row = buildStudentRow(record);
+            studentsTable.appendChild(row);
+            attachViewButton(row);
+
+            addStudentForm.reset();
+            closeAddModal();
+            alert(`${name} has been added successfully!`);
         });
+    }
 
 
-        // Reset form
+    // ---- RESTORE ----
+    const savedStudents = loadSaved();
+    if (studentsTable && savedStudents.length) {
+        savedStudents.forEach(s => {
+            const exists = Array.from(studentsTable.querySelectorAll(".student-name strong"))
+                .some(el => el.textContent.trim() === s.name);
+            if (exists) return;
 
-        addStudentForm.reset();
-
-        closeAddModal();
-
-        alert(
-            `${name} has been added successfully!`
-        );
-
-    });
-
-}
-
-
-    // ========================================
-    // 7. FUTURE DJANGO API
-    // ========================================
-
-    /*
-        Later, students will come from Django.
-
-        Example:
-
-        fetch("YOUR_API_ENDPOINT")
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-            });
-
-        We will connect this page to the
-        Django backend when the API is ready.
-    */
+            const row = buildStudentRow(s);
+            studentsTable.appendChild(row);
+            attachViewButton(row);
+        });
+    }
 
 });
