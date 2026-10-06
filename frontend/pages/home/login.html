@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport"content="width=device-width, initial-scale=1.0">
+<title>Login | Academy</title>
+<!-- Google Font -->
+<link rel="preconnect"href="https://fonts.googleapis.com">
+<link rel="preconnect"href="https://fonts.gstatic.com"crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<!-- Authentication CSS -->
+<link rel="stylesheet" href="../../css/login.css">
+
+</head>
+<body>
+
+<main class="auth-page">
+<div class="auth-card">
+
+<!--LEFT SIDE -->
+<section class="auth-left">
+<div class="logo"><img src="../../images/Top_Left-removebg-preview.png"></div>
+<div class="auth-left-content">
+<h1>Welcome<span>Back!</span></h1><p>
+ Continue your learning journey and
+ take another step toward building a
+ brighter future.</p>
+
+
+<div class="auth-benefits">
+<div class="auth-benefit">
+<div class="auth-benefit-icon"><i class="fa-solid fa-book-open"></i></div>
+<span>Access your courses anytime</span></div>
+<div class="auth-benefit"><div class="auth-benefit-icon"><i class="fa-solid fa-chart-line"></i></div>
+<span>Track your learning progress </span></div>
+<div class="auth-benefit"><div class="auth-benefit-icon"><i class="fa-solid fa-certificate"></i>
+</div><span>Earn professional certificates</span></div></div></div>
+</section>
+
+       <!-- RIGHT SIDE -->
+<section class="auth-right"><a href="./home.html" class="back-home">
+<i class="fa-solid fa-arrow-left"></i>Back to Home</a>
+<div class="auth-heading"><h2>Welcome Back</h2><p>Login to access your Academy account.</p></div>
+
+      <!-- LOGIN FORM -->
+<form class="auth-form" id="loginForm">
+
+       <!-- Email -->
+<div class="form-group">
+<label for="email">Email Address</label>
+<div class="input-wrapper"><i class="fa-regular fa-envelope"></i>
+<input type="email"id="email"name="email"placeholder="Enter your email address"required>
+</div><small id="emailError" class="error-message"></small></div>
+
+     <!-- Password -->
+<div class="form-group"><label for="password">Password</label>
+<div class="input-wrapper"><i class="fa-solid fa-lock"></i>
+<input type="password"id="password"name="password"placeholder="Enter your password">
+<i class="fa-regular fa-eye password-toggle" id="passwordToggle"></i></div><small id="passwordError" class="error-message"></small></div>
+
+         <!-- Options -->
+<div class="form-options"><label class="remember-me">
+ <input type="checkbox"name="remember">Remember me</label>
+<a href="./forgot-password.html"class="forgot-password">Forgot Password?</a></div>
+           
+            <!-- Login -->
+
+<button type="submit"class="auth-btn">Login to Account<i class="fa-solid fa-arrow-right"></i></button></form>
+
+            <!-- Footer -->
+
+<div class="auth-footer">Don't have an account?<a href="./signup.html">Create Account</a></div></section>
+</div></main>
+       
+
+<script src="../../js/login.js"></script>
+</body>
+</html>

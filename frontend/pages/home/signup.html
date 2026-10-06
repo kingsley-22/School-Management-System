@@ -1,0 +1,333 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up | Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="../../css/login.css">
+</head>
+<body>
+
+    <main class="auth-page">
+
+        <div class="auth-card">
+
+            <!--  LEFT SIDE  -->
+            <section class="auth-left">
+
+                <div class="logo">
+                    <img
+                        src="../../images/Top_Left-removebg-preview.png"
+                        alt="Academy Logo"
+                    >
+                </div>
+
+                <div class="auth-left-content">
+
+                    <h1>
+                        Start Your
+                        <span>Learning Journey.</span>
+                    </h1>
+
+                    <p>
+                        Join thousands of learners gaining practical skills
+                        and preparing for a brighter future.
+                    </p>
+
+                    <div class="auth-benefits">
+
+                        <!-- Benefit 1 -->
+                        <div class="auth-benefit">
+
+                            <div class="auth-benefit-icon">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+
+                            <span>
+                                Learn from expert instructors
+                            </span>
+
+                        </div>
+
+                        <!-- Benefit 2 -->
+                        <div class="auth-benefit">
+
+                            <div class="auth-benefit-icon">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+
+                            <span>
+                                Flexible learning anytime
+                            </span>
+
+                        </div>
+
+                        <!-- Benefit 3 -->
+                        <div class="auth-benefit">
+
+                            <div class="auth-benefit-icon">
+                                <i class="fa-solid fa-award"></i>
+                            </div>
+
+                            <span>
+                                Earn recognized certificates
+                            </span>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </section>
+
+
+            <!-- ================= RIGHT SIDE ================= -->
+            <section class="auth-right">
+
+                <!-- Back Home -->
+                <a href="./home.html" class="back-home">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Back to Home
+                </a>
+
+                <!-- Heading -->
+                <div class="auth-heading">
+                    <h2>Create Account</h2>
+
+                    <p>
+                        Create your account and start learning today.
+                    </p>
+                </div>
+
+
+                <!-- ================= SIGN UP FORM ================= -->
+                <form
+                    class="auth-form signup-form"
+                    id="signupForm"
+                >
+
+                    <!-- First & Last Name -->
+                    <div class="form-row">
+
+                        <!-- First Name -->
+                        <div class="form-group">
+
+                            <label for="first-name">
+                                First Name
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <i class="fa-regular fa-user"></i>
+
+                                <input
+                                    type="text"
+                                    id="first-name"
+                                    name="first_name"
+                                    placeholder="First name"
+                                    required
+                                >
+
+                            </div>
+
+                            <small
+                                id="firstNameError"
+                                class="error-message"
+                            ></small>
+
+                        </div>
+
+
+                        <!-- Last Name -->
+                        <div class="form-group">
+
+                            <label for="last-name">
+                                Last Name
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <i class="fa-regular fa-user"></i>
+
+                                <input
+                                    type="text"
+                                    id="last-name"
+                                    name="last_name"
+                                    placeholder="Last name"
+                                    required
+                                >
+
+                            </div>
+
+                            <small
+                                id="lastNameError"
+                                class="error-message"
+                            ></small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Email -->
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-regular fa-envelope"></i>
+
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="Enter your email address"
+                                required
+                            >
+
+                        </div>
+
+                        <small
+                            id="signupEmailError"
+                            class="error-message"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- Password -->
+                    <div class="form-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-solid fa-lock"></i>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Create a password"
+                                required
+                            >
+
+                            <i
+                                class="fa-regular fa-eye password-toggle"
+                                id="signupPasswordToggle"
+                            ></i>
+
+                        </div>
+
+                        <small
+                            id="signupPasswordError"
+                            class="error-message"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- Confirm Password -->
+                    <div class="form-group">
+
+                        <label for="confirm-password">
+                            Confirm Password
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-solid fa-lock"></i>
+
+                            <input
+                                type="password"
+                                id="confirm-password"
+                                name="confirm_password"
+                                placeholder="Confirm your password"
+                                required
+                            >
+
+                        </div>
+
+                        <small
+                            id="confirmPasswordError"
+                            class="error-message"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- Terms -->
+                    <div class="terms-wrapper">
+
+                        <label class="terms">
+
+                            <input
+                                type="checkbox"
+                                id="terms"
+                                name="terms"
+                                required
+                            >
+
+                            <span>
+                                I agree to the
+                                <a href="#">Terms of Service</a>
+                                and
+                                <a href="#">Privacy Policy</a>.
+                            </span>
+
+                        </label>
+
+                        <small
+                            id="termsError"
+                            class="error-message"
+                        ></small>
+
+                    </div>
+
+
+                    <!-- Sign Up Button -->
+                    <button
+                        type="submit"
+                        class="auth-btn"
+                    >
+                        Create Account
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+
+                </form>
+
+
+                <!-- Footer -->
+                <div class="auth-footer">
+
+                    Already have an account?
+
+                    <a href="./login.html">
+                        Login
+                    </a>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- Authentication JavaScript -->
+    <script src="../../js/login.js"></script>
+
+</body>
+
+</html>
