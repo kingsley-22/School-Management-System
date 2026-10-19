@@ -1,0 +1,391 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnHub - Courses</title>
+    <link rel="stylesheet" href="Course.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+    <aside class="Sidebar" id="sidebar">
+        <div class="brand">
+            <i class="fas fa-graduation-cap"></i>
+            <span>LearnHub</span>
+        </div>
+
+        <nav>
+            <a href="#" class="Dash active-link"><i class="fa fa-home"></i> Dashboard</a>
+            <a href=""><i class="fa fa-users"></i> Students</a>
+            <a href=""><i class="fa fa-chalkboard-teacher"></i> Instructor</a>
+            <a href="admin.html"><i class="fa fa-user" aria-hidden="true"></i> Admin</a>
+            <a href="Course.html"><i class="fa fa-book" aria-hidden="true"></i> Courses</a>
+            <a href="announcement.html"><i class="fa fa-bell" aria-hidden="true"></i> Announcement</a>
+        </nav>
+        <div class="Sidebar_down">
+        <a href="#" id="logoutLink">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+    </a>
+</div>
+</aside>
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <button class="menu-toggle" id="menuToggle" type="button"
+                    aria-label="Open navigation menu"
+                    aria-controls="sidebar" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="header-text">
+                <h2 id="pageTitle">Dashboard</h2>
+                <p>Explore, learn and grow your skills.</p>
+            </div>
+
+           
+        </header>
+
+        <!-- DASHBOARD / HOMEPAGE -->
+        <section class="page active" id="courses">
+
+            <div class="welcome">
+                <div>
+                    <p class="eyebrow">YOUR LEARNING JOURNEY</p>
+                    <h1>Welcome to LearnHub</h1>
+                    <p>Discover courses, learn new skills and build your future.</p>
+                </div>
+                <i class="fas fa-graduation-cap welcome-icon"></i>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon purple-bg">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div>
+                        <p>Available Courses</p>
+                        <h2 id="availableCount">6</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green-bg">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <p>My Registered Courses</p>
+                        <h2 id="enrolledCount">0</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REGISTERED COURSES -->
+            <div class="registered-section">
+                <div class="section-heading">
+                    <div>
+                        <h2>My Registered Courses</h2>
+                        <p>Continue your learning journey.</p>
+                    </div>
+                    <span class="registered-badge" id="registeredLabel">
+                        0 enrolled
+                    </span>
+                </div>
+
+                <div class="course-grid" id="enrolledCoursesGrid"></div>
+
+                <p id="noEnrolledCourses" class="empty-state">
+                    <i class="fas fa-book-open"></i>
+                    <strong>No courses registered yet</strong>
+                    Choose a course below and register to see it here.
+                </p>
+            </div>
+
+            <!-- COURSE SEARCH -->
+            <div class="course-toolbar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="search" id="searchInput"
+                           placeholder="Search courses..."
+                           aria-label="Search courses">
+                </div>
+
+                <select id="categoryFilter" aria-label="Filter courses">
+                    <option value="all">All Categories</option>
+                    <option value="Development">Development</option>
+                    <option value="Design">Design</option>
+                    <option value="Business">Business</option>
+                    <option value="Marketing">Marketing</option>
+                </select>
+            </div>
+
+            <div class="section-heading">
+                <div>
+                    <h2>Explore Popular Courses</h2>
+                    <p>Find the right course for your goals.</p>
+                </div>
+                <span id="courseCount">6 courses available</span>
+            </div>
+
+            <div class="course-grid" id="courseGrid">
+
+                <article class="course-card" data-category="Development"
+                         data-title="Complete Web Development">
+                    <div class="course-image purple">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="course-info">
+                        <span class="category">Development</span>
+                        <h3>Complete Web Development</h3>
+                        <p>Learn HTML, CSS and JavaScript from scratch.</p>
+                        <div class="course-meta">
+                            <span><i class="far fa-clock"></i> 12 weeks</span>
+                            <span><i class="fas fa-star"></i> 4.9</span>
+                        </div>
+                        <div class="course-footer">
+                            <strong>₦120,000</strong>
+                            <button class="view-btn" data-course="0">View Course</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="course-card" data-category="Design"
+                         data-title="UI/UX Design Masterclass">
+                    <div class="course-image pink">
+                        <i class="fas fa-pen-ruler"></i>
+                    </div>
+                    <div class="course-info">
+                        <span class="category">Design</span>
+                        <h3>UI/UX Design Masterclass</h3>
+                        <p>Design beautiful and user-friendly interfaces.</p>
+                        <div class="course-meta">
+                            <span><i class="far fa-clock"></i> 8 weeks</span>
+                            <span><i class="fas fa-star"></i> 4.8</span>
+                        </div>
+                        <div class="course-footer">
+                            <strong>₦150,000</strong>
+                            <button class="view-btn" data-course="1">View Course</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="course-card" data-category="Development"
+                         data-title="Python Programming">
+                    <div class="course-image blue">
+                        <i class="fab fa-python"></i>
+                    </div>
+                    <div class="course-info">
+                        <span class="category">Development</span>
+                        <h3>Python Programming</h3>
+                        <p>Build your programming foundation with Python.</p>
+                        <div class="course-meta">
+                            <span><i class="far fa-clock"></i> 10 weeks</span>
+                            <span><i class="fas fa-star"></i> 4.7</span>
+                        </div>
+                        <div class="course-footer">
+                            <strong>₦200,000</strong>
+                            <button class="view-btn" data-course="2">View Course</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="course-card" data-category="Business"
+                         data-title="Business Management">
+                    <div class="course-image orange">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="course-info">
+                        <span class="category">Business</span>
+                        <h3>Business Management</h3>
+                        <p>Develop practical leadership and business skills.</p>
+                        <div class="course-meta">
+                            <span><i class="far fa-clock"></i> 6 weeks</span>
+                            <span><i class="fas fa-star"></i> 4.6</span>
+                        </div>
+                        <div class="course-footer">
+                            <strong>₦150,000</strong>
+                            <button class="view-btn" data-course="3">View Course</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="course-card" data-category="Marketing"
+                         data-title="Digital Marketing">
+                    <div class="course-image green">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="course-info">
+                        <span class="category">Marketing</span>
+                        <h3>Digital Marketing</h3>
+                        <p>Master social media, content and online marketing.</p>
+                        <div class="course-meta">
+                            <span><i class="far fa-clock"></i> 7 weeks</span>
+                            <span><i class="fas fa-star"></i> 4.8</span>
+                        </div>
+                        <div class="course-footer">
+                            <strong>₦160,000</strong>
+                            <button class="view-btn" data-course="4">View Course</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="course-card" data-category="Design"
+                         data-title="Graphic Design Essentials">
+                    <div class="course-image yellow">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <div class="course-info">
+                        <span class="category">Design</span>
+                        <h3>Graphic Design Essentials</h3>
+                        <p>Create attractive graphics and visual content.</p>
+                        <div class="course-meta">
+                            <span><i class="far fa-clock"></i> 5 weeks</span>
+                            <span><i class="fas fa-star"></i> 4.7</span>
+                        </div>
+                        <div class="course-footer">
+                            <strong>₦75,000</strong>
+                            <button class="view-btn" data-course="5">View Course</button>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+
+            <p id="emptyMessage" class="empty-state" hidden>
+                No courses match your search.
+            </p>
+        </section>
+
+        <!-- COURSE DETAILS -->
+        <section class="page" id="details">
+            <button class="back-btn" id="backToCourses">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+
+            <div class="details-layout">
+                <div class="details-main">
+                    <div class="details-banner purple" id="detailsBanner">
+                        <i class="fas fa-code"></i>
+                    </div>
+
+                    <span class="category" id="detailCategory">Development</span>
+                    <h1 id="detailTitle">Complete Web Development</h1>
+                    <p id="detailDescription"></p>
+
+                    <div class="detail-stats">
+                        <span><i class="fas fa-star"></i>
+                            <b id="detailRating">4.9</b> rating</span>
+                        <span><i class="far fa-clock"></i>
+                            <b id="detailDuration">12 weeks</b></span>
+                        <span><i class="fas fa-book"></i> Beginner friendly</span>
+                    </div>
+
+                    <h2>What You Will Learn</h2>
+                    <ul class="learning-list">
+                        <li><i class="fas fa-check-circle"></i> Understand course fundamentals.</li>
+                        <li><i class="fas fa-check-circle"></i> Complete practical projects.</li>
+                        <li><i class="fas fa-check-circle"></i> Develop real-world skills.</li>
+                        <li><i class="fas fa-check-circle"></i> Build a portfolio of your work.</li>
+                    </ul>
+
+                    <h2>Course Curriculum</h2>
+                    <div class="curriculum-item">Module 1: Introduction</div>
+                    <div class="curriculum-item">Module 2: Core Concepts</div>
+                    <div class="curriculum-item">Module 3: Practical Projects</div>
+                </div>
+
+                <aside class="enroll-card">
+                    <p>Course Price</p>
+                    <h2 id="detailPrice">₦120,000</h2>
+                    <button class="primary-btn" id="enrollNow">
+                        Enroll in Course
+                    </button>
+                    <hr>
+                    <p><i class="fas fa-book-open"></i> Full course access</p>
+                    <p><i class="fas fa-infinity"></i> Learn at your own pace</p>
+                    <p><i class="fas fa-certificate"></i> Certificate of completion</p>
+                </aside>
+            </div>
+        </section>
+
+        <!-- ENROLLMENT -->
+        <section class="page" id="enrollment">
+            <button class="back-btn" id="backToDetails">
+                <i class="fas fa-arrow-left"></i> Back to Course
+            </button>
+
+            <div class="section-heading">
+                <div>
+                    <h1>Course Enrollment</h1>
+                    <p>Complete your details to register.</p>
+                </div>
+            </div>
+
+            <div class="enrollment-layout">
+                <form class="enrollment-form" id="enrollmentForm">
+                    <h2>Student Information</h2>
+
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" autocomplete="name"
+                           placeholder="Enter your full name" required>
+
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" autocomplete="email"
+                           placeholder="Enter your email address" required>
+
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" autocomplete="tel"
+                           placeholder="Enter your phone number" required>
+
+                    <label for="selectedCourse">Select Course</label>
+                    <select id="selectedCourse" required>
+                        <option value="">Choose a course</option>
+                    </select>
+
+                    <div class="enrollment-summary">
+                        <span>Course Fee</span>
+                        <strong id="enrollmentPrice">₦0</strong>
+                    </div>
+
+                    <button type="submit" class="primary-btn">
+                        Confirm Enrollment
+                    </button>
+                    <p id="formMessage" role="status" aria-live="polite"></p>
+                </form>
+
+                <div class="enrollment-info">
+                    <i class="fas fa-user-graduate info-main-icon"></i>
+                    <h2>Invest in Your Future</h2>
+                    <p>Choose your course, build valuable skills and take the next step in your learning journey.</p>
+                    <div class="info-point"><i class="fas fa-check-circle"></i> Practical course content</div>
+                    <div class="info-point"><i class="fas fa-check-circle"></i> Learn at your own pace</div>
+                    <div class="info-point"><i class="fas fa-check-circle"></i> Build valuable skills</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SIMPLE PLACEHOLDER PAGES -->
+        <section class="page" id="noticePage">
+            <div class="welcome">
+                <div>
+                    <p class="eyebrow">LEARNHUB</p>
+                    <h1 id="noticeTitle">Coming Soon</h1>
+                    <p>This section has not been connected yet.</p>
+                </div>
+                <i class="fas fa-tools welcome-icon"></i>
+            </div>
+            <button class="primary-btn" id="noticeBack">Back to Dashboard</button>
+        </section>
+
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="Course.js"></script>
+</body>
+</html>
