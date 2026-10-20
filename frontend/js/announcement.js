@@ -7,9 +7,7 @@ const form = formContainer.querySelector("form");
 
 const titleInput = document.getElementById("inputText");
 
-// IMPORTANT:
-// Because your div and textarea both have inputTextarea,
-// use querySelector to get the textarea.
+// Get the textarea
 const messageInput = formContainer.querySelector("textarea");
 
 const cancelButton = document.getElementById("Cancel");
@@ -17,11 +15,17 @@ const phase = document.getElementById("phase");
 
 
 // ======================================
+// ANNOUNCEMENTS ARRAY
+// ======================================
+
+let announcements = [];
+
+
+// ======================================
 // OPEN ANNOUNCEMENT FORM
 // ======================================
 
 function editAnnouncement() {
-
     formContainer.style.display = "block";
 }
 
@@ -58,14 +62,7 @@ form.addEventListener("submit", function(event) {
 
     if (title === "" || message === "") {
         return;
-
     }
-
-
-    // Get existing announcements
-
-    let announcements =
-        JSON.parse(localStorage.getItem("announcements")) || [];
 
 
     // Create announcement
@@ -81,17 +78,9 @@ form.addEventListener("submit", function(event) {
     };
 
 
-    // Add announcement
+    // Add announcement to array
 
     announcements.push(newAnnouncement);
-
-
-    // Save announcement
-
-    localStorage.setItem(
-        "announcements",
-        JSON.stringify(announcements)
-    );
 
 
     // Show announcement
@@ -102,7 +91,6 @@ form.addEventListener("submit", function(event) {
     // Clear form
 
     titleInput.value = "";
-
     messageInput.value = "";
 
 
@@ -118,10 +106,6 @@ form.addEventListener("submit", function(event) {
 // ======================================
 
 function displayAnnouncements() {
-
-    const announcements =
-        JSON.parse(localStorage.getItem("announcements")) || [];
-
 
     // Clear old announcements
 
@@ -213,22 +197,11 @@ function displayAnnouncements() {
 
 function deleteAnnouncement(id) {
 
-    let announcements =
-        JSON.parse(localStorage.getItem("announcements")) || [];
-
-
     announcements = announcements.filter(function(announcement) {
 
         return announcement.id !== id;
 
     });
-
-
-    localStorage.setItem(
-        "announcements",
-        JSON.stringify(announcements)
-    );
-
 
     displayAnnouncements();
 
@@ -259,4 +232,3 @@ document.addEventListener("DOMContentLoaded", function() {
     displayAnnouncements();
 
 });
-

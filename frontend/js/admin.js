@@ -1,4 +1,13 @@
 // ==========================================
+// IN-MEMORY DATA
+// ==========================================
+
+let adminProfile = null;
+let adminImage = null;
+let students = [];
+
+
+// ==========================================
 // ADMIN PROFILE DROPDOWN
 // ==========================================
 
@@ -23,32 +32,28 @@ administration.addEventListener("click", function () {
 
 function Editprofile() {
 
-    const saved = JSON.parse(
-        localStorage.getItem("adminProfile")
-    );
-
-    if (saved) {
+    if (adminProfile) {
 
         document.getElementById("fullName").value =
-            saved.named || "";
+            adminProfile.named || "";
 
         document.getElementById("username").value =
-            saved.userName || "";
+            adminProfile.userName || "";
 
         document.getElementById("email").value =
-            saved.email || "";
+            adminProfile.email || "";
 
         document.getElementById("phone").value =
-            saved.phone || "";
+            adminProfile.phone || "";
 
         document.getElementById("department").value =
-            saved.department || "";
+            adminProfile.department || "";
 
         document.getElementById("role").value =
-            saved.role || "";
+            adminProfile.role || "";
 
         document.getElementById("bio").value =
-            saved.bio || "";
+            adminProfile.bio || "";
     }
 
     Edits.style.display = "block";
@@ -84,8 +89,8 @@ function saveProfile() {
         document.getElementById("bio").value.trim();
 
 
-    // Save profile information
-    const admin = {
+    // Store profile in memory only
+    adminProfile = {
 
         named: named,
         userName: userName,
@@ -98,13 +103,10 @@ function saveProfile() {
     };
 
 
-    localStorage.setItem(
-        "adminProfile",
-        JSON.stringify(admin)
-    );
+    // ======================================
+    // DISPLAY PROFILE INFORMATION
+    // ======================================
 
-
-    // Display profile information
     document.getElementById("showName").textContent =
         named;
 
@@ -131,7 +133,7 @@ function saveProfile() {
 
 
     // ======================================
-    // SAVE PROFILE IMAGE
+    // PROFILE IMAGE
     // ======================================
 
     const imageInput =
@@ -145,16 +147,15 @@ function saveProfile() {
 
         reader.onload = function () {
 
-            localStorage.setItem(
-                "adminImage",
-                reader.result
-            );
+            // Store image in memory only
+            adminImage = reader.result;
 
             document.getElementById("showImage").src =
-                reader.result;
+                adminImage;
 
             document.getElementById("showAdmin").src =
-                reader.result;
+                adminImage;
+
         };
 
         reader.readAsDataURL(image);
@@ -164,6 +165,7 @@ function saveProfile() {
     // Show profile
     Edits.style.display = "none";
     Bot.style.display = "block";
+
 }
 
 
@@ -188,53 +190,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function loadAdminProfile() {
 
-    const saved =
-        JSON.parse(
-            localStorage.getItem("adminProfile")
-        );
-
-
-    if (saved) {
+    if (adminProfile) {
 
         document.getElementById("showName").textContent =
-            saved.named || "Admin Name";
+            adminProfile.named || "Admin Name";
 
         document.getElementById("showRole").textContent =
-            saved.role || "Administration";
+            adminProfile.role || "Administration";
 
         document.getElementById("showEmail").textContent =
-            saved.email || "---";
+            adminProfile.email || "---";
 
         document.getElementById("showPhone").textContent =
-            saved.phone || "---";
+            adminProfile.phone || "---";
 
         document.getElementById("showDepartment").textContent =
-            saved.department || "---";
+            adminProfile.department || "---";
 
         document.getElementById("showUsername").textContent =
-            saved.userName || "---";
+            adminProfile.userName || "---";
 
         document.getElementById("showBio").textContent =
-            saved.bio || "---";
+            adminProfile.bio || "---";
 
         document.getElementById("userFullName").textContent =
-            saved.named || "";
+            adminProfile.named || "";
     }
 
 
-    // Load saved image
-
-    const savedImage =
-        localStorage.getItem("adminImage");
-
-
-    if (savedImage) {
+    // Load image from memory
+    if (adminImage) {
 
         document.getElementById("showImage").src =
-            savedImage;
+            adminImage;
 
         document.getElementById("showAdmin").src =
-            savedImage;
+            adminImage;
     }
 
 }
@@ -291,7 +282,6 @@ form.addEventListener("submit", function (event) {
 
 
     // Create student
-
     const student = {
 
         id: Date.now(),
@@ -311,39 +301,19 @@ form.addEventListener("submit", function (event) {
     };
 
 
-    // Get old students
-
-    let students =
-        JSON.parse(
-            localStorage.getItem("students")
-        ) || [];
-
-
-    // Add new student
-
+    // Add student to memory
     students.push(student);
 
 
-    // Save students
-
-    localStorage.setItem(
-        "students",
-        JSON.stringify(students)
-    );
-
-
     // Refresh table
-
     loadStudents();
 
 
     // Update dashboard
-
     updateDashboard();
 
 
     // Clear form
-
     form.reset();
 
 });
@@ -358,12 +328,6 @@ function loadStudents() {
     studentList.innerHTML = "";
 
 
-    const students =
-        JSON.parse(
-            localStorage.getItem("students")
-        ) || [];
-
-
     students.forEach(function (student) {
 
         const row =
@@ -371,8 +335,8 @@ function loadStudents() {
 
 
         // Status class
-
         let statusClass = "pending";
+
 
         if (student.status === "Approved") {
 
@@ -394,9 +358,13 @@ function loadStudents() {
             <td>${student.username}</td>
 
             <td>
+
                 <span class="${statusClass}">
+
                     ${student.status}
+
                 </span>
+
             </td>
 
             <td>
@@ -441,12 +409,6 @@ function loadStudents() {
 
 function approveStudent(id) {
 
-    let students =
-        JSON.parse(
-            localStorage.getItem("students")
-        ) || [];
-
-
     students.forEach(function (student) {
 
         if (student.id === id) {
@@ -458,21 +420,11 @@ function approveStudent(id) {
     });
 
 
-    // Save updated students
-
-    localStorage.setItem(
-        "students",
-        JSON.stringify(students)
-    );
-
-
     // Refresh table
-
     loadStudents();
 
 
     // Update dashboard
-
     updateDashboard();
 
 }
@@ -484,12 +436,6 @@ function approveStudent(id) {
 
 function deleteStudent(id) {
 
-    let students =
-        JSON.parse(
-            localStorage.getItem("students")
-        ) || [];
-
-
     students =
         students.filter(function (student) {
 
@@ -498,21 +444,11 @@ function deleteStudent(id) {
         });
 
 
-    // Save new list
-
-    localStorage.setItem(
-        "students",
-        JSON.stringify(students)
-    );
-
-
     // Refresh table
-
     loadStudents();
 
 
     // Update dashboard
-
     updateDashboard();
 
 }
@@ -524,14 +460,7 @@ function deleteStudent(id) {
 
 function updateDashboard() {
 
-    const students =
-        JSON.parse(
-            localStorage.getItem("students")
-        ) || [];
-
-
     // Total students
-
     const totalStudents =
         document.querySelector(".card_Students p");
 
@@ -545,7 +474,6 @@ function updateDashboard() {
 
 
     // Pending students
-
     const pendingStudents =
         students.filter(function (student) {
 
@@ -567,7 +495,20 @@ function updateDashboard() {
 
 }
 
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
 function logout() {
-    // Remove saved login information
-    localStorage.removeItem("adminLoggedIn");
+
+    // No localStorage is used.
+    // Login state should be handled by your
+    // authentication system or backend.
+
+    adminProfile = null;
+    adminImage = null;
+    students = [];
+
 }
+
