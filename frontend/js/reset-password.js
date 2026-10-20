@@ -2,9 +2,7 @@
    RESET PASSWORD
 ===================================================== */
 
-const resetPasswordForm =
-    document.getElementById("resetPasswordForm");
-
+const resetPasswordForm = document.getElementById("resetPasswordForm");
 
 if (resetPasswordForm) {
 

@@ -655,7 +655,8 @@ body.dark-mode .mobileMenu li { border-color: #334155; }
       
 } */
   /* STATISTICS CARD */
-.stats-card {max-height: 15vh; position: relative; top: 20%; left: 50%; z-index: 5;display: flex; align-items: center; gap: 12px; padding: 17px; width: 195px; background: #ffffff; border-radius: 12px;
+.stats-card {max-height: 15vh; position: relative; top: 20%; left: 50%; z-index: 5;display: flex; align-items: center;
+ gap: 12px; padding: 17px; width: 195px; background: #ffffff; border-radius: 12px;
  box-shadow: 0 12px 35px rgba(32, 72, 120, 0.14);  animation: fadeIn 10s ease-in-out infinite; 
 
 }

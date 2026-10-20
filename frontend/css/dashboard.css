@@ -1,0 +1,7284 @@
+/* =====================================================
+
+
+
+   IFEXA ACADEMY — STUDENT DASHBOARD
+
+
+
+   Professional responsive dashboard stylesheet
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+/* 1. CSS VARIABLES */
+
+
+
+:root {
+
+
+
+    --primary: #1769f5;
+
+
+
+    --primary-dark: #1052cf;
+
+
+
+    --sidebar: #0d1b38;
+
+
+
+    --sidebar-light: #14284c;
+
+
+
+    --text: #152440;
+
+
+
+    --muted: #8290a5;
+
+
+
+    --border: #e7edf5;
+
+
+
+    --background: #f4f7fc;
+
+
+
+    --white: #ffffff;
+
+
+
+    --green: #10b981;
+
+
+
+    --purple: #7754ee;
+
+
+
+    --orange: #f28b36;
+
+
+
+    --red: #ee5367;
+
+
+
+    --radius: 14px;
+
+
+
+    --shadow: 0 3px 14px rgba(28, 52, 91, 0.045);
+
+
+
+}
+
+
+
+
+
+
+
+/* 2. RESET */
+
+
+
+\* {
+
+
+
+    margin: 0;
+
+
+
+    padding: 0;
+
+
+
+    box-sizing: border-box;
+
+
+
+}
+
+
+
+
+
+
+
+html {
+
+
+
+    scroll-behavior: smooth;
+
+
+
+}
+
+
+
+
+
+
+
+body {
+
+
+
+    min-height: 100vh;
+
+
+
+    font-family: "Inter", sans-serif;
+
+
+
+    color: var(--text);
+
+
+
+    background: var(--background);
+
+
+
+    font-size: 13px;
+
+
+
+    line-height: 1.5;
+
+
+
+    overflow-x: hidden;
+
+
+
+}
+
+
+
+
+
+
+
+a {
+
+
+
+    color: inherit;
+
+
+
+    text-decoration: none;
+
+
+
+}
+
+
+
+
+
+
+
+button,
+
+
+
+input {
+
+
+
+    font: inherit;
+
+
+
+}
+
+
+
+
+
+
+
+button {
+
+
+
+    cursor: pointer;
+
+
+
+}
+
+
+
+
+
+
+
+img {
+
+
+
+    display: block;
+
+
+
+    max-width: 100%;
+
+
+
+}
+
+
+
+
+
+
+
+.dashboard-layout {
+
+
+
+    min-height: 100vh;
+
+
+
+}
+
+
+
+
+
+
+
+/* 3. SIDEBAR */
+
+
+
+
+
+
+
+.sidebar {
+
+
+
+    position: fixed;
+
+
+
+    inset: 0 auto 0 0;
+
+
+
+    z-index: 100;
+
+
+
+    width: 245px;
+
+
+
+    min-height: 100vh;
+
+
+
+    display: flex;
+
+
+
+    flex-direction: column;
+
+
+
+    padding: 22px 16px 18px;
+
+
+
+    overflow-y: auto;
+
+
+
+    color: #fff;
+
+
+
+    background: var(--sidebar);
+
+
+
+}
+
+
+
+
+
+
+
+.logo {
+
+
+
+
+
+
+
+display: flex;
+
+
+
+
+
+
+
+align-items: center;
+
+
+
+
+
+
+
+justify-content: flex-start;
+
+
+
+
+
+
+
+padding: 0 7px;
+
+
+
+
+
+
+
+margin: 0 0 18px;
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+.logo a {
+
+
+
+display: inline-flex;align-items: center; width: 100%;}
+
+
+
+
+
+
+
+.logo img {
+
+width: 150px;
+
+max-width: 100%;
+
+height: auto;
+
+object-fit: contain;
+
+}
+
+
+
+
+
+
+
+ .logo-badge {
+
+display: flex;
+
+align-items: center;
+
+gap: 7px;
+
+padding: 7px 15px;
+
+margin-bottom: 16px;
+
+color: #fff;
+
+border-radius: 20px;
+
+font-size: 13px; font-weight: 700;} 
+
+.logo-badge small {
+
+color: #d0daeb;
+
+font-size: 9px;
+
+letter-spacing: 0.2px;
+
+margin: 15px;
+
+}
+
+
+
+.sidebar-nav {
+
+
+
+    display: flex;
+
+
+
+    flex-direction: column;
+
+
+
+    gap: 6px;
+
+
+
+}
+
+
+
+
+
+
+
+.nav-link {
+
+
+
+    min-height: 43px;
+
+
+
+    display: flex;
+
+
+
+    align-items: center;
+
+
+
+    gap: 14px;
+
+
+
+    padding: 0 13px;
+
+
+
+    border-radius: 9px;
+
+
+
+    color: #c0cce0;
+
+
+
+    font-size: 12px;
+
+
+
+    font-weight: 500;
+
+
+
+    transition: background 0.25s ease, color 0.25s ease;
+
+
+
+}
+
+
+
+
+
+
+
+.nav-link > i {
+
+
+
+    width: 19px;
+
+
+
+    text-align: center;
+
+
+
+    font-size: 17px;
+
+
+
+}
+
+
+
+
+
+
+
+.nav-link:hover {
+
+
+
+    color: #fff;
+
+
+
+    background: var(--sidebar-light);
+
+
+
+}
+
+
+
+
+
+
+
+.nav-link.active {
+
+
+
+    color: #fff;
+
+
+
+    background: linear-gradient(110deg, #3280ff, #1761ed);
+
+
+
+    box-shadow: 0 5px 14px rgba(23, 105, 245, 0.2);
+
+
+
+}
+
+
+
+
+
+
+
+.notification {
+
+
+
+    display: grid;
+
+
+
+    place-items: center;
+
+
+
+    min-width: 19px;
+
+
+
+    height: 19px;
+
+
+
+    margin-left: auto;
+
+
+
+    border-radius: 50%;
+
+
+
+    color: #fff;
+
+
+
+    background: #f04462;
+
+
+
+    font-size: 10px;
+
+
+
+}
+
+
+
+
+
+
+
+/* Sidebar promotional card */
+
+
+
+.sidebar-promo {
+
+
+
+    position: relative;
+
+
+
+    min-height: 180px;
+
+
+
+    margin-top: auto;
+
+
+
+    padding: 18px 14px;
+
+
+
+    overflow: hidden;
+
+
+
+    border: 1px solid rgba(85, 139, 255, 0.3);
+
+
+
+    border-radius: 14px;
+
+
+
+    background:
+
+
+
+        radial-gradient(circle at 90% 100%, #164c9b 0, transparent 45%),
+
+
+
+        linear-gradient(145deg, #112e62, #07152f);
+
+
+
+}
+
+
+
+
+
+
+
+.sidebar-promo > i {
+
+
+
+    margin-bottom: 10px;
+
+
+
+    color: #3686ff;
+
+
+
+    font-size: 27px;
+
+
+
+}
+
+
+
+
+
+
+
+.sidebar-promo h3 {
+
+
+
+    position: relative;
+
+
+
+    z-index: 1;
+
+
+
+    font-size: 15px;
+
+
+
+    line-height: 1.4;
+
+
+
+}
+
+
+
+
+
+
+
+.sidebar-promo p {
+
+
+
+    position: relative;
+
+
+
+    z-index: 1;
+
+
+
+    margin-top: 9px;
+
+
+
+    color: #a9bddb;
+
+
+
+    font-size: 10px;
+
+
+
+    line-height: 1.7;
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   4. MAIN CONTENT AND TOPBAR
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+.main-content {
+
+
+
+    min-width: 0;
+
+
+
+    margin-left: 245px;
+
+
+
+}
+
+
+
+
+
+
+
+.topbar {
+
+
+
+    position: sticky;
+
+
+
+    top: 0;
+
+
+
+    z-index: 50;
+
+
+
+    min-height: 70px;
+
+
+
+    display: flex;
+
+
+
+    align-items: center;
+
+
+
+    justify-content: space-between;
+
+
+
+    gap: 25px;
+
+
+
+    padding: 12px 24px;
+
+
+
+    background: rgba(255, 255, 255, 0.96);
+
+
+
+    border-bottom: 1px solid var(--border);
+
+
+
+    backdrop-filter: blur(12px);
+
+
+
+}
+
+
+
+
+
+
+
+.search-box {
+
+
+
+    width: min(420px, 50%);
+
+
+
+    height: 40px;
+
+
+
+    display: flex;
+
+
+
+    align-items: center;
+
+
+
+    gap: 11px;
+
+
+
+    padding: 0 14px;
+
+
+
+    border: 1px solid transparent;
+
+
+
+    border-radius: 9px;
+
+
+
+    color: #91a0b5;
+
+
+
+    background: #f3f6fb;
+
+
+
+    transition: border-color 0.2s ease, background 0.2s ease;
+
+
+
+}
+
+
+
+
+
+
+
+.search-box:focus-within {
+
+
+
+    border-color: #a8caff;
+
+
+
+    background: #fff;
+
+
+
+}
+
+
+
+
+
+
+
+.search-box i {
+
+
+
+    font-size: 14px;
+
+
+
+}
+
+
+
+
+
+
+
+.search-box input {
+
+
+
+    width: 100%;
+
+
+
+    min-width: 0;
+
+
+
+    outline: none;
+
+
+
+    border: 0;
+
+
+
+    color: var(--text);
+
+
+
+    background: transparent;
+
+
+
+    font-size: 11px;
+
+
+
+}
+
+
+
+
+
+
+
+.search-box input::placeholder {
+
+
+
+    color: #98a4b6;
+
+
+
+}
+
+
+
+
+
+
+
+.topbar-user {
+
+
+
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+
+
+}
+
+
+
+
+
+
+
+.notification-button {
+
+
+
+    position: relative;
+
+
+
+    width: 36px;
+
+
+
+    height: 36px;
+
+
+
+    margin-right: 9px;
+
+
+
+    border: 0;
+
+
+
+    border-radius: 9px;
+
+
+
+    color: #4c5c76;
+
+
+
+    background: transparent;
+
+
+
+    font-size: 19px;
+
+
+
+}
+
+
+
+
+
+
+
+.notification-button:hover {
+
+
+
+    background: #f0f5fc;
+
+
+
+}
+
+
+
+
+
+
+
+.notification-button span {
+
+
+
+    position: absolute;
+
+
+
+    top: 0;
+
+
+
+    right: 0;
+
+
+
+    width: 16px;
+
+
+
+    height: 16px;
+
+
+
+    display: grid;
+
+
+
+    place-items: center;
+
+
+
+    border: 2px solid white;
+
+
+
+    border-radius: 50%;
+
+
+
+    color: white;
+
+
+
+    background: #ed4762;
+
+
+
+    font-size: 8px;
+
+
+
+}
+
+
+
+
+
+
+
+.topbar-avatar {
+
+
+
+    width: 38px;
+
+
+
+    height: 38px;
+
+
+
+    flex-shrink: 0;
+
+
+
+    border: 2px solid #edf2f9;
+
+
+
+    border-radius: 50%;
+
+
+
+    object-fit: cover;
+
+
+
+}
+
+
+
+
+
+
+
+.topbar-user > div {
+
+    display: flex;
+
+
+
+    flex-direction: column;
+
+
+
+}
+
+
+
+
+
+
+
+.topbar-user strong {
+
+    color: #1d2d49;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+
+
+}
+
+
+
+
+
+
+
+.topbar-user small {
+
+
+
+    color: var(--muted);
+
+
+
+    font-size: 10px;
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   5. DASHBOARD GRID
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+.dashboard-grid {
+
+
+
+    display: grid;
+
+
+
+    grid-template-columns: minmax(0, 1fr) 310px;
+
+
+
+    align-items: start;
+
+
+
+    gap: 18px;
+
+
+
+    padding: 18px;
+
+
+
+}
+
+
+
+
+
+
+
+/* .dashboard-center, */
+
+
+
+.dashboard-right {
+   width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-left: 1px;
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   6. WELCOME BANNER
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+.welcome-banner {
+
+
+
+    position: relative;
+
+
+
+    min-height: 165px;
+
+
+
+    display: flex;
+
+
+
+    flex-direction: column;
+
+
+
+    align-items: flex-start;
+
+
+
+    justify-content: center;
+
+
+
+    padding: 25px 30px;
+
+
+
+    overflow: hidden;
+
+
+
+    border-radius: var(--radius);
+
+
+
+    color: #fff;
+
+
+
+    background:
+
+
+
+        radial-gradient(ellipse at 80% 110%, #234fa6 0, transparent 45%),
+
+
+
+        linear-gradient(115deg, #102449, #071b45 65%, #102e6d);
+
+
+
+}
+
+
+
+
+
+
+
+.welcome-banner::after {
+
+
+
+    content: "✦";
+
+
+
+    position: absolute;
+
+
+
+    top: -28px;
+
+
+
+    right: 32px;
+
+
+
+    color: rgba(255, 255, 255, 0.06);
+
+
+
+    font-size: 170px;
+
+
+
+    line-height: 1;
+
+
+
+    pointer-events: none;
+
+
+
+}
+
+
+
+
+
+
+
+.welcome-banner > \* {
+
+
+
+    position: relative;
+
+
+
+    z-index: 1;
+
+
+
+}
+
+
+
+
+
+
+
+.welcome-banner > p:first-child {
+
+
+
+    margin-bottom: 2px;
+
+
+
+    color: #d5e1fa;
+
+
+
+    font-size: 12px;
+
+
+
+}
+
+
+
+
+
+
+
+.welcome-banner h1 {
+
+
+
+    font-size: clamp(20px, 2vw, 26px);
+
+
+
+    font-weight: 800;
+
+
+
+    letter-spacing: -0.7px;
+
+
+
+}
+
+
+
+
+
+
+
+.welcome-banner h1 + p {
+
+
+
+    margin-top: 6px;
+
+
+
+    color: #c3d2ee;
+
+
+
+    font-size: 11px;
+
+
+
+}
+
+
+
+
+
+
+
+.primary-button {
+
+
+
+    min-height: 36px;
+
+
+
+    display: inline-flex;
+
+
+
+    align-items: center;
+
+
+
+    justify-content: center;
+
+
+
+    gap: 9px;
+
+
+
+    padding: 0 17px;
+
+
+
+    border: 0;
+
+
+
+    border-radius: 8px;
+
+
+
+    color: white;
+
+
+
+    background: var(--primary);
+
+
+
+    font-size: 10px;
+
+
+
+    font-weight: 700;
+
+
+
+    transition: transform 0.2s ease, background 0.2s ease;
+
+
+
+}
+
+
+
+
+
+
+
+.welcome-banner .primary-button {
+
+
+
+    margin-top: 15px;
+
+
+
+}
+
+
+
+
+
+
+
+.primary-button:hover {
+
+
+
+    transform: translateY(-2px);
+
+
+
+    background: var(--primary-dark);
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   7. STATISTICS CARDS
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+.stats-grid {
+
+
+
+    display: grid;
+
+
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+
+
+    gap: 12px;
+
+
+
+}
+
+
+
+
+
+
+
+.stat-card {
+
+
+
+    min-width: 0;
+
+
+
+    min-height: 150px;
+
+
+
+    padding: 15px;
+
+
+
+    border: 1px solid rgba(220, 230, 244, 0.7);
+
+
+
+    border-radius: 12px;
+
+
+
+    box-shadow: var(--shadow);
+
+
+
+}
+
+
+
+
+
+
+
+.blue-card {
+
+
+
+    background: #eef6ff;
+
+
+
+}
+
+
+
+
+
+
+
+.green-card {
+
+
+
+    background: #eafaf5;
+
+
+
+}
+
+
+
+.purple-card { background: #f4f0ff;}
+
+.orange-card {background: #fff5ee;}
+
+.stat-icon { width: 41px; height: 41px; display: grid; place-items: center; margin-bottom: 10px;
+
+
+
+    border-radius: 12px;
+
+
+
+    color: white;
+
+
+
+    background: #3981ef;
+
+
+
+    font-size: 19px;
+
+
+
+}
+
+
+
+
+
+
+
+.green-card .stat-icon {
+
+
+
+    background: #10b88a;
+
+
+
+}
+
+
+
+
+
+
+
+.purple-card .stat-icon {
+
+
+
+    background: #7651e9;
+
+
+
+}
+
+
+
+
+
+
+
+.orange-card .stat-icon {
+
+
+
+    background: #f1843d;
+
+
+
+}
+
+
+
+
+
+
+
+.stat-card > p {
+
+
+
+    margin-bottom: 2px;
+
+
+
+    color: #53627a;
+
+
+
+    font-size: 10px;
+
+
+
+    font-weight: 600;
+
+
+
+}
+
+
+
+
+
+
+
+.stat-card h2 {
+
+
+
+    margin-bottom: 4px;
+
+
+
+    color: #142744;
+
+
+
+    font-size: clamp(19px, 2vw, 25px);
+
+
+
+    font-weight: 800;
+
+
+
+    letter-spacing: -0.7px;
+
+
+
+    overflow-wrap: anywhere;
+
+
+
+}
+
+
+
+
+
+
+
+.stat-card > a {
+
+
+
+    color: #2670e7;
+
+
+
+    font-size: 10px;
+
+
+
+    font-weight: 600;
+
+
+
+}
+
+
+
+
+
+
+
+.green-card > a {
+
+
+
+    color: #099b78;
+
+
+
+}
+
+
+
+
+
+
+
+.orange-card > a {
+
+
+
+    color: #df7551;
+
+
+
+}
+
+
+
+
+
+
+
+.progress-track {
+
+
+
+    height: 8px;
+
+
+
+    margin-top: 7px;
+
+
+
+    overflow: hidden;
+
+
+
+    border-radius: 20px;
+
+
+
+    background: #dfd9fa;
+
+
+
+}
+
+
+
+
+
+
+
+.progress-track span {
+
+
+
+    display: block;
+
+
+
+    height: 100%;
+
+
+
+    border-radius: inherit;
+
+
+
+    background: linear-gradient(90deg, #6546ed, #a080ff);
+
+
+
+}
+
+
+
+
+
+/* =====================================
+
+   MOBILE HAMBURGER MENU
+
+\===================================== */
+
+
+
+/* Hide hamburger on desktop */
+
+.hamburger {
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 42px;
+
+    height: 42px;
+
+    flex-shrink: 0;
+
+    border: 1px solid #072552;
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    color: #1769f5;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    transition: background 0.2s ease, color 0.2s ease;
+
+}
+
+
+
+.hamburger:hover {
+
+    background: #1769f5;
+
+    color: #ffffff;
+
+}
+
+
+
+/* =====================================
+
+   MOBILE DROPDOWN CONTAINER
+
+\===================================== */
+
+
+
+.mobileMenu {
+
+    position: fixed;
+
+    top: 80px;
+
+    right: 16px;
+
+    z-index: 2000;
+
+    width: min(290px, calc(100vw - 32px));
+
+    max-height: calc(100dvh - 96px);
+
+    overflow-y: auto;
+
+    box-sizing: border-box;
+
+    padding: 16px;
+
+    background: #1d349b;
+
+    border: 1px solid #e6ebf2;
+
+    border-radius: 14px;
+
+    box-shadow: 0 12px 35px rgba(13, 27, 56, 0.18);
+
+}
+
+
+
+/* Respect the hidden attribute */
+
+.mobileMenu[hidden] {
+
+    display: none !important;
+
+}
+
+
+
+/* =====================================
+
+   MOBILE LOGO
+
+\===================================== */
+
+
+
+.mobile-menu-header {
+
+    display: flex;
+
+    align-items: center;
+
+    padding-bottom: 14px;
+
+    margin-bottom: 12px;
+
+    border-bottom: 1px solid #e7edf5;
+
+}
+
+
+
+.mobile-menu-logo {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    max-width: 180px;
+
+    width: 100%;
+
+    text-decoration: none;
+
+}
+
+
+
+.mobile-menu-logo img {
+
+    display: block;
+
+    width: 150px;
+
+    max-width: 100%;
+
+    height: auto;
+
+    object-fit: contain;
+
+}
+
+
+
+/* =====================================
+
+   MOBILE NAVIGATION LINKS
+
+\===================================== */
+
+
+
+.mobile-links {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+    padding: 0;
+
+    margin: 0;
+
+    list-style: none;
+
+}
+
+
+
+.mobile-links .nav-link {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 12px;
+
+    border-radius: 8px;
+
+    color: white;
+
+    text-decoration: none;
+
+    transition: background 0.2s ease, color 0.2s ease;
+
+}
+
+
+
+.mobile-links .nav-link i {
+
+    width: 20px;
+
+    text-align: center;
+
+    flex-shrink: 0;
+
+}
+
+
+
+.mobile-links .nav-link span {
+
+    flex: 1;
+
+}
+
+
+
+.mobile-links .nav-link:hover,
+
+.mobile-links .nav-link.active {
+
+    color: #1769f5;
+
+    background: #edf4ff;
+
+}
+
+
+
+.mobile-links .logout-link {
+
+    margin-top: 8px;
+
+    color: #dc3545;
+
+}
+
+
+
+/* =====================================
+
+   RESPONSIVE LAYOUT
+
+\===================================== */
+
+
+
+@media (max-width: 700px) {
+
+
+
+    /* Hide desktop sidebar on mobile */
+
+    .sidebar {
+
+        display: none !important;
+
+
+
+    }
+
+
+
+
+
+    /* Use full screen width */
+
+    .main-content {
+
+        width: 100%;
+
+        margin-left: 0;
+
+        min-width: 0;
+
+    }
+
+
+
+    /* Show hamburger */
+
+    .hamburger {
+
+        display: inline-flex;
+
+        margin-left: 320px;
+
+    }
+
+
+
+    /* Keep topbar content aligned */
+
+    .topbar {
+
+        width: 100%;
+
+        box-sizing: border-box;
+
+        display: flex;
+
+        align-items: center;
+
+        flex-wrap: wrap;
+
+        gap: 10px;
+
+    }
+
+
+
+    /* Keep dropdown below the topbar */
+
+    .mobileMenu {
+
+        top: 80px;
+
+        right: 12px;
+
+    }
+
+}
+
+
+
+@media (max-width: 400px) {
+
+
+
+    .mobileMenu {
+
+        top: 74px;
+
+        right: 8px;
+
+        width: calc(100vw - 16px);
+
+        padding: 12px;
+
+    }
+
+
+
+    .mobile-menu-logo img {
+
+        width: 135px;
+
+    }
+
+}
+
+
+
+@media (min-width: 701px) {
+
+    .mobileMenu,
+
+    .hamburger {
+
+        display: none !important;
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
+/* =====================================
+
+
+
+   MOBILE MENU BUTTON
+
+
+
+===================================== */
+
+
+
+
+
+/* 
+
+.hamburger {
+
+    display: none; width: 42px; height: 42px; border: none; border-radius: 8px;
+
+    background: transparent; background-color: #15155f; 
+
+    cursor: pointer; font-size: 1.5rem; color: white; padding: 8px;
+
+    align-items: center; justify-content: center; transition: all 0.3s ease;}
+
+
+
+    .hamburger:hover { background: rgba(255, 255, 255, 0.1); } */
+
+
+
+
+
+/* MOBILE MENU */
+
+/* .mobileMenu{
+
+    display: none;
+
+    padding-top: 100px;
+
+    position: fixed;
+
+    top: 80px;
+
+    right: 0;
+
+    height: calc(100vh - 80px);
+
+    padding: 25px 0;
+
+    width: 100%;
+
+    z-index: 999;
+
+    overflow-y: auto;
+
+    backdrop-filter: blur(20px);
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+     background: #084298;
+
+     backdrop-filter: blur(20px);
+
+} */
+
+
+
+
+
+/* Mobile menu when active */
+
+/* .mobileMenu.active { display: block; animation: fadeIn 0.3s ease; } */
+
+
+
+
+
+/* TOGGLE */
+
+/* 
+
+.mobileMenu a{
+
+    text-decoration: none;
+
+    text-transform: capitalize;
+
+    padding: 10px;
+
+    color: white;
+
+    margin-left: 40px;
+
+    font-weight: 600;
+
+    animation: fadeIn 1.4s ease-in;
+
+    font-family: 'Cormorant Garamond', serif;
+
+    font-size: 1.3rem;
+
+    letter-spacing: 0.05em;
+
+    transition: color 0.2s;
+
+
+
+} */
+
+/* .mobileMenu li{
+
+    list-style: none;
+
+    padding: 10px 30px;
+
+     border-bottom: 0.05px solid rgb(0, 0, 0); 
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+
+} */
+
+
+
+/* 
+
+.mobileMenu .btn{
+
+    font-size: 1.2rem;
+
+    padding: 4px;
+
+    cursor: pointer;
+
+    border: none;
+
+    background: #38bdf8;
+
+    color: black;
+
+    font-weight: bold;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    text-decoration: none;
+
+    transition: 0.4s ease-in-out;
+
+    animation: fadeIn 1.4s ease-in;
+
+    margin-left: 50px;
+
+    width: 100px;
+
+} */
+
+/* Mobile list */
+
+ /* .mobileMenu ul { list-style: none; margin: 0; padding: 0; }
+
+ .mobileMenu li a { display: block; padding: 18px 30px; color: #ffffff; 
+
+ text-decoration: none; text-transform: capitalize; font-size: 16px; font-weight: 600; 
+
+ transition: all 0.3s ease; }
+
+ .mobileMenu li a:hover { background: rgba(255, 255, 255, 0.1); padding-left: 40px; }
+
+
+
+  */
+
+/*  TABLET / MOBILE */
+
+ /* @media (max-width: 767px) 
+
+{ */
+
+  /* Logo */ 
+
+  /* .logo img { width:150PX;} */
+
+
+
+/* Show Hamburger */
+
+ /* .hamburger { display: flex; } */
+
+  /* Mobile Menu */
+
+ /* .mobileMenu { top: 70px; height: calc(100vh - 70px); } 
+
+} */
+
+ /* SMALL PHONES */
+
+ /* @media (max-width: 400px)
+
+  { 
+
+  .hamburger { width: 40px; height: 40px; font-size: 1.3rem; } 
+
+ } */
+
+
+
+/* @media (max-width: 768px) {
+
+
+
+    .hamburger {
+
+        display: flex;
+
+
+
+        align-items: center;
+
+        justify-content: center;
+
+    }
+
+} */
+
+
+
+
+
+
+
+
+
+/* 
+
+.mobileMenu {
+
+
+
+    position: fixed;
+
+
+
+    top: 80px;
+
+
+
+    right: 12px;
+
+
+
+    z-index: 1000;
+
+
+
+    width: min(280px, calc(100vw - 24px));
+
+
+
+    max-height: calc(100vh - 100px);
+
+
+
+    padding: 12px;
+
+
+
+    overflow-y: auto;
+
+
+
+    border: 1px solid #e7edf5;
+
+
+
+    border-radius: 14px;
+
+
+
+    background: #ffffff;
+
+
+
+    box-shadow: 0 12px 35px rgba(13, 27, 56, 0.18);
+
+
+
+    animation: mobileMenuOpen 0.2s ease;
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* MENU LINKS */
+
+
+
+
+
+/* 
+
+.mobile-nav {
+
+
+
+    display: flex;
+
+
+
+    flex-direction: column;
+
+
+
+    gap: 5px;
+
+
+
+}
+
+
+
+
+
+
+
+.mobile-nav .nav-link {
+
+
+
+    display: flex;
+
+
+
+    align-items: center;
+
+
+
+    gap: 12px;
+
+
+
+    width: 100%;
+
+
+
+    min-height: 44px;
+
+
+
+    padding: 11px 12px;
+
+
+
+    border-radius: 9px;
+
+
+
+    color: #53627a;
+
+
+
+    font-size: 13px;
+
+
+
+    font-weight: 600;
+
+
+
+    text-decoration: none;
+
+
+
+    transition: background 0.2s ease, color 0.2s ease;
+
+
+
+} */
+
+
+
+
+
+
+
+/* .mobile-nav .nav-link i {
+
+
+
+    display: inline-flex;
+
+
+
+    align-items: center;
+
+
+
+    justify-content: center;
+
+
+
+    width: 20px;
+
+
+
+    flex-shrink: 0;
+
+
+
+    font-size: 16px;
+
+
+
+}  */
+
+
+
+
+
+
+
+/* .mobile-nav .nav-link span {
+
+
+
+    flex: 1;
+
+
+
+} */
+
+
+
+
+
+/* 
+
+.mobile-nav .nav-link:hover,
+
+
+
+.mobile-nav .nav-link.active {
+
+
+
+    background: #edf4ff;
+
+
+
+    color: #1769f5;
+
+
+
+} */
+
+
+
+
+
+
+
+/* ASSIGNMENT NOTIFICATION */
+
+
+
+
+
+/* 
+
+.mobile-nav .notification {
+
+
+
+    display: inline-flex;
+
+
+
+    align-items: center;
+
+
+
+    justify-content: center;
+
+
+
+    min-width: 22px;
+
+
+
+    height: 22px;
+
+
+
+    padding: 0 6px;
+
+
+
+    border-radius: 20px;
+
+
+
+    background: #ee5367;
+
+
+
+    color: #ffffff;
+
+
+
+    font-size: 11px;
+
+
+
+} */
+
+
+
+
+
+
+
+/* LOGOUT LINK */
+
+
+
+
+
+
+
+/* .mobile-nav .logout-link { */
+
+/* 
+
+    margin-top: 6px;
+
+
+
+    border-top: 1px solid #e7edf5;
+
+
+
+    border-radius: 0 0 9px 9px;
+
+
+
+    color: #ee5367;
+
+
+
+}
+
+
+
+
+
+
+
+.mobile-nav .logout-link:hover {
+
+
+
+    background: #fff0f2;
+
+
+
+    color: #d9364e;
+
+
+
+}
+
+
+
+
+
+
+
+/* MENU ANIMATION */
+
+
+
+
+
+
+
+@keyframes mobileMenuOpen {
+
+
+
+    from {
+
+
+
+        opacity: 0;
+
+
+
+        transform: translateY(-6px);
+
+
+
+    }
+
+
+
+
+
+
+
+    to {
+
+
+
+        opacity: 1;
+
+
+
+        transform: translateY(0);
+
+
+
+    }
+
+
+
+} */
+
+
+
+
+
+
+
+/* =====================================
+
+
+
+   MOBILE RESPONSIVE
+
+
+
+===================================== */
+
+
+
+
+
+
+
+/* @media (max-width: 700px) {
+
+
+
+    .hamburger {
+
+
+
+        display: inline-flex;
+
+
+
+        flex-shrink: 0;
+
+
+
+    }
+
+
+
+
+
+
+
+    .topbar {
+
+
+
+        position: relative;
+
+
+
+    }
+
+
+
+} */
+
+
+
+
+
+
+
+/* Hide mobile navigation on desktop */
+
+
+
+/* @media (min-width: 701px) {
+
+
+
+    .mobileMenu {
+
+
+
+        display: none !important;
+
+
+
+    }
+
+
+
+} */
+
+
+
+
+
+
+
+/* SMALL PHONES */
+
+
+
+
+
+/* 
+
+@media (max-width: 380px) {
+
+
+
+    .mobileMenu {
+
+
+
+        right: 8px;
+
+
+
+        width: calc(100vw - 16px);
+
+
+
+        padding: 10px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .mobile-nav .nav-link {
+
+
+
+        min-height: 42px;
+
+
+
+        padding: 10px;
+
+
+
+        font-size: 12px;
+
+
+
+    }
+
+
+
+} */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   8. GENERAL PANELS
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+.panel {
+
+
+
+    min-width: 0;
+
+
+    padding: 17px;
+
+
+
+    border: 1px solid var(--border);
+
+
+
+    border-radius: var(--radius);
+
+
+
+    background: var(--white);
+
+
+
+    box-shadow: var(--shadow);
+
+
+
+}
+
+
+
+
+
+
+
+.panel-heading {
+
+
+
+    display: flex;
+
+
+
+    align-items: center;
+
+
+
+    justify-content: space-between;
+
+
+
+    gap: 12px;
+
+
+
+    margin-bottom: 16px;
+    margin-left:30px ;
+
+
+
+}
+
+
+
+
+
+
+
+.panel-heading h2 {
+
+
+
+    color: #1a2c49;
+
+
+
+    font-size: 13px;
+
+
+
+    font-weight: 800;
+
+
+
+}
+
+
+
+
+
+
+
+.panel-heading > a {
+
+
+
+    flex-shrink: 0;
+
+
+
+    color: #3975db;
+
+
+
+    font-size: 9px;
+
+
+
+    font-weight: 600;
+
+
+
+}
+
+
+
+
+
+
+
+.panel-heading > a:hover {
+    text-decoration: underline;
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   9. MY COURSES
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+.course-grid {
+
+
+
+    display: grid;
+
+
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+
+
+    gap: 12px;
+
+
+
+}
+
+
+
+
+
+
+
+.course-card {
+
+
+
+    min-width: 0;
+
+
+
+    padding: 9px;
+
+
+
+    overflow: hidden;
+
+
+
+    border: 1px solid #e8edf5;
+
+
+
+    border-radius: 10px;
+
+
+
+    background: #fff;
+
+
+
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+
+
+}
+
+
+
+
+
+
+
+.course-card:hover {
+
+
+
+    transform: translateY(-3px);
+
+
+
+    box-shadow: 0 9px 22px rgba(28, 52, 91, 0.09);
+
+
+
+}
+
+
+
+
+
+
+
+.course-art {
+
+
+
+    min-height: 62px;
+
+
+
+    display: grid;
+
+
+
+    place-items: center;
+
+
+
+    padding: 8px;
+
+
+
+    overflow: hidden;
+
+
+
+    border-radius: 7px;
+
+
+
+    color: white;
+
+
+
+    font-size: clamp(12px, 1.1vw, 18px);
+
+
+
+    font-weight: 800;
+
+
+
+    text-align: center;
+
+
+
+}
+
+
+
+
+
+
+
+.html-art {
+
+
+
+    background: linear-gradient(135deg, #10274c, #195b91);
+
+
+
+}
+
+
+
+
+
+
+
+.react-art {
+
+
+
+    color: #55d9ff;
+
+
+
+    background: linear-gradient(135deg, #10243b, #17334e);
+
+
+
+}
+
+
+
+
+
+
+
+.node-art {
+
+
+
+    color: #9cf27b;
+
+
+
+    background: linear-gradient(135deg, #102b2c, #164840);
+
+
+
+}
+
+
+
+
+
+
+
+.python-art {
+
+
+
+    color: #ffe38c;
+
+
+
+    background: linear-gradient(135deg, #123e83, #1764b4);
+
+
+
+}
+
+
+
+
+
+
+
+.django-art {
+
+
+
+    color: #fff;
+
+
+
+    background: linear-gradient(135deg, #063b39, #116c61);
+
+
+
+}
+
+
+
+
+
+
+
+.course-card h3 {
+
+
+
+    margin-top: 10px;
+
+
+
+    color: #1a2c49;
+
+
+
+    font-size: 10px;
+
+
+
+    font-weight: 800;
+
+
+
+    line-height: 1.5;
+
+
+
+    overflow-wrap: anywhere;
+
+
+
+}
+
+
+
+
+
+
+
+.course-card > p {
+
+
+
+    min-height: 24px;
+
+
+
+    margin-top: 2px;
+
+
+
+    color: #8591a4;
+
+
+
+    font-size: 9px;
+
+
+
+}
+
+
+
+
+
+
+
+.course-progress {
+
+
+
+    display: flex;
+
+
+
+    align-items: center;
+
+
+
+    gap: 7px;
+
+
+
+    margin: 9px 0 11px;
+
+
+
+}
+
+
+
+
+
+
+
+.course-progress > span {
+
+
+
+    flex: 1;
+
+
+
+    height: 6px;
+
+
+
+    overflow: hidden;
+
+
+
+    border-radius: 10px;
+
+
+
+    background: #e8edf5;
+
+
+
+}
+
+
+
+
+
+
+
+.course-progress i {
+
+
+
+    display: block;
+
+
+
+    height: 100%;
+
+
+
+    border-radius: inherit;
+
+
+
+    background: linear-gradient(90deg, #2678f5, #58a0ff);
+
+
+
+}
+
+
+
+
+
+
+
+.course-card:nth-child(2) .course-progress i {
+
+
+
+    background: linear-gradient(90deg, #12a884, #4cddbd);
+
+
+
+}
+
+
+
+
+
+
+
+.course-card:nth-child(3) .course-progress i {
+
+
+
+    background: linear-gradient(90deg, #7250ed, #ad8bff);
+
+
+
+}
+
+
+
+
+
+
+
+.course-card:nth-child(4) .course-progress i {
+
+
+
+    background: linear-gradient(90deg, #ee9339, #ffbe5b);
+
+
+
+}
+
+
+
+
+
+
+
+.course-card:nth-child(5) .course-progress i {
+
+
+
+    background: linear-gradient(90deg, #e95168, #ff8b9b);
+
+
+
+}
+
+
+
+
+
+
+
+.course-progress small {
+
+
+
+    color: #7c899d;
+
+
+
+    font-size: 9px;
+
+
+
+}
+
+
+
+
+
+
+
+.course-button {
+
+
+
+    min-height: 30px;
+
+
+
+    display: flex;
+
+
+
+    align-items: center;
+
+
+
+    justify-content: center;
+
+
+
+    padding: 5px;
+
+
+
+    border-radius: 7px;
+
+
+
+    color: #fff;
+
+
+
+    background: #2671ef;
+
+
+
+    font-size: 9px;
+
+
+
+    font-weight: 600;
+
+
+
+    text-align: center;
+
+
+
+    transition: background 0.2s ease;
+
+
+
+}
+
+
+
+
+
+
+
+.course-button:hover {
+
+
+
+    background: #104fbf;
+
+
+
+}
+
+
+
+
+
+
+
+.logout-link {
+
+
+
+    color: #ee5367;
+
+
+
+}
+
+
+
+
+
+
+
+.logout-link:hover {
+
+
+
+    color: #ffffff;
+
+
+
+    background: #ee5367;
+
+
+
+}
+
+
+
+
+
+
+
+.logout-link i {
+
+
+
+    width: 20px;
+
+
+
+    text-align: center;
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   10. LOWER WIDGETS
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+.lower-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-left: 30px;
+
+}
+
+
+
+
+
+
+
+.progress-summary {
+
+
+
+    display: grid;
+
+
+
+    grid-template-columns: 110px minmax(0, 1fr);
+
+
+
+    align-items: center;
+
+
+
+    gap: 15px;
+
+
+
+}
+
+
+
+
+
+
+
+.progress-circle {
+
+
+
+    width: 106px;
+
+
+
+    aspect-ratio: 1;
+
+
+
+    display: grid;
+
+
+
+    place-items: center;
+
+
+
+    border-radius: 50%;
+
+
+
+    background: conic-gradient(
+
+
+
+        #2679f5 0deg 244.8deg,
+
+
+
+        #e5edf8 244.8deg 360deg
+
+
+
+    );
+
+
+
+}
+
+
+
+
+
+
+
+.progress-circle > div {
+
+
+
+    width: 77px;
+
+
+
+    aspect-ratio: 1;
+
+
+
+    display: flex;
+
+
+
+    flex-direction: column;
+
+
+
+    align-items: center;
+
+
+
+    justify-content: center;
+
+
+
+    border-radius: 50%;
+
+
+
+    background: white;
+
+
+
+}
+
+
+
+
+
+
+
+.progress-circle strong {
+
+
+
+    color: #172a49;
+
+
+
+    font-size: 19px;
+
+
+
+    font-weight: 800;
+
+
+
+}
+
+
+
+
+
+
+
+.progress-circle small {
+
+
+
+    color: #7b889c;
+
+
+
+    font-size: 8px;
+
+
+
+    text-align: center;
+
+
+
+}
+
+
+
+
+
+
+
+.skill-list {
+
+
+
+    display: flex;
+
+
+
+    flex-direction: column;
+
+
+
+    gap: 12px;
+
+
+
+}
+
+
+
+
+
+
+
+.skill-list p {
+
+
+
+    display: flex;
+
+
+
+    align-items: center;
+
+
+
+    justify-content: space-between;
+
+
+
+    gap: 8px;
+
+
+
+    color: #77859b;
+
+
+
+    font-size: 9px;
+
+
+
+}
+
+
+
+
+
+
+
+.skill-list b {
+
+
+
+    flex-shrink: 0;
+
+
+
+    color: #263b5c;
+
+
+
+    font-size: 9px;
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   11. ASSIGNMENTS
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+.assignment-item {
+
+
+
+    display: grid;
+
+
+
+    grid-template-columns: 29px minmax(0, 1fr) auto;
+
+
+
+    align-items: center;
+
+
+
+    gap: 9px;
+
+
+
+    padding: 12px 0;
+
+
+
+    border-bottom: 1px solid #edf1f6;
+
+
+
+}
+
+
+
+
+
+
+
+.assignment-item:last-child {
+
+
+
+    border-bottom: 0;
+
+
+
+}
+
+
+
+
+
+
+
+.assignment-item > i {
+
+
+
+    width: 29px;
+
+
+
+    height: 32px;
+
+
+
+    display: grid;
+
+
+
+    place-items: center;
+
+
+
+    border-radius: 7px;
+
+
+
+    color: #377de9;
+
+
+
+    background: #edf5ff;
+
+
+
+    font-size: 13px;
+
+
+
+}
+
+
+
+
+
+
+
+.assignment-item > div {
+
+
+
+    min-width: 0;
+
+
+
+}
+
+
+
+
+
+
+
+.assignment-item strong {
+
+
+
+    display: block;
+
+
+
+    color: #30425f;
+
+
+
+    font-size: 9px;
+
+
+
+    line-height: 1.5;
+
+
+
+}
+
+
+
+
+
+
+
+.assignment-item small {
+
+
+
+    display: block;
+
+
+
+    margin-top: 3px;
+
+
+
+    color: #94a0b1;
+
+
+
+    font-size: 8px;
+
+
+
+}
+
+
+
+
+
+
+
+.status {
+
+
+
+    padding: 4px 6px;
+
+
+
+    border-radius: 5px;
+
+
+
+    font-size: 8px;
+
+
+
+    font-weight: 600;
+
+
+
+}
+
+
+
+
+
+
+
+.pending {
+
+
+
+    color: #c88722;
+
+
+
+    background: #fff5df;
+
+
+
+}
+
+
+
+
+
+
+
+.submitted {
+
+
+
+    color: #09966f;
+
+
+
+    background: #e4f9f1;
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   12. PAYMENT SUMMARY
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+.payment-summary {
+
+
+
+    display: flex;
+
+
+
+    align-items: center;
+
+
+
+    justify-content: space-between;
+
+
+
+    gap: 12px;
+
+
+
+    padding: 16px;
+
+
+
+    border-radius: 10px;
+
+
+
+    background: #eafaf5;
+
+
+
+}
+
+
+
+
+
+
+
+.payment-summary small {
+
+
+
+    color: #6c8b84;
+
+
+
+    font-size: 10px;
+
+
+
+}
+
+
+
+
+
+
+
+.payment-summary h2 {
+
+
+
+    margin-top: 3px;
+
+
+
+    color: #183a36;
+
+
+
+    font-size: 23px;
+
+
+
+    font-weight: 800;
+
+
+
+}
+
+
+
+
+
+
+
+.payment-summary .primary-button {
+
+
+
+    min-height: 34px;
+
+
+
+    padding: 0 12px;
+
+
+
+    background: #0eb487;
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   13. STUDENT PROFILE
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+.profile-card {
+
+
+
+    padding: 20px 17px;
+
+
+
+    text-align: center;
+    width: 100%;
+
+
+
+}
+
+
+
+
+
+
+
+.profile-avatar {
+
+
+
+    width: 82px;
+
+
+
+    height: 82px;
+
+
+
+    display: block;
+
+
+
+    margin: 0 auto 10px;
+
+
+
+    border: 4px solid #f0f3f8;
+
+
+
+    border-radius: 50%;
+
+
+
+    object-fit: cover;
+
+
+
+}
+
+
+
+
+
+
+
+.profile-card > h2 {
+
+
+
+    color: #203451;
+
+
+
+    font-size: 13px;
+
+
+
+    font-weight: 800;
+
+
+
+}
+
+
+
+
+
+
+
+.profile-card > p {
+
+
+
+    margin-top: 2px;
+
+
+
+    color: #8290a4;
+
+
+
+    font-size: 10px;
+
+
+
+}
+
+
+
+
+
+
+
+.active-status {
+
+
+
+    display: inline-block;
+
+
+
+    margin: 10px 0 14px;
+
+
+
+    padding: 5px 11px;
+
+
+
+    border-radius: 20px;
+
+
+
+    color: #07966d;
+
+
+
+    background: #dff9ef;
+
+
+
+    font-size: 9px;
+
+
+
+    font-weight: 700;
+
+
+
+}
+
+
+
+
+
+
+
+.profile-details {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 13px;
+
+    padding-top: 14px;
+
+    border-top: 1px solid #edf1f6;
+
+}
+
+
+
+
+
+
+
+.profile-details p {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+    text-align: left;
+
+}
+
+
+
+
+
+
+
+.profile-details span {
+
+    color: #8491a5;
+
+    font-size: 9px;
+
+}
+
+
+
+
+
+
+
+.profile-details strong {
+
+    max-width: 62%;
+
+    color: #354762;
+
+    font-size: 9px;
+
+    text-align: right;
+
+    overflow-wrap: anywhere;
+
+
+
+}
+
+
+
+
+
+
+
+/* 14. QUICK ACTIONS */
+
+
+
+
+
+
+
+.quick-actions {
+
+
+
+    display: grid;
+
+
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+
+
+    gap: 9px;
+    width: 100%;
+
+
+
+}
+
+
+
+
+
+
+
+.quick-actions a {
+
+
+
+    min-width: 0;
+
+
+
+    min-height: 88px;
+
+
+
+    display: flex;
+
+
+
+    flex-direction: column;
+
+
+
+    align-items: center;
+
+
+
+    justify-content: center;
+
+
+
+    gap: 9px;
+
+
+
+    padding: 8px 4px;
+
+
+
+    border-radius: 9px;
+
+
+
+    background: #f0f6ff;
+
+
+
+    transition: transform 0.2s ease;
+
+
+
+}
+
+
+
+
+
+
+
+.quick-actions a:hover {
+
+
+
+    transform: translateY(-3px);
+
+
+
+}
+
+
+
+
+
+
+
+.quick-actions a > i {
+
+
+
+    width: 31px;
+
+
+
+    height: 31px;
+
+
+
+    display: grid;
+
+
+
+    place-items: center;
+
+
+
+    border-radius: 9px;
+
+
+
+    color: white;
+
+
+
+    background: #2877ef;
+
+
+
+    font-size: 14px;
+
+
+
+}
+
+
+
+
+
+
+
+.quick-actions a:nth-child(2) {
+
+
+
+    background: #eafaf5;
+
+
+
+}
+
+
+
+
+
+
+
+.quick-actions a:nth-child(2) > i {
+
+
+
+    background: #10b88a;
+
+
+
+}
+
+
+
+
+
+
+
+.quick-actions a:nth-child(3) {
+
+
+
+    background: #f4efff;
+
+
+
+}
+
+
+
+
+
+
+
+.quick-actions a:nth-child(3) > i {
+
+
+
+    background: #7952eb;
+
+
+
+}
+
+
+
+
+
+
+
+.quick-actions a:nth-child(4) {
+
+
+
+    background: #fff5e9;
+
+
+
+}
+
+
+
+
+
+
+
+.quick-actions a:nth-child(4) > i {
+
+
+
+    background: #f19a37;
+
+
+
+}
+
+
+
+
+
+
+
+.quick-actions a:nth-child(5) {
+
+
+
+    background: #e8faf8;
+
+
+
+}
+
+
+
+
+
+
+
+.quick-actions a:nth-child(5) > i {
+
+
+
+    background: #10afa8;
+
+
+
+}
+
+
+
+
+
+
+
+.quick-actions a:nth-child(6) {
+
+
+
+    background: #fff0f4;
+
+
+
+}
+
+
+
+
+
+
+
+.quick-actions a:nth-child(6) > i {
+
+
+
+    background: #ed5a85;
+
+
+
+}
+
+
+
+
+
+
+
+.quick-actions a span {
+
+
+
+    color: #52617a;
+
+
+
+    font-size: 8px;
+
+
+
+    font-weight: 600;
+
+
+
+    text-align: center;
+
+
+
+    line-height: 1.4;
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   15. UPCOMING DEADLINES
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+.deadline-item {
+
+
+
+    display: grid;
+
+
+
+    grid-template-columns: 9px minmax(0, 1fr) auto;
+
+
+
+    align-items: start;
+
+
+
+    gap: 8px;
+
+
+
+    padding: 12px 0;
+
+
+
+    border-bottom: 1px solid #f0f3f7;
+
+
+
+}
+
+
+
+
+
+
+
+.deadline-item:last-child {
+
+
+
+    border-bottom: 0;
+
+
+
+}
+
+
+
+
+
+
+
+.deadline-dot {
+
+
+
+    width: 9px;
+
+
+
+    height: 9px;
+
+
+
+    margin-top: 4px;
+
+
+
+    border-radius: 50%;
+
+
+
+}
+
+
+
+
+
+
+
+.green-dot {
+
+
+
+    background: #10b88a;
+
+
+
+}
+
+
+
+
+
+
+
+.teal-dot {
+
+
+
+    background: #16b8b0;
+
+
+
+}
+
+
+
+
+
+
+
+.orange-dot {
+
+
+
+    background: #f19a37;
+
+
+
+}
+
+
+
+
+
+
+
+.red-dot {
+
+
+
+    background: #f05252;
+
+
+
+}
+
+
+
+
+
+
+
+.deadline-item p {
+
+
+
+    color: #43536d;
+
+
+
+    font-size: 9px;
+
+
+
+    font-weight: 600;
+
+
+
+    line-height: 1.5;
+
+
+
+}
+
+
+
+
+
+
+
+.deadline-item small {
+
+
+
+    color: #8a97a9;
+
+
+
+    font-size: 8px;
+
+
+
+    white-space: nowrap;
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   16. ANNOUNCEMENT
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+\#announcements > h3 {
+
+
+
+    margin: 5px 0 9px;
+
+
+
+    color: #253957;
+
+
+
+    font-size: 12px;
+
+
+
+    font-weight: 800;
+
+
+
+}
+
+
+
+
+
+
+
+.announcement-text {
+
+
+
+    margin-bottom: 12px;
+
+
+
+    color: #718097;
+
+
+
+    font-size: 10px;
+
+
+
+    line-height: 1.8;
+
+
+
+}
+
+
+
+
+
+
+
+\#announcements > small {
+
+
+
+    color: #9ba6b6;
+
+
+
+    font-size: 9px;
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   17. RESPONSIVE TABLET
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+@media (max-width: 1350px) {
+
+
+
+    .dashboard-grid {
+
+
+
+        grid-template-columns: minmax(0, 1fr) 270px;
+
+
+
+        gap: 14px;
+
+
+
+        padding: 14px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .stats-grid {
+
+
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+
+
+    }
+
+
+
+
+
+
+
+    .course-grid {
+
+
+
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+
+
+
+    }
+
+
+
+
+
+
+
+    .stat-card {
+
+
+
+        min-height: 140px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .progress-summary {
+
+
+
+        grid-template-columns: 1fr;
+
+
+
+        justify-items: center;
+
+
+
+    }
+
+
+
+
+
+
+
+    .skill-list {
+
+
+
+        width: 100%;
+
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+@media (max-width: 1050px) {
+
+
+
+    .sidebar {
+
+
+
+        width: 205px;
+
+
+
+        padding-right: 12px;
+
+
+
+        padding-left: 12px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .main-content {
+
+
+
+        margin-left: 205px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .dashboard-grid {
+
+
+
+        grid-template-columns: minmax(0, 1fr);
+
+
+
+    }
+
+
+
+
+
+
+
+    .dashboard-right {
+
+
+
+        display: grid;
+
+
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+
+
+        align-items: start;
+
+
+
+    }
+
+
+
+
+
+
+
+    .profile-card {
+
+
+
+        grid-row: span 2;
+
+
+
+    }
+
+
+
+
+
+
+
+    .course-grid {
+
+
+
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   18. RESPONSIVE MOBILE
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+@media (max-width: 700px) {
+
+
+
+    .sidebar {
+
+
+
+        position: static;
+
+
+
+        width: 100%;
+
+
+
+        min-height: auto;
+
+
+
+        padding: 14px 18px;
+
+
+
+        overflow: visible;
+
+
+
+    }
+
+
+
+
+
+
+
+    .brand {
+
+
+
+        margin-bottom: 14px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .brand > i {
+
+
+
+        font-size: 32px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .sidebar-nav {
+
+
+
+        display: grid;
+
+
+
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+
+
+
+        gap: 7px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .nav-link {
+
+
+
+        min-height: 42px;
+
+
+
+        justify-content: center;
+
+
+
+        gap: 6px;
+
+
+
+        padding: 6px;
+
+
+
+        font-size: 10px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .nav-link > i {
+
+
+
+        width: auto;
+
+
+
+        font-size: 14px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .notification {
+
+
+
+        min-width: 16px;
+
+
+
+        height: 16px;
+
+
+
+        font-size: 8px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .sidebar-promo {
+
+
+
+        display: none;
+
+
+
+    }
+
+
+
+
+
+
+
+    .main-content {
+
+
+
+        margin-left: 0;
+
+
+
+    }
+
+
+
+
+
+
+
+    .topbar {
+
+
+
+         position: relative;
+
+
+
+        flex-wrap: wrap;
+
+
+
+        gap: 12px;
+
+
+
+        padding: 12px;
+
+
+
+        width: 1000%;
+
+
+
+    }
+
+
+
+
+
+
+
+    .search-box {
+
+
+
+        width: 100%;
+
+
+
+        max-width: none;
+
+
+
+        order: 2;
+
+
+
+    }
+
+
+
+
+
+
+
+    .topbar-user {
+
+
+
+        margin-left: auto;
+
+
+
+    }
+
+
+
+
+
+
+
+    .dashboard-grid {
+
+
+
+        gap: 14px;
+
+
+
+        padding: 12px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .dashboard-center,
+
+
+
+    .dashboard-right {
+
+
+        
+        gap: 14px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .welcome-banner {
+
+
+
+        min-height: 170px;
+
+
+
+        padding: 23px 20px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .welcome-banner h1 {
+
+
+
+        font-size: 23px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .stats-grid {
+
+
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+
+
+        gap: 10px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .course-grid {
+
+
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+
+
+    }
+
+
+
+
+
+
+
+    .lower-grid {
+
+
+
+        grid-template-columns: 1fr;
+
+
+
+    }
+
+
+
+
+
+
+
+    .progress-summary {
+
+
+
+        grid-template-columns: 110px minmax(0, 1fr);
+
+
+
+        justify-items: stretch;
+
+
+
+    }
+
+
+
+
+
+
+
+    .dashboard-right {
+
+
+
+        display: flex;
+
+
+
+    }
+
+
+
+
+
+
+
+    .profile-card {
+
+
+
+        grid-row: auto;
+
+
+
+    }
+
+
+
+
+
+
+
+    .profile-details {
+
+
+
+        max-width: 420px;
+
+
+
+        margin: 0 auto;
+
+
+
+    }
+
+
+
+
+
+
+
+    .quick-actions {
+
+
+
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   19. SMALL MOBILE
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+@media (max-width: 400px) {
+
+
+
+    .sidebar {
+
+
+
+        padding: 12px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .sidebar-nav {
+
+
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+
+
+    }
+
+
+
+
+
+
+
+    .nav-link {
+
+
+
+        justify-content: flex-start;
+
+
+
+        padding: 8px 10px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .topbar-user strong {
+
+
+
+        font-size: 10px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .topbar-avatar {
+
+
+
+        width: 32px;
+
+
+
+        height: 32px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .dashboard-grid {
+
+
+
+        padding: 9px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .stat-card {
+
+
+
+        padding: 12px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .stat-card h2 {
+
+
+
+        font-size: 20px;
+
+
+
+    }
+
+
+
+
+
+
+
+    .course-grid {
+
+
+
+        grid-template-columns: 1fr;
+
+
+
+    }
+
+
+
+
+
+
+
+    .course-art {
+
+
+
+        min-height: 85px;
+
+    }
+
+    .panel {
+
+        padding: 13px;
+        width: 100%;
+    }
+
+
+
+
+
+
+
+    .progress-summary {
+
+
+
+        grid-template-columns: 1fr;
+
+
+
+        justify-items: center;
+
+
+
+    }
+
+
+
+
+
+
+
+    .skill-list {
+
+
+
+        width: 100%;
+
+
+
+    }
+
+
+
+
+
+
+
+    .assignment-item {
+
+
+
+        grid-template-columns: 27px minmax(0, 1fr);
+
+
+
+    }
+
+
+
+
+
+
+
+    .assignment-item .status {
+
+
+
+        grid-column: 2;
+
+
+
+        justify-self: start;
+
+
+
+    }
+
+
+
+
+
+
+
+    .payment-summary {
+
+
+
+        align-items: flex-start;
+
+        
+
+        flex-direction: column;
+
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+/* =====================================================
+
+
+
+   20. REDUCED MOTION ACCESSIBILITY
+
+
+
+===================================================== */
+
+
+
+
+
+
+
+@media (prefers-reduced-motion: reduce) {
+
+
+
+    \*,
+
+
+
+    \*::before,
+
+
+
+    \*::after {
+
+
+
+        scroll-behavior: auto !important;
+
+
+
+        transition-duration: 0.01ms !important;
+
+
+
+        animation-duration: 0.01ms !important;
+
+
+
+    }
+
+
+
+}
+
+
+
+/* =====================================================
+
+   FINAL LAYOUT FIXES
+
+   These overrides resolve conflicting mobile/sidebar rules.
+
+\===================================================== */
+
+/* 
+
+:root {
+
+    --sidebar-width: 245px;
+
+}
+
+
+
+.dashboard-layout {
+
+    min-height: 100vh;
+
+    width: 100%;
+
+}
+
+
+
+.main-content {
+
+    min-width: 0;
+
+    margin-left: 245px;
+
+    width: calc(100% - 245px);
+
+}
+
+
+
+.topbar {
+
+    width: 100%;
+
+    min-width: 0;
+
+} */
+
+/* 
+
+.search-box {
+
+    min-width: 0;
+
+}
+
+
+
+.topbar-user {
+
+    flex-shrink: 0;
+
+}
+
+
+
+.mobileMenu[hidden] {
+
+    display: none !important;
+
+}
+
+
+
+.mobileMenu:not([hidden]) {
+
+    display: block;
+
+}
+
+
+
+@media (max-width: 1050px) and (min-width: 701px) {
+
+    .main-content {
+
+        margin-left: 205px;
+
+        width: calc(100% - 205px);
+
+    }
+
+ } */
+
+
+
+/* @media (max-width: 700px) {
+
+    .sidebar {
+
+        display: none;
+
+    }
+
+
+
+    .main-content {
+
+        width: 100%;
+
+        margin-left: 0;
+
+    } */
+
+/* 
+
+    .topbar {
+
+        position: sticky;
+
+        top: 0;
+
+        z-index: 500;
+
+        display: flex;
+
+        flex-wrap: wrap;
+
+        align-items: center;
+
+        gap: 10px;
+
+        width: 100%;
+
+        padding: 10px 12px;
+
+    }
+
+
+
+    .hamburger {
+
+        display: inline-flex;
+
+        flex: 0 0 42px;
+
+    }
+
+
+
+    .search-box {
+
+        order: 3;
+
+        width: 100%;
+
+        max-width: none;
+
+        flex: 1 0 100%;
+
+    } */
+
+
+
+    /* .topbar-user {
+
+        margin-left: auto;
+
+        gap: 7px;
+
+    }
+
+
+
+    .mobileMenu {
+
+        position: fixed;
+
+        top: 72px;
+
+        right: 12px;
+
+        z-index: 1000;
+
+        width: min(280px, calc(100vw - 24px));
+
+        max-height: calc(100dvh - 88px);
+
+        overflow-y: auto;
+
+    }  */
+
+
+
+    /* .dashboard-grid {
+
+        grid-template-columns: minmax(0, 1fr);
+
+        padding: 12px;
+
+    }
+
+
+
+    .dashboard-center,
+
+    .dashboard-right {
+
+        min-width: 0;
+
+    }
+
+
+
+    .dashboard-right {
+
+        display: flex;
+
+    }
+
+}
+
+
+
+@media (max-width: 400px) {
+
+    .topbar-user > div {
+
+        display: none;
+
+    }
+
+
+
+    .topbar {
+
+        gap: 8px;
+
+    }
+
+
+
+    .mobileMenu {
+
+        right: 8px;
+
+        width: calc(100vw - 16px);
+
+    }
+
+}
+
+
+
+@media (min-width: 701px) {
+
+    .hamburger,
+
+    .mobileMenu {
+
+        display: none !important;
+
+    }
+
+} */
+
+
+
+/* =====================================
+
+   MOBILE MENU LOGO
+
+\===================================== */
+
+
+
+/* .mobileMenu {
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid #e5eaf2;
+
+    border-radius: 14px;
+
+    padding: 16px;
+
+    box-shadow: 0 12px 35px rgba(23, 88, 218, 0.16);
+
+} */
+
+
+
+/* Keep the menu hidden when the hidden attribute is present */
+
+/* .mobileMenu[hidden] {
+
+    display: none !important;
+
+} */
+
+
+
+/* Display the menu when JavaScript removes hidden */
+
+/* .mobileMenu:not([hidden]) {
+
+    display: block;
+
+} */
+
+
+
+/* Logo container */
+
+/* .mobile-menu-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    width: 100%;
+
+    padding: 0 0 14px;
+
+    margin-bottom: 12px;
+
+    border-bottom: 1px solid #e7edf5;
+
+} */
+
+
+
+/* Logo link */
+
+/* .mobile-menu-logo {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    width: 100%;
+
+    max-width: 180px;
+
+    text-decoration: none;
+
+} */
+
+
+
+/* Logo image */
+
+/* .mobile-menu-logo img {
+
+    display: block;
+
+    width: 150px;
+
+    max-width: 100%;
+
+    height: auto;
+
+    object-fit: contain;
+
+} */
+
+
+
+/* Mobile navigation links */
+
+/* .mobile-nav {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+}
+
+
+
+.mobile-nav .nav-link {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 12px;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+}
+
+
+
+.mobile-nav .nav-link span {
+
+    flex: 1;
+
+} */
+
+
+
+/* Position the dropdown */
+
+/* @media (max-width: 700px) {
+
+    .mobileMenu {
+
+        position: fixed;
+
+        top: 72px;
+
+        right: 12px;
+
+        z-index: 1000;
+
+        width: min(290px, calc(100vw - 24px));
+
+        max-height: calc(100dvh - 88px);
+
+        overflow-y: auto;
+
+    }
+
+}
+
+
+
+@media (max-width: 400px) {
+
+    .mobileMenu {
+
+        right: 8px;
+
+        width: calc(100vw - 16px);
+
+    }
+
+
+
+    .mobile-menu-logo img {
+
+        width: 100px;
+
+    }
+
+} */
+
+/* =========================================================
+   FINAL RESPONSIVE FIX — IFEXA STUDENT DASHBOARD
+   Keep this section at the very bottom of dashboard.css.
+========================================================= */
+.dashboard-layout { min-height: 100vh; }
+
+.main-content {
+    min-width: 0;
+    width: calc(100% - 245px);
+}
+
+.topbar { width: 100%; min-width: 0; }
+.search-box { min-width: 0; }
+
+.mobileMenu[hidden] { display: none !important; }
+.mobileMenu:not([hidden]) { display: block; }
+
+.mobile-menu-header {
+    display: flex;
+    align-items: center;
+    padding-bottom: 12px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #e7edf5;
+}
+.mobile-menu-logo {
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    max-width: 180px;
+}
+.mobile-menu-logo img {
+    display: block;
+    width: 150px;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+@media (max-width: 1050px) and (min-width: 701px) {
+    .sidebar { width: 205px; }
+    .main-content {
+        width: calc(100% - 205px);
+        margin-left: 205px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar { display: none !important; }
+    .main-content { width: 100%; margin-left: 0; }
+
+    .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 500;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 10px 12px;
+    }
+
+    .hamburger {
+        display: inline-flex;
+        order: 1;
+        flex: 0 0 42px;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        margin: 0;
+        border: 1px solid #dce6f4;
+        border-radius: 10px;
+        background: #fff;
+        color: #1769f5;
+    }
+
+    .topbar-user {
+        order: 2;
+        margin-left: auto;
+        gap: 7px;
+        flex-shrink: 0;
+    }
+
+    .search-box {
+        order: 3;
+        flex: 1 0 100%;
+        width: 100%;
+        max-width: none;
+    }
+
+    .mobileMenu {
+        position: fixed;
+        top: 118px;
+        right: 12px;
+        z-index: 2000;
+        width: min(290px, calc(100vw - 24px));
+        max-height: calc(100dvh - 132px);
+        overflow-y: auto;
+        padding: 16px;
+        background: navy;
+        color: #152440;
+        border: 1px solid #e7edf5;
+        border-radius: 14px;
+        box-shadow: 0 12px 35px rgba(13, 27, 56, 0.18);
+    }
+
+    .mobile-links {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .mobile-links .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        min-height: 44px;
+        padding: 11px 12px;
+        color: white;
+        border-radius: 8px;
+        font-size: 15px;
+    }
+
+    .mobile-links .nav-link > i {
+        width: 20px;
+        flex-shrink: 0;
+        text-align: center;
+    }
+
+    .mobile-links .nav-link span { flex: 1; }
+
+    .mobile-links .nav-link:hover,
+    .mobile-links .nav-link.active {
+        color: #1769f5;
+        background: #edf4ff;
+    }
+
+    .mobile-links .logout-link {
+        margin-top: 6px;
+        color: #ee5367;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+        padding: 12px;
+    }
+
+    .dashboard-center, .dashboard-right { min-width: 0; }
+    .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .course-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lower-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 400px) {
+    .topbar-user-info { display: none; }
+    .topbar { gap: 8px; }
+
+    .mobileMenu {
+        top: 118px;
+        right: 8px;
+        width: calc(100vw - 16px);
+        padding: 12px;
+    }
+
+    .mobile-menu-logo img { width: 135px; }
+    .stats-grid, .course-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (min-width: 701px) {
+    .hamburger, .mobileMenu { display: none !important; }
+}
+
