@@ -6,7 +6,7 @@
 
     <title>Dashboard | School Management System</title>
 
-    <link rel="stylesheet" href="../../css/instructor-dashboard.css">
+    <link rel="stylesheet" href="/css/instructor-dashboard.css">
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet"
@@ -22,27 +22,27 @@
 
             <div class="logo">
                 <i class="fa-solid fa-graduation-cap"></i>
-                <img src="../../image/ifexa_id-removebg-preview (1).png" alt="School Logo">
+                <img src="/image/ifexa_id-removebg-preview (1).png" alt="School Logo">
             </div>
 
             <nav class="sidebar-menu">
 
-                <a href="dashboard.html" class="menu-item active">
+                <a href="/instructor/" class="menu-item active">
                     <i class="fa-solid fa-chart-line"></i>
                     <span>Dashboard</span>
                 </a>
 
-                <a href="courses.html" class="menu-item">
+                <a href="/instructor/courses/" class="menu-item">
                     <i class="fa-solid fa-book-open"></i>
                     <span>My Courses</span>
                 </a>
 
-                <a href="students.html" class="menu-item">
+                <a href="/instructor/students/" class="menu-item">
                     <i class="fa-solid fa-users"></i>
                     <span>Students</span>
                 </a>
  
-                <a href="assignments.html" class="menu-item">
+                <a href="/instructor/assignments/" class="menu-item">
                     <i class="fa-solid fa-file-lines"></i>
                     <span>Assignments</span>
                 </a>
@@ -57,7 +57,7 @@
                     <span>Performance</span>
                 </a> -->
 
-                <a href="announcements.html" class="menu-item">
+                <a href="/instructor/announcements/" class="menu-item">
                     <i class="fa-solid fa-bullhorn"></i>
                     <span>Announcements</span>
                 </a>
@@ -272,7 +272,7 @@
 
                         <div>
                             <p>Total Courses</p>
-                            <h2>6</h2>
+                            <h2 id="totalCoursesCount">6</h2>
                             <span class="increase">
                                 <i class="fa-solid fa-arrow-up"></i>
                                 12% this month
@@ -290,7 +290,7 @@
 
                         <div>
                             <p>Total Students</p>
-                            <h2>20</h2>
+                            <h2 id="totalStudentsCount">20</h2>
                             <span class="increase">
                                 <i class="fa-solid fa-arrow-up"></i>
                                 8% this month
@@ -308,7 +308,7 @@
 
                         <div>
                             <p>Assignments</p>
-                            <h2>18</h2>
+                            <h2 id="totalAssignmentsCount">18</h2>
                             <span class="pending">3 pending review</span>
                         </div>
 
@@ -323,7 +323,7 @@
 
                         <div>
                             <p>Average Performance</p>
-                            <h2>82%</h2>
+                            <h2 id="averagePerformanceCount">82%</h2>
                             <span class="increase">
                                 <i class="fa-solid fa-arrow-up"></i>
                                 5% improvement
@@ -437,7 +437,7 @@
                         </div>
 
 
-                        <div class="activity-list">
+                        <div class="activity-list" id="activityList">
 
                             <div class="activity-item">
 
@@ -635,7 +635,8 @@
         </main>
 
     </div>
- <script src="../../js/instructor-dashboard.js"></script>
+    <script src="/js/activity-log.js"></script>
+ <script src="/js/instructor-dashboard.js"></script>
 
 </body>
 </html>

@@ -35,6 +35,66 @@ button {
     min-height: 100vh;
 }
 
+/* ========================================
+   ACTIVITY ICON VARIANTS
+======================================== */
+.activity-icon.blue   { background: #eff6ff; color: #2563eb; }
+.activity-icon.purple { background: #ede9fe; color: #7c3aed; }
+.activity-icon.orange { background: #ffedd5; color: #ea580c; }
+.activity-icon.green  { background: #dcfce7; color: #16a34a; }
+.activity-icon.red    { background: #fee2e2; color: #dc2626; }
+
+.activity-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 30px 15px;
+    color: #94a3b8;
+    text-align: center;
+}
+
+.activity-empty i {
+    font-size: 28px;
+    color: #cbd5e1;
+}
+
+.activity-empty p {
+    margin: 0;
+    font-size: 13px;
+}
+/* ========================================
+   ACTIVITY ITEM — CLICKABLE
+======================================== */
+.activity-item {
+    display: flex;
+    gap: 15px;
+    padding: 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.activity-item:hover {
+    background: #f8fafc;
+    transform: translateX(3px);
+}
+
+.activity-item .activity-go {
+    margin-left: auto;
+    color: #cbd5e1;
+    font-size: 12px;
+    align-self: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.activity-item:hover .activity-go {
+    color: #2563eb;
+    transform: translateX(2px);
+}
 
 /* =========================
    SIDEBAR
