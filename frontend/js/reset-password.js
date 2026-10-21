@@ -1,298 +1,208 @@
+
 /* =====================================================
    RESET PASSWORD
 ===================================================== */
 
-const resetPasswordForm =
-    document.getElementById("resetPasswordForm");
-
+const resetPasswordForm = document.getElementById("resetPasswordForm");
 
 if (resetPasswordForm) {
+    const newPassword = document.getElementById("new-password");
+    const confirmNewPassword = document.getElementById("confirm-new-password");
 
-    /* ---------------------------------------------
-       PASSWORD TOGGLE
-    --------------------------------------------- */
+    const newPasswordError = document.getElementById("newPasswordError");
+    const confirmNewPasswordError = document.getElementById("confirmNewPasswordError");
 
-    const newPassword =
-        document.getElementById("new-password");
+    const resetMessage = document.getElementById("resetMessage");
+    const submitButton = resetPasswordForm.querySelector('button[type="submit"]');
 
-    const confirmNewPassword =
-        document.getElementById("confirm-new-password");
+    // Get the UID and token from the reset link sent by Django.
+    const params = new URLSearchParams(window.location.search);
+    const uid = params.get("uid");
+    const token = params.get("token");
 
-    const newPasswordToggle =
-        document.getElementById("newPasswordToggle");
-
-    const confirmNewPasswordToggle =
-        document.getElementById("confirmNewPasswordToggle");
-
-
+    // Show and hide passwords.
     function setupPasswordToggle(input, toggle) {
-
         if (!input || !toggle) return;
 
         toggle.addEventListener("click", function () {
+            const showPassword = input.type === "password";
 
-            if (input.type === "password") {
+            input.type = showPassword ? "text" : "password";
 
-                input.type = "text";
-
-                toggle.classList.remove("fa-eye");
-                toggle.classList.add("fa-eye-slash");
-
-            } else {
-
-                input.type = "password";
-
-                toggle.classList.remove("fa-eye-slash");
-                toggle.classList.add("fa-eye");
-
-            }
-
+            toggle.classList.toggle("fa-eye", !showPassword);
+            toggle.classList.toggle("fa-eye-slash", showPassword);
         });
-
     }
-
 
     setupPasswordToggle(
         newPassword,
-        newPasswordToggle
+        document.getElementById("newPasswordToggle")
     );
-
 
     setupPasswordToggle(
         confirmNewPassword,
-        confirmNewPasswordToggle
+        document.getElementById("confirmNewPasswordToggle")
     );
 
-
-    /* ---------------------------------------------
-       PASSWORD REQUIREMENTS
-    --------------------------------------------- */
-
-    const lengthRequirement =
-        document.getElementById("lengthRequirement");
-
-    const letterRequirement =
-        document.getElementById("letterRequirement");
-
-    const numberRequirement =
-        document.getElementById("numberRequirement");
-
+    // Display the password reset requirements.
+    const lengthRequirement = document.getElementById("lengthRequirement");
+    const letterRequirement = document.getElementById("letterRequirement");
+    const numberRequirement = document.getElementById("numberRequirement");
 
     newPassword.addEventListener("input", function () {
-
         const password = newPassword.value;
 
-
-        /* 8 characters */
-
-        if (password.length >= 8) {
-
-            lengthRequirement.classList.add("valid");
-
-        } else {
-
-            lengthRequirement.classList.remove("valid");
-
+        if (lengthRequirement) {
+            lengthRequirement.classList.toggle("valid", password.length >= 8);
         }
 
-
-        /* Letter */
-
-        if (/[A-Za-z]/.test(password)) {
-
-            letterRequirement.classList.add("valid");
-
-        } else {
-
-            letterRequirement.classList.remove("valid");
-
+        if (letterRequirement) {
+            letterRequirement.classList.toggle("valid", /[A-Za-z]/.test(password));
         }
 
-
-        /* Number */
-
-        if (/[0-9]/.test(password)) {
-
-            numberRequirement.classList.add("valid");
-
-        } else {
-
-            numberRequirement.classList.remove("valid");
-
+        if (numberRequirement) {
+            numberRequirement.classList.toggle("valid", /[0-9]/.test(password));
         }
 
+        newPasswordError.textContent = "";
+        newPassword.classList.remove("error");
     });
 
-
-    /* ---------------------------------------------
-       SUBMIT FORM
-    --------------------------------------------- */
-
-    resetPasswordForm.addEventListener(
-        "submit",
-        function (event) {
-
-            event.preventDefault();
-
-
-            const newPasswordError =
-                document.getElementById(
-                    "newPasswordError"
-                );
-
-            const confirmNewPasswordError =
-                document.getElementById(
-                    "confirmNewPasswordError"
-                );
-
-
-            /* Clear errors */
-
-            newPasswordError.textContent = "";
-            confirmNewPasswordError.textContent = "";
-
-            newPassword.classList.remove("error");
-            confirmNewPassword.classList.remove("error");
-
-
-            /* -----------------------------------------
-               GET RESET EMAIL
-            ----------------------------------------- */
-
-            const resetEmail =
-                sessionStorage.getItem("resetEmail");
-
-
-            if (!resetEmail) {
-
-                alert(
-                    "Your password reset session has expired. Please request a new reset link."
-                );
-
-                window.location.href =
-                    "./forgot-password.html";
-
-                return;
-
-            }
-
-
-            /* -----------------------------------------
-               PASSWORD VALIDATION
-            ----------------------------------------- */
-
-            if (newPassword.value.length < 8) {
-
-                newPasswordError.textContent =
-                    "Password must be at least 8 characters.";
-
-                newPassword.classList.add("error");
-
-                return;
-
-            }
-
-
-            if (!/[A-Za-z]/.test(newPassword.value)) {
-
-                newPasswordError.textContent =
-                    "Password must contain at least one letter.";
-
-                newPassword.classList.add("error");
-
-                return;
-
-            }
-
-
-            if (!/[0-9]/.test(newPassword.value)) {
-
-                newPasswordError.textContent =
-                    "Password must contain at least one number.";
-
-                newPassword.classList.add("error");
-
-                return;
-
-            }
-
-
-            /* -----------------------------------------
-               CONFIRM PASSWORD
-            ----------------------------------------- */
-
-            if (
-                newPassword.value !==
-                confirmNewPassword.value
-            ) {
-
-                confirmNewPasswordError.textContent =
-                    "Passwords do not match.";
-
-                confirmNewPassword.classList.add("error");
-
-                return;
-
-            }
-
-
-            /* -----------------------------------------
-               GET SAVED USER
-            ----------------------------------------- */
-
-            const savedUser =
-                JSON.parse(
-                    localStorage.getItem("academyUser")
-                );
-
-
-            if (!savedUser) {
-
-                alert(
-                    "Account information could not be found."
-                );
-
-                window.location.href =
-                    "./forgot-password.html";
-
-                return;
-
-            }
-
-
-            /* -----------------------------------------
-               UPDATE PASSWORD
-            ----------------------------------------- */
-
-            savedUser.password =
-                newPassword.value;
-
-
-            localStorage.setItem(
-                "academyUser",
-                JSON.stringify(savedUser)
-            );
-
-
-            /* Remove reset session */
-
-            sessionStorage.removeItem(
-                "resetEmail"
-            );
-
-
-            /* Success */
-
-            alert(
-                "Your password has been reset successfully. You can now login."
-            );
-
-
-            /* Return to Reset-password */
-
-            window.location. href="./reset-password.html";
-
+    confirmNewPassword.addEventListener("input", function () {
+        confirmNewPasswordError.textContent = "";
+        confirmNewPassword.classList.remove("error");
+    });
+
+    function showMessage(message, type) {
+        if (!resetMessage) {
+            alert(message);
+            return;
         }
-    );
 
+        resetMessage.textContent = message;
+        resetMessage.className = `form-message ${type}`;
+        resetMessage.hidden = false;
+    }
+
+    // A valid reset link must contain both values.
+    if (!uid || !token) {
+        showMessage(
+            "This reset link is invalid or incomplete. Please request a new one.",
+            "error"
+        );
+
+        submitButton.disabled = true;
+    }
+
+    // Submit the new password to Django.
+    resetPasswordForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        newPasswordError.textContent = "";
+        confirmNewPasswordError.textContent = "";
+
+        newPassword.classList.remove("error");
+        confirmNewPassword.classList.remove("error");
+
+        if (resetMessage) {
+            resetMessage.hidden = true;
+        }
+
+        const password = newPassword.value;
+        const confirmation = confirmNewPassword.value;
+
+        if (password.length < 8) {
+            newPasswordError.textContent =
+                "Password must be at least 8 characters.";
+            newPassword.classList.add("error");
+            return;
+        }
+
+        if (!/[A-Za-z]/.test(password)) {
+            newPasswordError.textContent =
+                "Password must contain at least one letter.";
+            newPassword.classList.add("error");
+            return;
+        }
+
+        if (!/[0-9]/.test(password)) {
+            newPasswordError.textContent =
+                "Password must contain at least one number.";
+            newPassword.classList.add("error");
+            return;
+        }
+
+        if (password !== confirmation) {
+            confirmNewPasswordError.textContent =
+                "Passwords do not match.";
+            confirmNewPassword.classList.add("error");
+            return;
+        }
+
+        const originalButtonHTML = submitButton.innerHTML;
+
+        submitButton.disabled = true;
+        submitButton.textContent = "Resetting password...";
+
+        try {
+            const response = await fetch(
+                `http://127.0.0.1:8000/api/reset-password/${encodeURIComponent(uid)}/${encodeURIComponent(token)}/`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        new_password: password,
+                        confirm_password: confirmation
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showMessage(
+                    data.error || data.detail ||
+                    "Could not reset your password. Please request a new link.",
+                    "error"
+                );
+                return;
+            }
+
+            // Clear the form and display success.
+            resetPasswordForm.reset();
+
+            if (lengthRequirement) lengthRequirement.classList.remove("valid");
+            if (letterRequirement) letterRequirement.classList.remove("valid");
+            if (numberRequirement) numberRequirement.classList.remove("valid");
+
+            showMessage(
+                data.message ||
+                "Password reset successful! You can now log in.",
+                "success"
+            );
+
+            // Add a link back to login.
+            if (resetMessage) {
+                const loginLink = document.createElement("a");
+                loginLink.href = "./login.html";
+                loginLink.textContent = "Go to Login";
+                loginLink.style.display = "inline-block";
+                loginLink.style.marginTop = "12px";
+
+                resetMessage.appendChild(document.createElement("br"));
+                resetMessage.appendChild(loginLink);
+            }
+
+        } catch (error) {
+            showMessage(
+                "Unable to connect to the server. Please try again.",
+                "error"
+            );
+        } finally {
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonHTML;
+        }
+    });
 }

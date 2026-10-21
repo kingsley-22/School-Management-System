@@ -1,10 +1,13 @@
+
 /* =========================================================
    IFEXA ACADEMY
    LOGIN + SIGN UP
-   NO LOCALSTORAGE
+   DJANGO API AUTHENTICATION
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    const API_BASE_URL = "http://127.0.0.1:8000/api/";
 
     /* =====================================================
        HELPER FUNCTIONS
@@ -17,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (input) {
             input.classList.add("error");
+            input.setAttribute("aria-invalid", "true");
         }
     }
 
@@ -27,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (input) {
             input.classList.remove("error");
+            input.removeAttribute("aria-invalid");
         }
     }
 
@@ -34,13 +39,88 @@ document.addEventListener("DOMContentLoaded", () => {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
+    function validatePassword(password) {
+        const commonPasswords = [
+            "password",
+            "password1",
+            "password123",
+            "12345678",
+            "123456789",
+            "1234567890",
+            "qwerty",
+            "qwerty123",
+            "admin",
+            "admin123",
+            "letmein",
+            "welcome",
+            "welcome123",
+            "iloveyou",
+            "abc123",
+            "11111111",
+            "00000000"
+        ];
+
+        if (password.length < 8) {
+            return "Password must contain at least 8 characters.";
+        }
+
+        if (/^\d+$/.test(password)) {
+            return "Your password can't be entirely numeric.";
+        }
+
+        if (commonPasswords.includes(password.toLowerCase())) {
+            return "Your password can't be commonly used.";
+        }
+
+        return "";
+    }
+
+    /* Display messages returned by Django, including field errors. */
+    function formatBackendErrors(errors) {
+        if (typeof errors === "string") {
+            return errors;
+        }
+
+        if (Array.isArray(errors)) {
+            return errors.map(formatBackendErrors).join(" ");
+        }
+
+        if (errors && typeof errors === "object") {
+            return Object.entries(errors)
+                .map(([field, messages]) => {
+                    const fieldName = field
+                        .replace(/_/g, " ")
+                        .replace(/\b\w/g, letter => letter.toUpperCase());
+
+                    return `${fieldName}: ${formatBackendErrors(messages)}`;
+                })
+                .join(" ");
+        }
+
+        return "Something went wrong. Please try again.";
+    }
+
+    async function readResponse(response) {
+        const text = await response.text();
+
+        if (!text) {
+            return {};
+        }
+
+        try {
+            return JSON.parse(text);
+        } catch {
+            return {
+                error: "The server returned an unexpected response."
+            };
+        }
+    }
 
     /* =====================================================
        PASSWORD SHOW / HIDE
     ===================================================== */
 
     function setupPasswordToggle(toggleId, inputId) {
-
         const toggle = document.getElementById(toggleId);
         const input = document.getElementById(inputId);
 
@@ -48,513 +128,409 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        toggle.addEventListener("click", () => {
+        toggle.addEventListener("click", event => {
+            event.preventDefault();
 
             if (input.type === "password") {
-
                 input.type = "text";
-
                 toggle.classList.remove("fa-eye");
                 toggle.classList.add("fa-eye-slash");
-
             } else {
-
                 input.type = "password";
-
                 toggle.classList.remove("fa-eye-slash");
                 toggle.classList.add("fa-eye");
             }
         });
     }
 
-
-    /* =====================================================
-       LOGIN PASSWORD TOGGLE
-    ===================================================== */
-
-    setupPasswordToggle(
-        "passwordToggle",
-        "password"
-    );
-
-
-    /* =====================================================
-       SIGNUP PASSWORD TOGGLE
-    ===================================================== */
-
-    setupPasswordToggle(
-        "signupPasswordToggle",
-        "password"
-    );
-
+    setupPasswordToggle("passwordToggle", "password");
+    setupPasswordToggle("signupPasswordToggle", "password");
 
     /* =====================================================
        SIGN UP FORM
     ===================================================== */
 
-    const signupForm =
-        document.getElementById("signupForm");
+    const signupForm = document.getElementById("signupForm");
 
     if (signupForm) {
+        const firstName = document.getElementById("first-name");
+        const lastName = document.getElementById("last-name");
+        const email = document.getElementById("email");
+        const password = document.getElementById("password");
+        const confirmPassword = document.getElementById("confirm-password");
+        const terms = document.getElementById("terms");
 
-        const firstName =
-            document.getElementById("first-name");
+        const firstNameError = document.getElementById("firstNameError");
+        const lastNameError = document.getElementById("lastNameError");
+        const emailError = document.getElementById("signupEmailError");
+        const passwordError = document.getElementById("signupPasswordError");
+        const confirmPasswordError = document.getElementById("confirmPasswordError");
+        const termsError = document.getElementById("termsError");
 
-        const lastName =
-            document.getElementById("last-name");
+        const signupMessage = document.getElementById("signupMessage");
+        const submitButton = signupForm.querySelector('[type="submit"]');
 
-        const email =
-            document.getElementById("email");
-
-        const password =
-            document.getElementById("password");
-
-        const confirmPassword =
-            document.getElementById("confirm-password");
-
-        const terms =
-            document.getElementById("terms");
-
-
-        /* Error messages */
-
-        const firstNameError =
-            document.getElementById("firstNameError");
-
-        const lastNameError =
-            document.getElementById("lastNameError");
-
-        const emailError =
-            document.getElementById("signupEmailError");
-
-        const passwordError =
-            document.getElementById("signupPasswordError");
-
-        const confirmPasswordError =
-            document.getElementById("confirmPasswordError");
-
-        const termsError =
-            document.getElementById("termsError");
-
-
-        /* =================================================
-           PASSWORD VALIDATION
-        ================================================= */
-
-        function validatePassword(passwordValue) {
-
-            const commonPasswords = [
-                "password",
-                "password1",
-                "password123",
-                "12345678",
-                "123456789",
-                "1234567890",
-                "qwerty",
-                "qwerty123",
-                "admin",
-                "admin123",
-                "letmein",
-                "welcome",
-                "welcome123",
-                "iloveyou",
-                "abc123",
-                "11111111",
-                "00000000"
-            ];
-
-
-            /* At least 8 characters */
-
-            if (passwordValue.length < 8) {
-                return "Password must contain at least 8 characters.";
+        function showSignupMessage(message, type = "error") {
+            if (!signupMessage) {
+                console[type === "error" ? "error" : "log"](message);
+                return;
             }
 
-
-            /* Cannot be entirely numeric */
-
-            if (/^\d+$/.test(passwordValue)) {
-                return "Your password can't be entirely numeric.";
-            }
-
-
-            /* Cannot be commonly used */
-
-            if (
-                commonPasswords.includes(
-                    passwordValue.toLowerCase()
-                )
-            ) {
-                return "Your password can't be commonly used.";
-            }
-
-
-            return "";
+            signupMessage.textContent = message;
+            signupMessage.className = `form-message ${type}`;
+            signupMessage.style.display = "block";
         }
 
+        function clearSignupMessage() {
+            if (signupMessage) {
+                signupMessage.textContent = "";
+                signupMessage.className = "form-message";
+                signupMessage.style.display = "none";
+            }
+        }
 
-        /* =================================================
-           SIGN UP SUBMIT
-        ================================================= */
-
-        signupForm.addEventListener("submit", (event) => {
-
+        signupForm.addEventListener("submit", async event => {
             event.preventDefault();
+            
+            clearSignupMessage();
 
-            /* Clear previous errors */
+            if (!firstName || !lastName || !email ||
+                !password || !confirmPassword) {
+                showSignupMessage(
+                    "A required signup field could not be found. Please check the form HTML."
+                );
+                return;
+            }
 
             clearError(firstName, firstNameError);
             clearError(lastName, lastNameError);
             clearError(email, emailError);
             clearError(password, passwordError);
-            clearError(
-                confirmPassword,
-                confirmPasswordError
-            );
+            clearError(confirmPassword, confirmPasswordError);
 
             if (termsError) {
                 termsError.textContent = "";
             }
 
-
             let isValid = true;
 
-
-            /* =============================================
-               FIRST NAME
-            ============================================= */
-
-            const firstNameValue =
-                firstName.value.trim();
-
-            if (firstNameValue === "") {
-
-                showError(
-                    firstName,
-                    firstNameError,
-                    "Please enter your first name."
-                );
-
+            if (!firstName.value.trim()) {
+                showError(firstName, firstNameError, "Please enter your first name.");
                 isValid = false;
             }
 
-
-            /* =============================================
-               LAST NAME
-            ============================================= */
-
-            const lastNameValue =
-                lastName.value.trim();
-
-            if (lastNameValue === "") {
-
-                showError(
-                    lastName,
-                    lastNameError,
-                    "Please enter your last name."
-                );
-
+            if (!lastName.value.trim()) {
+                showError(lastName, lastNameError, "Please enter your last name.");
                 isValid = false;
             }
 
+            const emailValue = email.value.trim().toLowerCase();
+            const passwordValue = password.value;
+            const confirmPasswordValue = confirmPassword.value;
 
-            /* =============================================
-               EMAIL
-            ============================================= */
-
-            const emailValue =
-                email.value.trim().toLowerCase();
-
-            if (emailValue === "") {
-
-                showError(
-                    email,
-                    emailError,
-                    "Please enter your email address."
-                );
-
+            if (!emailValue) {
+                showError(email, emailError, "Please enter your email address.");
                 isValid = false;
-
             } else if (!isValidEmail(emailValue)) {
-
-                showError(
-                    email,
-                    emailError,
-                    "Please enter a valid email address."
-                );
-
+                showError(email, emailError, "Please enter a valid email address.");
                 isValid = false;
             }
 
+            const passwordMessage = validatePassword(passwordValue);
 
-            /* =============================================
-               PASSWORD
-            ============================================= */
-
-            const passwordValue =
-                password.value;
-
-            const passwordMessage =
-                validatePassword(passwordValue);
-
-            if (passwordMessage !== "") {
-
-                showError(
-                    password,
-                    passwordError,
-                    passwordMessage
-                );
-
+            if (passwordMessage) {
+                showError(password, passwordError, passwordMessage);
                 isValid = false;
             }
 
-
-            /* =============================================
-               CONFIRM PASSWORD
-            ============================================= */
-
-            const confirmPasswordValue =
-                confirmPassword.value;
-
-            if (confirmPasswordValue === "") {
-
-                showError(
-                    confirmPassword,
-                    confirmPasswordError,
-                    "Please confirm your password."
-                );
-
-                isValid = false;
-
-            } else if (
-                passwordValue !== confirmPasswordValue
-            ) {
-
+            if (passwordValue !== confirmPasswordValue) {
                 showError(
                     confirmPassword,
                     confirmPasswordError,
                     "Passwords do not match."
                 );
-
                 isValid = false;
             }
 
-
-            /* =============================================
-               TERMS
-            ============================================= */
-
-            if (!terms.checked) {
-
+            if (terms && !terms.checked) {
                 if (termsError) {
-                    termsError.textContent =
-                        "You must agree to the Terms of Service and Privacy Policy.";
+                    termsError.textContent = "Please accept the terms and conditions.";
                 }
-
                 isValid = false;
             }
-
-
-            /* =============================================
-               STOP IF INVALID
-            ============================================= */
 
             if (!isValid) {
+                showSignupMessage("Please correct the highlighted fields.");
                 return;
             }
 
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.dataset.originalText =
+                    submitButton.textContent;
+                submitButton.textContent = "Creating account...";
+            }
 
-            /* =============================================
-               TEMPORARY SUCCESS
+            try {
+                const response = await fetch(`${API_BASE_URL}register/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        first_name: firstName.value.trim(),
+                        last_name: lastName.value.trim(),
+                        email: emailValue,
+                        password: passwordValue,
+                        confirm_password: confirmPasswordValue
+                    })
+                });
+
+                const data = await readResponse(response);
+
+                if (!response.ok) {
+                    const errorMessage = formatBackendErrors(data);
+                    showSignupMessage(errorMessage, "error");
+
+                    /* Put Django's field errors beside their inputs too. */
+                    if (data.email) {
+                        showError(
+                            email,
+                            emailError,
+                            formatBackendErrors(data.email)
+                        );
+                    }
+
+                    if (data.password) {
+                        showError(
+                            password,
+                            passwordError,
+                            formatBackendErrors(data.password)
+                        );
+                    }
+
+                    if (data.first_name) {
+                        showError(
+                            firstName,
+                            firstNameError,
+                            formatBackendErrors(data.first_name)
+                        );
+                    }
+
+                    if (data.last_name) {
+                        showError(
+                            lastName,
+                            lastNameError,
+                            formatBackendErrors(data.last_name)
+                        );
+                    }
+
+                    if (data.confirm_password) {
+                        showError(
+                            confirmPassword,
+                            confirmPasswordError,
+                            formatBackendErrors(data.confirm_password)
+                        );
+                    }
+
+                    return;
+                }
+                 
+                signupForm.reset();
+
+                showSignupMessage(
+                    data.message || "Registration successful. Please check your email.",
+                    "success"
+                );
+
+                
+
                
-               NO LOCALSTORAGE
-               NO PASSWORD STORAGE
-            ============================================= */
 
-            alert(
-                "Your information has been validated successfully."
-            );
+            } catch (error) {
+                console.error("Signup request failed:", error);
 
-            /*
-             * Django will be connected here later.
-             *
-             * Example:
-             *
-             * fetch("/accounts/register/", {
-             *     method: "POST",
-             *     body: new FormData(signupForm)
-             * });
-             */
+                showSignupMessage(
+                    "Unable to connect to Django. Make sure the backend is running and CORS is configured correctly.",
+                    "error"
+                );
 
-        });
-
-
-        /* =================================================
-           CLEAR ERRORS WHILE TYPING
-        ================================================= */
-
-        firstName.addEventListener("input", () => {
-            clearError(firstName, firstNameError);
-        });
-
-        lastName.addEventListener("input", () => {
-            clearError(lastName, lastNameError);
-        });
-
-        email.addEventListener("input", () => {
-            clearError(email, emailError);
-        });
-
-        password.addEventListener("input", () => {
-            clearError(password, passwordError);
-        });
-
-        confirmPassword.addEventListener("input", () => {
-            clearError(
-                confirmPassword,
-                confirmPasswordError
-            );
-        });
-
-        terms.addEventListener("change", () => {
-
-            if (termsError) {
-                termsError.textContent = "";
+            } finally {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent =
+                        submitButton.dataset.originalText || "Create Account";
+                }
             }
         });
-    }
 
+        /* Clear individual errors as the user types. */
+        if (firstName) {
+            firstName.addEventListener("input", () =>
+                clearError(firstName, firstNameError)
+            );
+        }
+
+        if (lastName) {
+            lastName.addEventListener("input", () =>
+                clearError(lastName, lastNameError)
+            );
+        }
+
+        if (email) {
+            email.addEventListener("input", () =>
+                clearError(email, emailError)
+            );
+        }
+
+        if (password) {
+            password.addEventListener("input", () =>
+                clearError(password, passwordError)
+            );
+        }
+
+        if (confirmPassword) {
+            confirmPassword.addEventListener("input", () =>
+                clearError(confirmPassword, confirmPasswordError)
+            );
+        }
+
+        if (terms) {
+            terms.addEventListener("change", () => {
+                if (termsError) {
+                    termsError.textContent = "";
+                }
+            });
+        }
+    }
 
     /* =====================================================
        LOGIN FORM
     ===================================================== */
 
-    const loginForm =
-        document.getElementById("loginForm");
+    const loginForm = document.getElementById("loginForm");
 
     if (loginForm) {
+        const email = document.getElementById("email");
+        const password = document.getElementById("password");
+        const emailError = document.getElementById("emailError");
+        const passwordError = document.getElementById("passwordError");
 
-        const email =
-            document.getElementById("email");
-
-        const password =
-            document.getElementById("password");
-
-        const emailError =
-            document.getElementById("emailError");
-
-        const passwordError =
-            document.getElementById("passwordError");
-
-        const rememberMe =
-            loginForm.querySelector(
-                'input[name="remember"]'
-            );
-
-
-        /* =================================================
-           LOGIN SUBMIT
-        ================================================= */
-
-        loginForm.addEventListener("submit", (event) => {
-
+        loginForm.addEventListener("submit", async event => {
             event.preventDefault();
 
             clearError(email, emailError);
             clearError(password, passwordError);
 
+            if (!email || !password) {
+                console.error("Login email or password field is missing.");
+                return;
+            }
+
             let isValid = true;
 
+            const emailValue = email.value.trim().toLowerCase();
+            const passwordValue = password.value;
 
-            const emailValue =
-                email.value.trim().toLowerCase();
-
-            const passwordValue =
-                password.value;
-
-
-            /* =============================================
-               EMAIL
-            ============================================= */
-
-            if (emailValue === "") {
-
-                showError(
-                    email,
-                    emailError,
-                    "Please enter your email address."
-                );
-
+            if (!emailValue) {
+                showError(email, emailError, "Please enter your email address.");
                 isValid = false;
-
             } else if (!isValidEmail(emailValue)) {
-
-                showError(
-                    email,
-                    emailError,
-                    "Please enter a valid email address."
-                );
-
+                showError(email, emailError, "Please enter a valid email address.");
                 isValid = false;
             }
 
-
-            /* =============================================
-               PASSWORD
-            ============================================= */
-
-            if (passwordValue === "") {
-
-                showError(
-                    password,
-                    passwordError,
-                    "Please enter your password."
-                );
-
+            if (!passwordValue) {
+                showError(password, passwordError, "Please enter your password.");
                 isValid = false;
             }
-
 
             if (!isValid) {
                 return;
             }
 
+            const submitButton = loginForm.querySelector('[type="submit"]');
 
-            /* =============================================
-               NO LOCALSTORAGE AUTHENTICATION
-            ============================================= */
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
 
-            /*
-             * Django authentication will be connected here.
-             *
-             * Example:
-             *
-             * fetch("/accounts/login/", {
-             *     method: "POST",
-             *     body: new FormData(loginForm)
-             * });
-             */
+            try {
+                const response = await fetch(`${API_BASE_URL}login/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email: emailValue,
+                        password: passwordValue
+                    })
+                });
 
+                const data = await readResponse(response);
 
-            alert(
-                "Login information is valid. Django authentication will be connected here."
+                if (!response.ok) {
+                    const message = formatBackendErrors(data);
+
+                    showError(
+                        password,
+                        passwordError,
+                        message || "Login failed. Please check your credentials."
+                    );
+                    return;
+                }
+
+                sessionStorage.setItem("accessToken", data.access);
+                sessionStorage.setItem("refreshToken", data.refresh);
+                sessionStorage.setItem("user", JSON.stringify(data.user));
+
+                /* Redirect based on the user's role. */
+                if (data.user.role === "ADMIN") {
+                    window.location.href = "../admin/admin.html";
+
+                } else if (data.user.role === "INSTRUCTOR") {
+                    window.location.href = "../instructor/instructor-dashboard.html";
+
+                } else if (data.user.role === "STUDENT") {
+                    window.location.href = "../student/student-dashboard.html";
+
+                } else if (data.user.role === "SUPER_ADMIN") {
+                    window.location.href = "../admin/admin.html";
+
+                } else {
+                    window.location.href = "../dashboard.html";
+                }
+
+            } catch (error) {
+                console.error("Login request failed:", error);
+
+                showError(
+                    password,
+                    passwordError,
+                    "Unable to connect to the server. Please make sure Django is running."
+                );
+
+            } finally {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                }
+            }
+        });
+
+        /* Clear login errors while typing. */
+        if (email) {
+            email.addEventListener("input", () =>
+                clearError(email, emailError)
             );
+        }
 
-        });
-
-
-        /* =================================================
-           CLEAR ERRORS WHILE TYPING
-        ================================================= */
-
-        email.addEventListener("input", () => {
-            clearError(email, emailError);
-        });
-
-        password.addEventListener("input", () => {
-            clearError(password, passwordError);
-        });
-
+        if (password) {
+            password.addEventListener("input", () =>
+                clearError(password, passwordError)
+            );
+        }
     }
 
 });
