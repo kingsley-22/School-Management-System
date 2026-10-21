@@ -1,0 +1,648 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | IFEXA Academy</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Dashboard CSS -->
+    <link rel="stylesheet" href="../../css/dashboard.css">
+</head>
+<body>
+
+
+<!-- DASHBOARD LAYOUT -->
+<div class="dashboard-layout">
+
+    <!-- DESKTOP SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <a href="../../pages/home/home.html">
+                <img src="../../images/Top_Left-removebg-preview.png"
+                     alt="IFEXA Academy Logo">
+            </a>
+        </div>
+
+        <div class="logo-badge">
+            <small>Learn. Grow. Succeed.</small>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+
+            <a href="#dashboard" class="nav-link active">
+                <i class="fa-solid fa-house"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="#courses" class="nav-link">
+                <i class="fa-solid fa-book-open"></i>
+                <span>My Courses</span>
+            </a>
+
+            <a href="#assignments" class="nav-link">
+                <i class="fa-solid fa-clipboard-list"></i>
+                <span>Assignments</span>
+                <b class="notification">3</b>
+            </a>
+
+            <a href="#grades" class="nav-link">
+                <i class="fa-solid fa-chart-column"></i>
+                <span>Grades</span>
+            </a>
+
+            <a href="#payments" class="nav-link">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Payments</span>
+            </a>
+
+            <a href="#messages" class="nav-link">
+                <i class="fa-solid fa-comments"></i>
+                <span>Messages</span>
+            </a>
+
+            <a href="#announcements" class="nav-link">
+                <i class="fa-solid fa-bell"></i>
+                <span>Announcements</span>
+            </a>
+
+            <a href="#profile" class="nav-link">
+                <i class="fa-solid fa-user"></i>
+                <span>Profile</span>
+            </a>
+
+            <a href="#logout" class="nav-link logout-link">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+
+        </nav>
+
+        <!-- SIDEBAR PROMO -->
+        <div class="sidebar-promo">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <h3>Small steps,<br>create big dreams.</h3>
+            <p>Keep learning, keep growing.</p>
+        </div>
+
+    </aside>
+
+
+<!-- MAIN CONTENT  -->
+
+<main class="main-content">
+
+<!-- TOPBAR -->
+<header class="topbar">
+
+    <!-- MOBILE HAMBURGER BUTTON -->
+    <button
+        type="button"
+        class="hamburger"
+        id="hamburger"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+        aria-controls="mobileMenu">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    
+    <!-- MOBILE NAVIGATION MENU -->
+    <div class="mobileMenu" id="mobileMenu" hidden>
+
+        <!-- MOBILE LOGO -->
+        <div class="mobile-menu-header">
+            <a href="../../pages/home/home.html"
+               class="mobile-menu-logo"
+               aria-label="IFEXA Academy Home">
+
+                <img
+                    src="../../images/Top_Left-removebg-preview.png"
+                    alt="IFEXA Academy Logo">
+            </a>
+        </div>
+
+        <!-- MOBILE LINKS -->
+        <nav class="mobile-links" aria-label="Mobile navigation">
+
+            <a href="#dashboard" class="nav-link active">
+                <i class="fa-solid fa-house"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="#courses" class="nav-link">
+                <i class="fa-solid fa-book-open"></i>
+                <span>My Courses</span>
+            </a>
+
+            <a href="#assignments" class="nav-link">
+                <i class="fa-solid fa-clipboard-list"></i>
+                <span>Assignments</span>
+                <b class="notification">3</b>
+            </a>
+
+            <a href="#grades" class="nav-link">
+                <i class="fa-solid fa-chart-column"></i>
+                <span>Grades</span>
+            </a>
+
+            <a href="#payments" class="nav-link">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Payments</span>
+            </a>
+
+            <a href="#messages" class="nav-link">
+                <i class="fa-solid fa-comments"></i>
+                <span>Messages</span>
+            </a>
+
+            <a href="#announcements" class="nav-link">
+                <i class="fa-solid fa-bell"></i>
+                <span>Announcements</span>
+            </a>
+
+            <a href="#profile" class="nav-link">
+                <i class="fa-solid fa-user"></i>
+                <span>Profile</span>
+            </a>
+
+            <a href="#logout" class="nav-link logout-link">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+
+        </nav>
+
+    </div>
+
+
+    <!-- SEARCH BAR -->
+<label class="search-box"><i class="fa-solid fa-magnifying-glass"></i>
+<input type="search" id="courseSearch" placeholder="Search for courses, assignments, or anything..." aria-label="Search courses and assignments"></label>
+
+            <!-- USER PROFILE -->
+            <div class="topbar-user">
+
+                <!-- NOTIFICATIONS -->
+                <div class="notification-container">
+
+                    <button
+                        type="button"
+                        class="notification-button"
+                        id="notificationBell"
+                        aria-label="Notifications"
+                        aria-expanded="false"
+                        aria-controls="notificationPanel">
+
+                        <i class="fa-regular fa-bell"></i>
+                        <span>2</span>
+                    </button>
+
+                    <!-- Notification panel can be created by JavaScript -->
+
+                </div>
+
+                <img
+                    src="../../image/female.jpg"
+                    alt="Student profile"
+                    class="topbar-avatar">
+
+                <div class="topbar-user-info">
+                    <strong>Ikechukwu Stephen</strong>
+                    <small>Student</small>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================
+             DASHBOARD GRID
+        ====================================== -->
+        <div class="dashboard-grid">
+
+            <!-- CENTER COLUMN -->
+            <section class="dashboard-center">
+
+                <!-- WELCOME BANNER -->
+                <section class="welcome-banner" id="dashboard">
+
+                    <p>Good morning,</p>
+
+                    <h1>Ikechukwu Stephen 👋</h1>
+
+                    <p>
+                        Keep going! You're doing great on your
+                        learning journey.
+                    </p>
+
+                    <a href="#courses" class="primary-button">
+                        View My Courses
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </section>
+
+
+                <!-- STATISTICS -->
+                <section class="stats-grid">
+
+                    <article class="stat-card blue-card">
+                        <i class="fa-solid fa-graduation-cap stat-icon"></i>
+                        <p>Enrolled Courses</p>
+                        <h2>5</h2>
+                        <a href="#courses">View all →</a>
+                    </article>
+
+                    <article class="stat-card green-card">
+                        <i class="fa-solid fa-file-lines stat-icon"></i>
+                        <p>Assignments Due</p>
+                        <h2>3</h2>
+                        <a href="#assignments">View all →</a>
+                    </article>
+
+                    <article class="stat-card purple-card">
+                        <i class="fa-solid fa-trophy stat-icon"></i>
+                        <p>Overall Progress</p>
+                        <h2>68%</h2>
+
+                        <div class="progress-track">
+                            <span style="width: 68%"></span>
+                        </div>
+                    </article>
+
+                    <article class="stat-card orange-card">
+                        <i class="fa-solid fa-wallet stat-icon"></i>
+                        <p>Outstanding Balance</p>
+                        <h2>₦45,000</h2>
+                        <a href="#payments">View details →</a>
+                    </article>
+
+                </section>
+
+
+                <!-- MY COURSES -->
+                <section class="panel courses-panel" id="courses">
+
+                    <div class="panel-heading">
+                        <h2>My Courses</h2>
+                        <a href="#courses">View All Courses →</a>
+                    </div>
+
+                    <div class="course-grid">
+
+                        <article class="course-card">
+                            <div class="course-art html-art">
+                                HTML · CSS · JS
+                            </div>
+
+                            <h3>HTML, CSS &amp; JavaScript</h3>
+                            <p>Web Development</p>
+
+                            <div class="course-progress">
+                                <span><i style="width: 80%"></i></span>
+                                <small>80%</small>
+                            </div>
+
+                            <a href="#" class="course-button">
+                                Continue Learning →
+                            </a>
+                        </article>
+
+                        <article class="course-card">
+                            <div class="course-art react-art">React</div>
+
+                            <h3>React</h3>
+                            <p>Frontend Development</p>
+
+                            <div class="course-progress">
+                                <span><i style="width: 65%"></i></span>
+                                <small>65%</small>
+                            </div>
+
+                            <a href="#" class="course-button">
+                                Continue Learning →
+                            </a>
+                        </article>
+
+                        <article class="course-card">
+                            <div class="course-art node-art">Node.js</div>
+
+                            <h3>Node.js</h3>
+                            <p>Backend Development</p>
+
+                            <div class="course-progress">
+                                <span><i style="width: 50%"></i></span>
+                                <small>50%</small>
+                            </div>
+
+                            <a href="#" class="course-button">
+                                Continue Learning →
+                            </a>
+                        </article>
+
+                        <article class="course-card">
+                            <div class="course-art python-art">Python</div>
+
+                            <h3>Python</h3>
+                            <p>Programming</p>
+
+                            <div class="course-progress">
+                                <span><i style="width: 90%"></i></span>
+                                <small>90%</small>
+                            </div>
+
+                            <a href="#" class="course-button">
+                                Continue Learning →
+                            </a>
+                        </article>
+
+                        <article class="course-card">
+                            <div class="course-art django-art">Django</div>
+
+                            <h3>Django</h3>
+                            <p>Full Stack Development</p>
+
+                            <div class="course-progress">
+                                <span><i style="width: 30%"></i></span>
+                                <small>30%</small>
+                            </div>
+
+                            <a href="#" class="course-button">
+                                Continue Learning →
+                            </a>
+                        </article>
+
+                    </div>
+                </section>
+
+
+                <!-- LOWER WIDGETS -->
+                <div class="lower-grid">
+
+                    <!-- PROGRESS OVERVIEW -->
+                    <section class="panel" id="grades">
+
+                        <div class="panel-heading">
+                            <h2>Progress Overview</h2>
+                            <a href="#grades">View Details →</a>
+                        </div>
+
+                        <div class="progress-summary">
+
+                            <div class="progress-circle">
+                                <div>
+                                    <strong>68%</strong>
+                                    <small>Overall Progress</small>
+                                </div>
+                            </div>
+
+                            <div class="skill-list">
+                                <p>HTML, CSS &amp; JS <b>80%</b></p>
+                                <p>React <b>65%</b></p>
+                                <p>Node.js <b>50%</b></p>
+                                <p>Python <b>90%</b></p>
+                                <p>Django <b>30%</b></p>
+                            </div>
+
+                        </div>
+                    </section>
+
+
+                    <!-- RECENT ASSIGNMENTS -->
+                    <section class="panel" id="assignments">
+
+                        <div class="panel-heading">
+                            <h2>Recent Assignments</h2>
+                            <a href="#assignments">View All →</a>
+                        </div>
+
+                        <div class="assignment-item">
+                            <i class="fa-regular fa-file-lines"></i>
+
+                            <div>
+                                <strong>Build a Portfolio Website</strong>
+                                <small>Web Development · Due Oct 10</small>
+                            </div>
+
+                            <span class="status pending">Pending</span>
+                        </div>
+
+                        <div class="assignment-item">
+                            <i class="fa-regular fa-file-lines"></i>
+
+                            <div>
+                                <strong>React State Management</strong>
+                                <small>Frontend Development</small>
+                            </div>
+
+                            <span class="status pending">Pending</span>
+                        </div>
+
+                        <div class="assignment-item">
+                            <i class="fa-regular fa-file-lines"></i>
+
+                            <div>
+                                <strong>Python Calculator</strong>
+                                <small>Programming</small>
+                            </div>
+
+                            <span class="status submitted">Submitted</span>
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <!-- PAYMENT SUMMARY -->
+                <section class="panel" id="payments">
+
+                    <div class="panel-heading">
+                        <h2>Payment Summary</h2>
+                        <a href="#payments">View History →</a>
+                    </div>
+
+                    <div class="payment-summary">
+
+                        <div>
+                            <small>Current Balance</small>
+                            <h2>₦45,000</h2>
+                        </div>
+
+                        <a href="#" class="primary-button">
+                            Make Payment
+                        </a>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+
+            <!-- =====================================
+                 RIGHT COLUMN
+            ====================================== -->
+            <aside class="dashboard-right">
+
+                <!-- STUDENT PROFILE -->
+                <section class="panel profile-card" id="profile">
+
+                    <img
+                        src="../../image/female.jpg"
+                        alt="Ikechukwu Stephen"
+                        class="profile-avatar">
+
+                    <h2>Ikechukwu Stephen</h2>
+                    <p>Student</p>
+
+                    <span class="active-status">● Active</span>
+
+                    <div class="profile-details">
+
+                        <p>
+                            <span>Student ID</span>
+                            <strong>STU2025001</strong>
+                        </p>
+
+                        <p>
+                            <span>Email</span>
+                            <strong>stephen@gmail.com</strong>
+                        </p>
+
+                        <p>
+                            <span>Course</span>
+                            <strong>Computer Science</strong>
+                        </p>
+
+                        <p>
+                            <span>Joined</span>
+                            <strong>Aug 2025</strong>
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- QUICK ACTIONS -->
+                <section class="panel" id="messages">
+
+                    <div class="panel-heading">
+                        <h2>Quick Actions</h2>
+                    </div>
+
+                    <div class="quick-actions">
+
+                        <a href="#courses">
+                            <i class="fa-solid fa-play"></i>
+                            <span>Continue Learning</span>
+                        </a>
+
+                        <a href="#assignments">
+                            <i class="fa-solid fa-file-lines"></i>
+                            <span>Submit Assignment</span>
+                        </a>
+
+                        <a href="#payments">
+                            <i class="fa-solid fa-wallet"></i>
+                            <span>Make Payment</span>
+                        </a>
+
+                        <a href="#grades">
+                            <i class="fa-solid fa-chart-column"></i>
+                            <span>View Grades</span>
+                        </a>
+
+                        <a href="#messages">
+                            <i class="fa-solid fa-message"></i>
+                            <span>Send Message</span>
+                        </a>
+
+                        <a href="#schedule">
+                            <i class="fa-solid fa-calendar-days"></i>
+                            <span>View Calendar</span>
+                        </a>
+
+                    </div>
+
+                </section>
+
+
+                <!-- UPCOMING DEADLINES -->
+                <section class="panel" id="deadlines">
+
+                    <div class="panel-heading">
+                        <h2>Upcoming Deadlines</h2>
+                        <a href="#deadlines">View All →</a>
+                    </div>
+
+                    <div class="deadline-item">
+                        <span class="deadline-dot green-dot"></span>
+                        <p>Web Development Project</p>
+                        <small>Oct 10</small>
+                    </div>
+
+                    <div class="deadline-item">
+                        <span class="deadline-dot teal-dot"></span>
+                        <p>React Project Submission</p>
+                        <small>Oct 15</small>
+                    </div>
+
+                    <div class="deadline-item">
+                        <span class="deadline-dot orange-dot"></span>
+                        <p>Python Assignment</p>
+                        <small>Oct 18</small>
+                    </div>
+
+                    <div class="deadline-item">
+                        <span class="deadline-dot red-dot"></span>
+                        <p>Database Project</p>
+                        <small>Oct 22</small>
+                    </div>
+
+                </section>
+
+
+                <!-- ANNOUNCEMENTS -->
+                <section class="panel" id="announcements">
+
+                    <div class="panel-heading">
+                        <h2>Latest Announcement</h2>
+                    </div>
+
+                    <h3>End of Semester Exams</h3>
+
+                    <p class="announcement-text">
+                        Final exams will hold from Nov 10 – Nov 20.
+                        Check your timetable for details.
+                    </p>
+
+                    <small>2 hours ago</small>
+
+                </section>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+
+
+
+</div>
+
+<!-- DASHBOARD JAVASCRIPT -->
+<script src="../../js/dashboard.js" defer></script>
+
+</body>
+</html>
