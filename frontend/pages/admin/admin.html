@@ -1,237 +1,614 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#102347">
+    <title>Ifexa Academy | School Management Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="admin.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css">
-    <title>Admin Panel</title>
-</head>
-<body>
+    </head>
 
-    <!-- NAVBAR -->
-     
-    <aside class="Sidebar">
-        <button class="Hamburger" onclick="HamButton()">
-            <i class="fa fa-bars"></i>
-        </button>
-        <h1 class="Admin_Panel">Admin Panel</h1>
-        <nav>
-            <a href="#" class="Dash"><i class="fa fa-home" aria-hidden="true"></i> Dashboard</a>
-            <a href="#"><i class="fa fa-users" aria-hidden="true"></i> Students</a>
-            <a href="#"><i class="fa fa-chalkboard-teacher" aria-hidden="true"></i> Instructor</a>
-            <a href="admin.html"><i class="fa fa-user" aria-hidden="true"></i> Admin</a>
-            <a href="Course.html"><i class="fa fa-book" aria-hidden="true"></i> Courses</a>
-            <a href="announcement.html"><i class="fa fa-bell" aria-hidden="true"></i> Announcement</a>
-        </nav>
+    <body>
+    <div class="app-shell">
 
-        <div class="Sidebar_down">
-        <a href="logout.html" onclick="logout()">
-    <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
-        </a>
-        </div>
+   <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <aside class="Sidebar" id="Sidebar">
+
+    <a class="brand" href="#">
+    <span class="brand-mark"><i class="fa-solid fa-graduation-cap"></i></span>
+    <span>
+    <strong>Ifexa Academy</strong>
+    <small>School Management</small>
+    </span>
+    </a>
+
+    <p class="nav-label">WORKSPACE</p>
+
+    <nav class="side-nav">
+
+    <a href="#dashboard" class="active">
+    <i class="fa-solid fa-house"></i>
+    <span>Dashboard</span>
+    </a>
+
+    <a href="#studentManagement">
+    <i class="fa-solid fa-user-graduate"></i>
+    <span>Students</span>
+    </a>
+
+    <a href="#instructorManagement">
+    <i class="fa-solid fa-chalkboard-user"></i>
+    <span>Instructors</span>
+    </a>
+
+    <a href="admin.html">
+    <i class="fa-solid fa-user-shield"></i>
+    <span>Admin profile</span>
+    </a>
+
+    <a href="Course.html">
+    <i class="fa-solid fa-book-open"></i>
+    <span>Courses</span>
+    </a>
+
+    <a href="Announcement.html">
+    <i class="fa-regular fa-bell"></i>
+    <span>Announcements</span>
+    </a>
+
+    </nav>
+
+    <div class="sidebar-help">
+    <span class="help-icon"><i class="fa-regular fa-circle-question"></i></span>
+    <strong>Need help?</strong>
+    <p>Manage your school workspace with ease.</p>
+    <a href="mailto:ifexatechnologies@gmail.com">
+    Contact support <i class="fa-solid fa-arrow-up-right-from-square"></i>
+    </a>
+    </div>
+
+    <div class="Sidebar_down">
+    <a href="#" onclick="logout(event)">
+    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+    <span>Log out</span>
+    </a>
+    </div>
+
+    <div class="sidebar-footer">© <span id="currentYear"></span> Ifexa Academy</div>
+
     </aside>
 
+    <main class="main-content" id="dashboard">
 
+    <header class="topbar">
 
-        <!-- ADMIN DROPDOWN -->
-        <section class="Head">
+    <div class="topbar-left">
+    <button
+    class="Hamburger"
+    id="hamburger"
+    type="button"
+    aria-expanded="false"
+    onclick="HamButton()"
+    aria-label="Toggle navigation"
+    aria-controls="Sidebar"
+    aria-expanded="false"
+>
+    <i class="fa-solid fa-bars"></i>
+</button>
 
-            <header>
-                <div>
-                    
-                    <h1>Dashboard</h1>
-                    <p>Welcome back, <span id="userFullName"></span></p>
-                </div>
+    <div class="breadcrumb">
+    <span>Workspace</span>
+    <i class="fa-solid fa-chevron-right"></i>
+    <strong>Dashboard</strong>
+    </div>
+    </div>
 
-                <div class="Admin_Profile">
-                    <img id="showAdmin" src="https://via.placeholder.com/100">
-                   
-                <div class="Admin_Details">
-                    <h3>Administration</h3>
-                    <span><i class="fa fa-circle"></i> Online</span>
-                </div>
+    <div class="topbar-actions">
 
-                <div class="Profile_arrow"> 
-                    <i class="fa fa-chevron-down" id="administration"></i> 
-                </div>
-                </div>
-        
+    <button class="icon-button" type="button" onclick="showToast('You are all caught up!')" aria-label="Notifications">
+    <i class="fa-regular fa-bell"></i>
+    <span class="notification-dot"></span>
+    </button>
 
-                        
+    <div class="profile-wrap">
 
+    <button class="Admin_Profile" id="profileToggle" type="button" onclick="toggleProfile()" aria-expanded="false" aria-controls="Bot">
+    <img id="showAdmin" src="https://placehold.co/100x100/e8eef8/17366b?text=AD" alt="Admin">
 
-                <!-- Admin details -->
-                <div class="Bot" id="Bot">
+    <span class="Admin_Details">
+    <strong id="topAdminName">Administrator</strong>
+    <small><i class="fa-solid fa-circle"></i> Online</small>
+    </span>
 
-                    <div class="Profile">
-                        <img id="showImage" src="https://via.placeholder.com/100">
-                        <h1 class="Admin" id="showName">Admin Name</h1>
-                        <p class="Administration" id="showRole">Administration</p>
-                    </div>
+    <i class="fa-solid fa-chevron-down profile-chevron"></i>
+    </button>
 
-                    <div class="info">
-                        <p>
-                            <strong>Email:</strong>
-                            <span id="showEmail">---</span>
-                        </p>
+    <section class="Bot" id="Bot">
 
-                        <p>
-                            <strong>Phone: </strong>
-                            <span id="showPhone">---</span>
-                        </p>
+    <div class="profile-card-head">
+    <img id="showImage" src="https://placehold.co/100x100/e8eef8/17366b?text=AD" alt="Admin">
+    <h2 id="showName">Admin Name</h2>
+    <p id="showRole">Administration</p>
+    </div>
 
-                        <p>
-                            <strong>Department: </strong>
-                            <span id="showDepartment">---</span>
-                        </p>
+    <div class="info">
+    <p><strong>Email</strong><span id="showEmail">---</span></p>
+    <p><strong>Phone</strong><span id="showPhone">---</span></p>
+    <p><strong>Department</strong><span id="showDepartment">---</span></p>
+    <p><strong>Username</strong><span id="showUsername">---</span></p>
+    <p><strong>Bio</strong><span id="showBio">---</span></p>
+    </div>
 
-                        <p>
-                            <strong>Username: </strong>
-                            <span id="showUsername" >---</span>
-                        </p>
+    <button class="Save" type="button" onclick="Editprofile()">
+    <i class="fa-solid fa-pen-to-square"></i> Edit profile
+    </button>
 
-                        <p>
-                            <strong>Bio: </strong>
-                            <span id="showBio">---</span>
-                        </p>
-                    </div>
-                    <button onclick="Editprofile()" class="Save">Edit Profile</button>
-                </div>
-                </header>
+    </section>
+    </div>
+    </div>
+    </header>
 
+    <section class="page-heading">
 
-        <!-- Edit Profile -->
-                <div class="Edit" id="Edit">
+    <div>
+    <p class="eyebrow">OVERVIEW</p>
+    <h1>Dashboard</h1>
+    <p class="welcome-line">
+    Welcome back, <strong id="userFullName">Administrator</strong>!
+    Here's what's happening at your school.
+    </p>
+    </div>
 
-                    <form id="profileForm">
+    <div class="heading-date">
+    <i class="fa-regular fa-calendar"></i>
+    <span id="todayDate"></span>
+    </div>
 
-                        <h1 class="Pro">Edit Profile</h1>
+    </section>
 
-                    
-                        <div class="ditor">
-                            <input type="file" id="profileImage" accept="image/*">
-                        </div>
+    <section class="quick-banner">
 
+    <div class="banner-copy">
+    <span class="banner-kicker">YOUR SCHOOL AT A GLANCE</span>
+    <h2>Make every school day count.</h2>
+    <p>
+    Review student records, manage instructors, monitor approvals,
+    and keep your school community moving forward.
+    </p>
+    <a href="#studentManagement" class="banner-link">
+    Manage students <i class="fa-solid fa-arrow-right"></i>
+    </a>
+    </div>
 
-                        <div class="Editor">
-                            <input type="text" id="fullName" placeholder="Full Name" required>
-                        </div>
+    <div class="banner-art">
+    <i class="fa-solid fa-graduation-cap"></i>
+    </div>
 
+    </section>
 
-                        <div class="Editor"> 
-                            <input type="text" id="username" placeholder="Username" required>
-                        </div>
+    <section class="stats-section">
 
+    <div class="section-heading">
+    <div>
+    <h2>School overview</h2>
+    <p>A quick summary of your school records</p>
+    </div>
 
-                        <div class="Editor">
-                            <input type="email" id="email" placeholder="Email"required>
-                        </div>
+    <span class="live-label"><span></span> Live totals</span>
+    </div>
 
-                        <div class="Editor">
-                            <input type="tel" id="phone" placeholder="Phone Number" required>
-                        </div>
+    <div class="Card_container">
 
-                        <div class="Editor">
-                            <input type="text" id="department" placeholder="Department" required>
-                        </div>
+    <article class="stat-card">
+    <div class="stat-top">
+    <span class="stat-icon"><i class="fa-solid fa-user-graduate"></i></span>
+    <span class="stat-tag">Students</span>
+    </div>
+    <p class="stat-label">Total students</p>
+    <h3 id="totalStudents">0</h3>
+    <p class="stat-foot">Registered student records</p>
+    </article>
 
-                        <div class="Editor">
-                            <input type="text" id="role" placeholder="Role" required>
-                        </div>
+    <article class="stat-card">
+    <div class="stat-top">
+    <span class="stat-icon"><i class="fa-solid fa-chalkboard-user"></i></span>
+    <span class="stat-tag">Teaching</span>
+    </div>
+    <p class="stat-label">Total instructors</p>
+    <h3 id="totalInstructors">0</h3>
+    <p class="stat-foot">Registered instructor records</p>
+    </article>
 
-                        <div class="Editor">
-                            <textarea id="bio" placeholder="Write your Bio"></textarea>
-                        </div>
+    <article class="stat-card">
+    <div class="stat-top">
+    <span class="stat-icon"><i class="fa-solid fa-book-open"></i></span>
+    <span class="stat-tag">Learning</span>
+    </div>
+    <p class="stat-label">Total courses</p>
+    <h3 id="totalCourses">11</h3>
+    <p class="stat-foot">Published course records</p>
+    </article>
 
-                        <button type="button" onclick="saveProfile()" class="Save" id="Save">
-                        Save Profile
-                        </button>
-                    </form>
+    <article class="stat-card">
+    <div class="stat-top">
+    <span class="stat-icon"><i class="fa-solid fa-hourglass-half"></i></span>
+    <span class="stat-tag">Action needed</span>
+    </div>
+    <p class="stat-label">Pending approvals</p>
+    <h3 id="totalPending">0</h3>
+    <p class="stat-foot">Students awaiting review</p>
+    </article>
 
-                </div>
+    </div>
+    </section>
 
-            </div>
+    <!-- STUDENT MANAGEMENT -->
 
+    <section class="MANAGE" id="studentManagement">
 
+    <div class="section-heading management-heading">
+    <div>
+    <h2>Student management</h2>
+    <p>Add, review, and manage student records in one place.</p>
+    </div>
 
-             <!-- CARD CONTAINER -->
+    <button class="outline-button" type="button" onclick="exportCSV('students')">
+    <i class="fa-solid fa-file-arrow-down"></i> Export CSV
+    </button>
+    </div>
 
-             <div class="Card_container">
-            <div class="card_Students">
-                <span><i class="fa fa-users" aria-hidden="true"></i></span>
-                <h3>Total Students</h3>
-                <p>0</p>
-            </div>
+    <div class="Student_form panel">
 
-             <div class="card_Instructor">
-                <span><i class="fa fa-chalkboard-teacher" aria-hidden="true"></i></span>
-                <h3>Total Instructors</h3>
-                <p>0</p>
-            </div>
+    <div class="panel-heading">
+    <span class="panel-icon"><i class="fa-solid fa-user-plus"></i></span>
+    <div>
+    <h3>Add a student</h3>
+    <p>Enter the student's details below to create a record.</p>
+    </div>
+    </div>
 
-             <div class="card_Courses">
-                <span><i class="fa fa-book" aria-hidden="true"></i></span>
-                <h3>Total Courses</h3>
-                <p>0</p>
-            </div>
+    <form class="Add_student" id="Add_student">
 
-             <div class="card_Approval">
-                <span><i class="fa fa-clock" aria-hidden="true"></i></span>
-                <h3>Pending Approvals</h3>
-                <p>0</p>
-            </div>
-        </div> 
+    <label>
+    Full name
+    <input type="text" id="inputName" placeholder="e.g. Chika Okafor" required>
+    </label>
 
-        <!-- STUDENT MANAGEMENT -->
+    <label>
+    Email address
+    <input type="email" id="inputEmail" placeholder="student@example.com" required>
+    </label>
 
-        <section class="MANAGE">
-            <h1>Student Management</h1>
-            <div class="Student_form">
-                <h2>Add Students</h2>
-                <form action="" class="Add_student" id="Add_student">
-                    <input type="text" id="inputName" placeholder="Full Name" required>
+    <label>
+    Phone number
+    <input type="tel" id="inputPhoneNumber" placeholder="+234 800 000 0000" required>
+    </label>
 
-                    <input type="text" id="inputEmail" placeholder="Email" required>
+    <label>
+    Department
+    <input type="text" id="inputDepartment" placeholder="e.g. Computer Science" required>
+    </label>
 
-                    <input type="number" id="inputPhoneNumber" placeholder="Phone Name" required>
+    <label>
+    Username
+    <input type="text" id="inputUsername" placeholder="e.g. chika.okafor" required>
+    </label>
 
-                    <input type="text" id="inputDepartment" placeholder="Department" required>
+    <div class="form-submit">
+    <button type="submit" class="add">
+    <i class="fa-solid fa-plus"></i> Add student
+    </button>
+    </div>
 
-                    <input type="text" id="inputUsername" placeholder="Username" required>
+    </form>
+    </div>
 
-                    <button type="submit" class="add" id="add">Add Student</button>
-                </form>
-            </div>
-        </section>
-        
-        <div class="Student_record">
-            <h2>Student Records</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Department</th>
-                        <th>Username</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="studentList">
-                </tbody>
-            </table>
-        </div>
+    <div class="Student_record panel">
 
-        </section>
-       
+    <div class="records-heading">
+    <div>
+    <h3>Student records</h3>
+    <p>Each student receives a unique Student ID.</p>
+    </div>
 
-      
-      
+    <div class="record-tools">
 
-   
-</body>
-</html>
+    <label class="search-box">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input id="studentSearch" type="search" placeholder="Search students...">
+    </label>
 
-<script src="admin.js"></script>
+    <select id="statusFilter">
+    <option value="all">All statuses</option>
+    <option value="Pending">Pending</option>
+    <option value="Approved">Approved</option>
+    </select>
+
+    </div>
+    </div>
+
+    <div class="table-wrap">
+    <table>
+    <thead>
+    <tr>
+    <th>Student ID</th>
+    <th>Student</th>
+    <th>Email</th>
+    <th>Phone</th>
+    <th>Department</th>
+    <th>Username</th>
+    <th>Status</th>
+    <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody id="studentList"></tbody>
+    </table>
+    </div>
+
+    <div class="table-footer">
+    <span id="recordCount">Showing 0 students</span>
+    <span><i class="fa-solid fa-circle-check"></i> Records update automatically · Session only</span>
+    </div>
+
+    </div>
+    </section>
+
+    <!-- INSTRUCTOR MANAGEMENT -->
+
+    <section class="MANAGE" id="instructorManagement">
+
+    <div class="section-heading management-heading">
+    <div>
+    <h2>Instructor management</h2>
+    <p>Add, review, and manage your teaching staff.</p>
+    </div>
+
+    <button class="outline-button" type="button" onclick="exportCSV('instructors')">
+    <i class="fa-solid fa-file-arrow-down"></i> Export CSV
+    </button>
+    </div>
+
+    <div class="Student_form panel">
+
+    <div class="panel-heading">
+    <span class="panel-icon"><i class="fa-solid fa-chalkboard-user"></i></span>
+    <div>
+    <h3>Add an instructor</h3>
+    <p>Register a new instructor and assign a unique ID.</p>
+    </div>
+    </div>
+
+    <form class="Add_student" id="Add_instructor">
+
+    <label>
+    Full name
+    <input id="instructorName" type="text" placeholder="e.g. Daniel Okoro" required>
+    </label>
+
+    <label>
+    Email address
+    <input id="instructorEmail" type="email" placeholder="instructor@example.com" required>
+    </label>
+
+    <label>
+    Phone number
+    <input id="instructorPhone" type="tel" placeholder="+234 800 000 0000" required>
+    </label>
+
+    <label>
+    Department
+    <input id="instructorDepartment" type="text" placeholder="e.g. Computer Science" required>
+    </label>
+
+    <label>
+    Specialization
+    <input id="instructorSpecialization" type="text" placeholder="e.g. Web Development" required>
+    </label>
+
+    <label>
+    Username
+    <input id="instructorUsername" type="text" placeholder="e.g. daniel.okoro" required>
+    </label>
+
+    <div class="form-submit">
+    <button type="submit" class="add">
+    <i class="fa-solid fa-plus"></i> Add instructor
+    </button>
+    </div>
+
+    </form>
+    </div>
+
+    <div class="Student_record panel">
+
+    <div class="records-heading">
+    <div>
+    <h3>Instructor records</h3>
+    <p>Each instructor receives a unique Instructor ID.</p>
+    </div>
+
+    <div class="record-tools">
+    <label class="search-box">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input id="instructorSearch" type="search" placeholder="Search instructors...">
+    </label>
+    </div>
+    </div>
+
+    <div class="table-wrap">
+    <table>
+    <thead>
+    <tr>
+    <th>Instructor ID</th>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Phone</th>
+    <th>Department</th>
+    <th>Specialization</th>
+    <th>Username</th>
+    <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody id="instructorList"></tbody>
+    </table>
+    </div>
+
+    <div class="table-footer">
+    <span id="instructorRecordCount">Showing 0 instructors</span>
+    <span><i class="fa-solid fa-circle-check"></i> Records update automatically · Session only</span>
+    </div>
+
+    </div>
+    </section>
+
+    <!-- ACTIVITY AND QUICK ACTIONS -->
+
+    <section class="bottom-grid">
+
+    <article class="panel activity-panel">
+
+    <div class="panel-title-row">
+    <div>
+    <h3>Recent activity</h3>
+    <p>Latest actions in this session</p>
+    </div>
+    <span class="subtle-icon"><i class="fa-solid fa-clock-rotate-left"></i></span>
+    </div>
+
+    <ul id="activityList" class="activity-list">
+    <li>
+    <span class="activity-mark"><i class="fa-solid fa-right-to-bracket"></i></span>
+    <div>
+    <strong>Dashboard opened</strong>
+    <p>You're ready to manage your school records.</p>
+    <small>Just now</small>
+    </div>
+    </li>
+    </ul>
+
+    </article>
+
+    <article class="panel shortcuts-panel">
+
+    <div class="panel-title-row">
+    <div>
+    <h3>Quick actions</h3>
+    <p>Jump to a common task</p>
+    </div>
+    <span class="subtle-icon"><i class="fa-solid fa-bolt"></i></span>
+    </div>
+
+    <a href="#studentManagement" class="shortcut-link">
+    <span class="shortcut-icon"><i class="fa-solid fa-user-plus"></i></span>
+    <span>
+    <strong>Add a student</strong>
+    <small>Create a new student record</small>
+    </span>
+    <i class="fa-solid fa-chevron-right"></i>
+    </a>
+
+    <a href="#instructorManagement" class="shortcut-link">
+    <span class="shortcut-icon"><i class="fa-solid fa-chalkboard-user"></i></span>
+    <span>
+    <strong>Add an instructor</strong>
+    <small>Create a new instructor record</small>
+    </span>
+    <i class="fa-solid fa-chevron-right"></i>
+    </a>
+
+    <a href="Course.html" class="shortcut-link">
+    <span class="shortcut-icon"><i class="fa-solid fa-book-open"></i></span>
+    <span>
+    <strong>Manage courses</strong>
+    <small>View your course list</small>
+    </span>
+    <i class="fa-solid fa-chevron-right"></i>
+    </a>
+
+    </article>
+    </section>
+
+    <footer class="page-footer">
+    © <span id="footerYear"></span> Ifexa Academy School Management System
+    </footer>
+
+    </main>
+    </div>
+
+    <!-- EDIT ADMIN PROFILE -->
+
+    <section class="Edit" id="Edit" aria-label="Edit admin profile">
+
+    <form id="profileForm">
+
+    <div class="edit-heading">
+    <div>
+    <p class="eyebrow">ACCOUNT SETTINGS</p>
+    <h2>Edit profile</h2>
+    </div>
+
+    <button type="button" class="close-edit" onclick="closeEdit()" aria-label="Close">
+    <i class="fa-solid fa-xmark"></i>
+    </button>
+    </div>
+
+    <label>
+    Profile photo
+    <input type="file" id="profileImage" accept="image/*">
+    </label>
+
+    <label>
+    Full name
+    <input type="text" id="fullName" required>
+    </label>
+
+    <label>
+    Username
+    <input type="text" id="username" required>
+    </label>
+
+    <label>
+    Email address
+    <input type="email" id="email" required>
+    </label>
+
+    <label>
+    Phone number
+    <input type="tel" id="phone">
+    </label>
+
+    <label>
+    Department
+    <input type="text" id="department" required>
+    </label>
+
+    <label>
+    Role
+    <input type="text" id="role" required>
+    </label>
+
+    <label>
+    Bio
+    <textarea id="bio" rows="3"></textarea>
+    </label>
+
+    <button type="submit" class="Save">
+    <i class="fa-solid fa-floppy-disk"></i> Save changes
+    </button>
+
+    </form>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="admin.js"></script>
+
+    </body>
+    </html>
