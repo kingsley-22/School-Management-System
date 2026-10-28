@@ -1,6 +1,7 @@
 // ==========================================
-// IFEXA SCHOOL MANAGEMENT SYSTEM
+// LEARNHUB SCHOOL MANAGEMENT SYSTEM
 // ADMIN DASHBOARD JAVASCRIPT
+// NO LOCAL STORAGE OR SESSION STORAGE
 // ==========================================
 
 
@@ -92,25 +93,6 @@ function generateInstructorID() {
 }
 
 
-// ==========================================
-// 4. TOAST NOTIFICATION
-// ==========================================
-
-function showToast(message) {
-    const toast = $("toast");
-
-    if (!toast) return;
-
-    toast.textContent = message;
-
-    toast.classList.add("show");
-
-    clearTimeout(toastTimer);
-
-    toastTimer = setTimeout(() => {
-        toast.classList.remove("show");
-    }, 3000);
-}
 
 
 // ==========================================
@@ -656,86 +638,6 @@ function deleteInstructor(instructorID) {
 }
 
 
-// ==========================================
-// 14. CSV EXPORT
-// ==========================================
-
-function downloadCSV(filename, data) {
-
-    if (!data.length) {
-        showToast("There are no records to export.");
-        return;
-    }
-
-    const headers = Object.keys(data[0]);
-
-    const csvRows = [
-        headers.join(","),
-
-        ...data.map(record =>
-            headers.map(header => {
-
-                const value = String(record[header] ?? "");
-
-                return `"${value.replace(/"/g, '""')}"`;
-
-            }).join(",")
-        )
-    ];
-
-    const csvContent = "\uFEFF" + csvRows.join("\n");
-
-    const blob = new Blob(
-        [csvContent],
-        { type: "text/csv;charset=utf-8;" }
-    );
-
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = filename;
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-
-function exportCSV(type) {
-
-    if (type === "students") {
-
-        downloadCSV(
-            "LearnHub_Students.csv",
-            students
-        );
-
-        logActivity(
-            "Student records exported",
-            "Student records were downloaded as CSV.",
-            "fa-file-csv"
-        );
-
-    } else if (type === "instructors") {
-
-        downloadCSV(
-            "LearnHub_Instructors.csv",
-            instructors
-        );
-
-        logActivity(
-            "Instructor records exported",
-            "Instructor records were downloaded as CSV.",
-            "fa-file-csv"
-        );
-
-    }
-}
 
 
 // ==========================================

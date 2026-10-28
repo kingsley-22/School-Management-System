@@ -1,88 +1,545 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#102347">
-  <title>Courses | Ifexa Academy</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-  <link rel="stylesheet" href="Course.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#102347">
+
+    <title>Courses | Ifexa Academy</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="Course.css">
 </head>
+
 <body>
-<div class="layout">
-  <aside class="sidebar" id="sidebar">
-    <a class="brand" href="admin.html"><span class="brand-icon"><i class="fa-solid fa-graduation-cap"></i></span><span><b>Ifexa Academy</b><small>School Management</small></span></a>
-    <p class="nav-title">WORKSPACE</p>
-    <nav>
-       <a href="#" class="Dash active"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
-        <a href="admin.html#studentManagement"><i class="fa-solid fa-user-graduate"></i><span>Students</span><span class="nav-count" id="studentNavCount">0</span></a>
-        <a href="admin.html#instructorManagement"><i class="fa-solid fa-chalkboard-user"></i><span>Instructors</span></a>
-        <a href="admin.html"><i class="fa-solid fa-user-shield"></i><span>Admin profile</span></a>
-        <a href="Course.html"><i class="fa-solid fa-book-open"></i><span>Courses</span></a>
-        <a href="Announcement.html"><i class="fa-regular fa-bell"></i><span>Announcements</span></a>
-    </nav>
-    <div class="sidebar-bottom"><div class="help-card"><span><i class="fa-regular fa-circle-question"></i></span><b>Need a hand?</b><p>Keep your learning workspace organised.</p><a href="mailto:ifexatechnologies@gmail.com">Contact support <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div><a class="logout" href="admin.html"><i class="fa-solid fa-house"></i> Return to dashboard</a><small class="copyright">© <span id="year"></span> Ifexa Academy</small></div>
-  </aside>
-  <div class="overlay" id="overlay"></div>
-  <main class="main">
-    <header class="topbar">
-      <div class="top-left"><button class="menu-btn" id="menuBtn" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button><div class="crumb"><span>Workspace</span><i class="fa-solid fa-chevron-right"></i><b>Courses</b></div></div>
-      
-    </header>
-    <section class="page-head">
-      <div><p class="eyebrow">LEARNING MANAGEMENT</p><h1>Courses</h1><p class="subtitle">Discover, organise, and manage your school's courses from one place.</p></div>
-      <button class="primary-btn" id="addCourseBtn"><i class="fa-solid fa-plus"></i> Add course</button>
-    </section>
-    <section class="hero">
-      <div class="hero-copy"><span class="hero-tag"><i class="fa-solid fa-sparkles"></i> COURSE DIRECTORY</span><h2>Build skills.<br>Open new possibilities.</h2><p>Browse the course catalogue and find the right learning path for every student.</p><a href="#courseGrid" class="hero-cta">Explore courses <i class="fa-solid fa-arrow-down"></i></a></div>
-      <div class="hero-visual" aria-hidden="true"><div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="hero-book"><i class="fa-solid fa-book-open"></i></div><span class="float-badge badge-code"><i class="fa-solid fa-code"></i></span><span class="float-badge badge-star"><i class="fa-solid fa-star"></i></span><span class="float-badge badge-play"><i class="fa-solid fa-play"></i></span></div>
-    </section>
-    <section class="metrics">
-      <article><span class="metric-icon blue"><i class="fa-solid fa-book-open"></i></span><div><small>Total courses</small><strong id="totalCourses">13</strong><span>In the catalogue</span></div></article>
-      <article><span class="metric-icon green"><i class="fa-solid fa-circle-check"></i></span><div><small>Active courses</small><strong id="activeCourses">11</strong><span>Available to learners</span></div></article>
-      <article><span class="metric-icon purple"><i class="fa-solid fa-layer-group"></i></span><div><small>Categories</small><strong id="categoryCount">6</strong><span>Areas of study</span></div></article>
-      <article><span class="metric-icon orange"><i class="fa-solid fa-clock"></i></span><div><small>Learning hours</small><strong id="totalHours">420</strong><span>Across all courses</span></div></article>
-    </section>
-    <section class="catalog-section" id="courseGrid">
-      <div class="catalog-heading"><div><h2>Course catalogue</h2><p>Choose a course to view its overview and learning details.</p></div><div class="view-label"><i class="fa-solid fa-grip"></i> All courses</div></div>
-      <div class="toolbar"><label class="search"><i class="fa-solid fa-magnifying-glass"></i><input id="searchInput" type="search" placeholder="Search courses, instructors..." aria-label="Search courses"></label><select id="categoryFilter" aria-label="Filter by category"><option value="All">All categories</option><option>Technology</option><option>Business</option><option>Design</option><option>Science</option><option>Languages</option><option>Mathematics</option></select><select id="levelFilter" aria-label="Filter by level"><option value="All">All levels</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select><select id="sortFilter" aria-label="Sort courses"><option value="featured">Sort: Featured</option><option value="title">Name: A–Z</option><option value="hours">Shortest duration</option></select></div>
-      <div class="filter-chips" id="filterChips"><button class="chip active" data-category="All">All courses <span>13</span></button><button class="chip" data-category="Technology">Technology</button><button class="chip" data-category="Business">Business</button><button class="chip" data-category="Design">Design</button><button class="chip" data-category="Science">Science</button><button class="chip" data-category="Languages">Languages</button><button class="chip" data-category="Mathematics">Mathematics</button></div>
-      <div class="course-grid" id="coursesContainer"></div>
-      <div class="no-results" id="noResults" hidden><span><i class="fa-solid fa-magnifying-glass"></i></span><h3>No courses found</h3><p>Try another search or clear your filters.</p><button class="secondary-btn" id="clearFilters">Clear filters</button></div>
-      <div class="catalog-footer"><span id="resultsCount">Showing 13 courses</span><span>Course information can be edited by an administrator.</span></div>
-    </section>
-  </main>
-</div>
 
-<div class="modal-backdrop" id="courseModal" aria-hidden="true">
-  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <button class="modal-close" id="closeModal" aria-label="Close dialog"><i class="fa-solid fa-xmark"></i></button>
-    <div class="modal-art" id="modalArt"><i class="fa-solid fa-book-open"></i></div>
-    <p class="eyebrow" id="modalCategory">COURSE DETAILS</p><h2 id="modalTitle">Course title</h2><p class="modal-description" id="modalDescription"></p>
-    <div class="modal-facts"><span><i class="fa-regular fa-clock"></i> <b id="modalHours"></b> hours</span><span><i class="fa-solid fa-signal"></i> <b id="modalLevel"></b></span><span><i class="fa-solid fa-user-tie"></i> <b id="modalInstructor"></b></span></div>
-    <h3>What you'll learn</h3><ul id="modalOutcomes"></ul><div class="modal-actions"><button class="secondary-btn" id="modalCloseBottom">Close</button><button class="primary-btn" id="enrollBtn"><i class="fa-solid fa-circle-check"></i> Enroll student</button></div>
-  </section>
-</div>
+    <!-- ==================== MAIN LAYOUT ==================== -->
+    <div class="layout">
 
-<div class="modal-backdrop" id="addModal" aria-hidden="true">
-  <section class="modal add-modal" role="dialog" aria-modal="true" aria-labelledby="addModalTitle">
-    <button class="modal-close" id="closeAddModal" aria-label="Close dialog"><i class="fa-solid fa-xmark"></i></button>
-    <p class="eyebrow">COURSE MANAGEMENT</p><h2 id="addModalTitle">Add a course</h2><p class="modal-description">Add a course to your local catalogue. All fields are required.</p>
-    <form id="addCourseForm" class="add-course-form">
-      <label>Course title<input id="newTitle" required placeholder="e.g. Introduction to Robotics"></label>
-      <label>Instructor<input id="newInstructor" required placeholder="e.g. Dr. Ada James"></label>
-      <label>Category<select id="newCategory" required><option value="">Choose category</option><option>Technology</option><option>Business</option><option>Design</option><option>Science</option><option>Languages</option><option>Mathematics</option></select></label>
-      <label>Level<select id="newLevel" required><option value="">Choose level</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></label>
-      <label>Duration (hours)<input id="newHours" type="number" min="1" max="500" required placeholder="e.g. 24"></label>
-      <label>Description<textarea id="newDescription" rows="3" required placeholder="What will students learn?"></textarea></label>
-      <button type="submit" class="primary-btn full-btn"><i class="fa-solid fa-plus"></i> Add to catalogue</button>
-    </form>
-  </section>
-</div>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="Course.js"></script>
+        <!-- ==================== SIDEBAR ==================== -->
+        <aside class="sidebar" id="sidebar">
+
+            <!-- Brand -->
+            <a class="brand" href="admin.html">
+
+                <span class="brand-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </span>
+
+                <span>
+                    <b>Ifexa Academy</b>
+                    <small>School Management</small>
+                </span>
+
+            </a>
+
+            <p class="nav-title">WORKSPACE</p>
+
+            <!-- Navigation -->
+            <nav>
+
+                <a href="#" class="Dash active">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="admin.html#studentManagement">
+                    <i class="fa-solid fa-user-graduate"></i>
+                    <span>Students</span>
+                    <span class="nav-count" id="studentNavCount">0</span>
+                </a>
+
+                <a href="admin.html#instructorManagement">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <span>Instructors</span>
+                </a>
+
+                <a href="admin.html">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Admin profile</span>
+                </a>
+
+                <a href="Course.html">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>Courses</span>
+                </a>
+
+                <a href="Announcement.html">
+                    <i class="fa-regular fa-bell"></i>
+                    <span>Announcements</span>
+                </a>
+
+            </nav>
+
+            <!-- Sidebar Bottom -->
+            <div class="sidebar-bottom">
+
+                <!-- Help Card -->
+                <div class="help-card">
+
+                    <span>
+                        <i class="fa-regular fa-circle-question"></i>
+                    </span>
+
+                    <b>Need a hand?</b>
+
+                    <p>Keep your learning workspace organised.</p>
+
+                    <a href="mailto:ifexatechnologies@gmail.com">
+                        Contact support
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+
+                </div>
+
+                <!-- Return to Dashboard -->
+                <a class="logout" href="admin.html">
+                    <i class="fa-solid fa-house"></i>
+                    Return to dashboard
+                </a>
+
+                <!-- Copyright -->
+                <small class="copyright">
+                    © <span id="year"></span> Ifexa Academy
+                </small>
+
+            </div>
+
+        </aside>
+
+        <!-- Sidebar Overlay -->
+        <div class="overlay" id="overlay"></div>
+
+
+        <!-- ==================== MAIN CONTENT ==================== -->
+        <main class="main">
+
+            <!-- ==================== TOPBAR ==================== -->
+            <header class="topbar">
+
+                <div class="top-left">
+
+                    <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+
+                    <div class="crumb">
+                        <span>Workspace</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                        <b>Courses</b>
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- ==================== PAGE HEADER ==================== -->
+            <section class="page-head">
+
+                <div>
+                    <p class="eyebrow">LEARNING MANAGEMENT</p>
+
+                    <h1>Courses</h1>
+
+                    <p class="subtitle">
+                        Discover, organise, and manage your school's courses from one place.
+                    </p>
+                </div>
+
+                <button class="primary-btn" id="addCourseBtn">
+                    <i class="fa-solid fa-plus"></i>
+                    Add course
+                </button>
+
+            </section>
+
+
+            <!-- ==================== HERO SECTION ==================== -->
+            <section class="hero">
+
+                <!-- Hero Text -->
+                <div class="hero-copy">
+
+                    <span class="hero-tag">
+                        <i class="fa-solid fa-sparkles"></i>
+                        COURSE DIRECTORY
+                    </span>
+
+                    <h2>
+                        Build skills.<br>
+                        Open new possibilities.
+                    </h2>
+
+                    <p>
+                        Browse the course catalogue and find the right learning path for every student.
+                    </p>
+
+                    <a href="#courseGrid" class="hero-cta">
+                        Explore courses
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </a>
+
+                </div>
+
+                <!-- Hero Visual -->
+                <div class="hero-visual" aria-hidden="true">
+
+                    <div class="orbit orbit-a"></div>
+                    <div class="orbit orbit-b"></div>
+
+                    <div class="hero-book">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+
+                    <span class="float-badge badge-code">
+                        <i class="fa-solid fa-code"></i>
+                    </span>
+
+                    <span class="float-badge badge-star">
+                        <i class="fa-solid fa-star"></i>
+                    </span>
+
+                    <span class="float-badge badge-play">
+                        <i class="fa-solid fa-play"></i>
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==================== COURSE METRICS ==================== -->
+            <section class="metrics">
+
+                <!-- Total Courses -->
+                <article>
+
+                    <span class="metric-icon blue">
+                        <i class="fa-solid fa-book-open"></i>
+                    </span>
+
+                    <div>
+                        <small>Total courses</small>
+                        <strong id="totalCourses">13</strong>
+                        <span>In the catalogue</span>
+                    </div>
+
+                </article>
+
+                <!-- Active Courses -->
+                <article>
+
+                    <span class="metric-icon green">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </span>
+
+                    <div>
+                        <small>Active courses</small>
+                        <strong id="activeCourses">11</strong>
+                        <span>Available to learners</span>
+                    </div>
+
+                </article>
+
+                <!-- Categories -->
+                <article>
+
+                    <span class="metric-icon purple">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </span>
+
+                    <div>
+                        <small>Categories</small>
+                        <strong id="categoryCount">6</strong>
+                        <span>Areas of study</span>
+                    </div>
+
+                </article>
+
+                <!-- Learning Hours -->
+                <article>
+
+                    <span class="metric-icon orange">
+                        <i class="fa-solid fa-clock"></i>
+                    </span>
+
+                    <div>
+                        <small>Learning hours</small>
+                        <strong id="totalHours">420</strong>
+                        <span>Across all courses</span>
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- ==================== COURSE CATALOGUE ==================== -->
+            <section class="catalog-section" id="courseGrid">
+
+                <!-- Catalogue Heading -->
+                <div class="catalog-heading">
+
+                    <div>
+                        <h2>Course catalogue</h2>
+
+                        <p>
+                            Choose a course to view its overview and learning details.
+                        </p>
+                    </div>
+
+                    <div class="view-label">
+                        <i class="fa-solid fa-grip"></i>
+                        All courses
+                    </div>
+
+                </div>
+
+
+                <!-- Search and Filters -->
+                <div class="toolbar">
+
+                    <label class="search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        <input
+                            id="searchInput"
+                            type="search"
+                            placeholder="Search courses, instructors..."
+                            aria-label="Search courses"
+                        >
+                    </label>
+
+                    <!-- Category Filter -->
+                    <select id="categoryFilter" aria-label="Filter by category">
+                        <option value="All">All categories</option>
+                        <option>Technology</option>
+                        <option>Business</option>
+                        <option>Design</option>
+                        <option>Science</option>
+                        <option>Languages</option>
+                        <option>Mathematics</option>
+                    </select>
+
+                    <!-- Level Filter -->
+                    <select id="levelFilter" aria-label="Filter by level">
+                        <option value="All">All levels</option>
+                        <option>Beginner</option>
+                        <option>Intermediate</option>
+                        <option>Advanced</option>
+                    </select>
+
+                    <!-- Sort Filter -->
+                    <select id="sortFilter" aria-label="Sort courses">
+                        <option value="featured">Sort: Featured</option>
+                        <option value="title">Name: A–Z</option>
+                        <option value="hours">Shortest duration</option>
+                    </select>
+
+                </div>
+
+
+                <!-- Category Filter Chips -->
+                <div class="filter-chips" id="filterChips">
+
+                    <button class="chip active" data-category="All">
+                        All courses <span>13</span>
+                    </button>
+
+                    <button class="chip" data-category="Technology">
+                        Technology
+                    </button>
+
+                    <button class="chip" data-category="Business">
+                        Business
+                    </button>
+
+                    <button class="chip" data-category="Design">
+                        Design
+                    </button>
+
+                    <button class="chip" data-category="Science">
+                        Science
+                    </button>
+
+                    <button class="chip" data-category="Languages">
+                        Languages
+                    </button>
+
+                    <button class="chip" data-category="Mathematics">
+                        Mathematics
+                    </button>
+
+                </div>
+
+
+                <!-- Courses Container -->
+                <div class="course-grid" id="coursesContainer"></div>
+
+
+                <!-- No Results -->
+                <div class="no-results" id="noResults" hidden>
+
+                    <span>
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+
+                    <h3>No courses found</h3>
+
+                    <p>Try another search or clear your filters.</p>
+
+                    <button class="secondary-btn" id="clearFilters">
+                        Clear filters
+                    </button>
+
+                </div>
+
+
+                <!-- Catalogue Footer -->
+                <div class="catalog-footer">
+
+                    <span id="resultsCount">Showing 13 courses</span>
+
+                    <span>Course information can be edited by an administrator.</span>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+
+
+    <!-- ==================== ADD COURSE MODAL ==================== -->
+    <div class="modal-backdrop" id="addModal" aria-hidden="true">
+
+        <section class="modal add-modal" role="dialog" aria-modal="true" aria-labelledby="addModalTitle">
+
+            <!-- Close Button -->
+            <button class="modal-close" id="closeAddModal" aria-label="Close dialog">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Modal Heading -->
+            <p class="eyebrow">COURSE MANAGEMENT</p>
+
+            <h2 id="addModalTitle">Add a course</h2>
+
+            <p class="modal-description">
+                Add a course to your local catalogue. All fields are required.
+            </p>
+
+            <!-- Add Course Form -->
+            <form id="addCourseForm" class="add-course-form">
+
+                <!-- Course Title -->
+                <label>
+                    Course title
+
+                    <input
+                        id="newTitle"
+                        required
+                        placeholder="e.g. Introduction to Robotics"
+                    >
+                </label>
+
+                <!-- Instructor -->
+                <label>
+                    Instructor
+
+                    <input
+                        id="newInstructor"
+                        required
+                        placeholder="e.g. Dr. Ada James"
+                    >
+                </label>
+
+                <!-- Category -->
+                <label>
+                    Category
+
+                    <select id="newCategory" required>
+                        <option value="">Choose category</option>
+                        <option>Technology</option>
+                        <option>Business</option>
+                        <option>Design</option>
+                        <option>Science</option>
+                        <option>Languages</option>
+                        <option>Mathematics</option>
+                    </select>
+                </label>
+
+                <!-- Level -->
+                <label>
+                    Level
+
+                    <select id="newLevel" required>
+                        <option value="">Choose level</option>
+                        <option>Beginner</option>
+                        <option>Intermediate</option>
+                        <option>Advanced</option>
+                    </select>
+                </label>
+
+                <!-- Duration -->
+                <label>
+                    Duration (hours)
+
+                    <input
+                        id="newHours"
+                        type="number"
+                        min="1"
+                        max="500"
+                        required
+                        placeholder="e.g. 24"
+                    >
+                </label>
+
+                <!-- Description -->
+                <label>
+                    Description
+
+                    <textarea
+                        id="newDescription"
+                        rows="3"
+                        required
+                        placeholder="What will students learn?"
+                    ></textarea>
+                </label>
+
+                <!-- Submit Button -->
+                <button type="submit" class="primary-btn full-btn">
+                    <i class="fa-solid fa-plus"></i>
+                    Add to catalogue
+                </button>
+
+            </form>
+
+        </section>
+
+    </div>
+
+
+    <!-- ==================== TOAST NOTIFICATION ==================== -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script src="Course.js"></script>
+
 </body>
 </html>

@@ -1,81 +1,450 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Announcements | Ifexa Academy Admin</title>
-  <link rel="stylesheet" href="Announcement.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements | Ifexa Academy Admin</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="Announcement.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
+
 <body>
-  <aside class="sidebar" id="sidebar">
-    <div class="brand"><span class="brand-mark"><i class="fa-solid fa-graduation-cap"></i></span><span>Learn<span>Hub</span></span></div>
-    <p class="nav-label">MAIN MENU</p>
-    <nav class="nav-links">
-        <a href="admin.html#dashboard" class="Dash active"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
-        <a href="admin.html#studentManagement"><i class="fa-solid fa-user-graduate"></i><span>Students</span><span class="nav-count" id="studentNavCount">0</span></a>
-        <a href="admin.html#instructorManagement"><i class="fa-solid fa-chalkboard-user"></i><span>Instructors</span></a>
-        <a href="admin.html"><i class="fa-solid fa-user-shield"></i><span>Admin profile</span></a>
-        <a href="Course.html"><i class="fa-solid fa-book-open"></i><span>Courses</span></a>
-        <a href="Announcement.html"><i class="fa-regular fa-bell"></i><span>Announcements</span></a>
-    </nav>
-    <div class="sidebar-bottom">
-      <div class="help-card"><span class="help-icon"><i class="fa-regular fa-circle-question"></i></span><strong>Need help?</strong><p>Visit the help center for support.</p><button type="button" id="helpBtn">Get support <i class="fa-solid fa-arrow-right"></i></button></div>
-      <a href="admin.html" class="logout"><i class="fa-solid fa-house"></i> Return to dashboard</a>
-    </div>
-  </aside>
 
-  <main class="main">
-    <header class="topbar">
-      <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
-      <div class="breadcrumb">Pages <i class="fa-solid fa-chevron-right"></i> <strong>Announcements</strong></div>
-    </header>
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar">
 
-    <section class="page-content">
-      <div class="welcome-row">
-        <div><p class="eyebrow">COMMUNICATION CENTER</p><h1>Announcements</h1><p class="subtitle">Keep students and staff informed with important updates.</p></div>
-        <button class="primary-btn" id="openCreate"><i class="fa-solid fa-plus"></i> Create announcement</button>
-      </div>
-
-      <div class="stats-grid">
-        <article class="stat-card"><div class="stat-icon purple"><i class="fa-solid fa-bullhorn"></i></div><div><p>Total announcements</p><h2 id="totalStat">13</h2><small>Across all categories</small></div></article>
-        <article class="stat-card"><div class="stat-icon green"><i class="fa-solid fa-paper-plane"></i></div><div><p>Published</p><h2 id="publishedStat">10</h2><small>Visible to your audience</small></div></article>
-        <article class="stat-card"><div class="stat-icon orange"><i class="fa-regular fa-clock"></i></div><div><p>Drafts</p><h2 id="draftStat">3</h2><small>Waiting to be published</small></div></article>
-        <article class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-users"></i></div><div><p>Audience groups</p><h2>4</h2><small>Students, staff and more</small></div></article>
-      </div>
-
-      <section class="content-card">
-        <div class="section-heading"><div><h2>All announcements</h2><p>Manage, publish and update school notices.</p></div><button class="secondary-btn" id="exportBtn"><i class="fa-solid fa-download"></i> Export CSV</button></div>
-        <div class="toolbar">
-          <label class="search-box"><i class="fa-solid fa-magnifying-glass"></i><input id="searchInput" type="search" placeholder="Search announcements..."></label>
-          <select id="categoryFilter" aria-label="Filter category"><option value="All">All categories</option><option>Academic</option><option>Events</option><option>Finance</option><option>General</option><option>Staff</option></select>
-          <select id="statusFilter" aria-label="Filter status"><option value="All">All statuses</option><option>Published</option><option>Draft</option></select>
-          <select id="audienceFilter" aria-label="Filter audience"><option value="All">All audiences</option><option>All users</option><option>Students</option><option>Teaching staff</option><option>Parents</option></select>
+        <!-- Brand -->
+        <div class="brand">
+            <span class="brand-mark">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </span>
+            <span>IFEXA</span>
         </div>
-        <div class="table-wrap"><table><thead><tr><th>ANNOUNCEMENT</th><th>CATEGORY</th><th>AUDIENCE</th><th>PUBLISH DATE</th><th>STATUS</th><th>ACTIONS</th></tr></thead><tbody id="announcementRows"></tbody></table></div>
-        <div class="empty-state" id="emptyState" hidden><i class="fa-regular fa-folder-open"></i><h3>No announcements found</h3><p>Try a different search or create a new announcement.</p></div>
-        <div class="table-footer"><span id="resultCount">Showing 13 announcements</span><span class="local-note">Changes are kept for this session only.</span></div>
-      </section>
-      <footer>© 2026 Ifexa Academy. All rights reserved.</footer>
-    </section>
-  </main>
 
-  <div class="overlay" id="modalOverlay">
-    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-head"><div><p class="eyebrow">COMMUNICATION CENTER</p><h2 id="modalTitle">Create announcement</h2></div><button class="close-btn" id="closeModal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
-      <form id="announcementForm">
-        <input type="hidden" id="editId">
-        <label>Announcement title <span>*</span><input id="titleInput" required maxlength="100" placeholder="e.g. Examination timetable released"></label>
-        <div class="form-grid"><label>Category <span>*</span><select id="categoryInput" required><option>Academic</option><option>Events</option><option>Finance</option><option>General</option><option>Staff</option></select></label><label>Audience <span>*</span><select id="audienceInput" required><option>All users</option><option>Students</option><option>Teaching staff</option><option>Parents</option></select></label></div>
-        <label>Announcement details <span>*</span><textarea id="bodyInput" required rows="5" placeholder="Write the important information here..."></textarea></label>
-        <div class="form-grid"><label>Publish date<input id="dateInput" type="date"></label><label>Status<select id="statusInput"><option>Published</option><option>Draft</option></select></label></div>
-        <div class="modal-actions"><button type="button" class="secondary-btn" id="cancelModal">Cancel</button><button type="submit" class="primary-btn"><i class="fa-solid fa-check"></i> Save announcement</button></div>
-      </form>
-    </section>
-  </div>
-  <div class="toast" id="toast" role="status"></div>
-  <script src="Announcement.js"></script>
+        <p class="nav-label">MAIN MENU</p>
+
+        <!-- Navigation Links -->
+        <nav class="nav-links">
+
+            <a href="" class="Dash active">
+                <i class="fa-solid fa-house"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="">
+                <i class="fa-solid fa-user-graduate"></i>
+                <span>Students</span>
+            </a>
+
+            <a href="">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                <span>Instructors</span>
+            </a>
+
+            <a href="admin.html">
+                <i class="fa-solid fa-user-shield"></i>
+                <span>Admin profile</span>
+            </a>
+
+            <a href="Course.html">
+                <i class="fa-solid fa-book-open"></i>
+                <span>Courses</span>
+            </a>
+
+            <a href="Announcement.html">
+                <i class="fa-regular fa-bell"></i>
+                <span>Announcements</span>
+            </a>
+
+        </nav>
+
+        <!-- Sidebar Bottom -->
+        <div class="sidebar-bottom">
+
+            <!-- Help Card -->
+            <div class="help-card">
+                <span class="help-icon">
+                    <i class="fa-regular fa-circle-question"></i>
+                </span>
+
+                <strong>Need help?</strong>
+
+                <p>Visit the help center for support.</p>
+
+                <button type="button" id="helpBtn">
+                    Get support
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Return to Dashboard -->
+            <a href="admin.html" class="logout">
+                <i class="fa-solid fa-house"></i>
+                Return to dashboard
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="main">
+
+        <!-- Topbar -->
+        <header class="topbar">
+
+            <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div class="breadcrumb">
+                Pages
+                <i class="fa-solid fa-chevron-right"></i>
+                <strong>Announcements</strong>
+            </div>
+
+        </header>
+
+
+        <!-- ==================== PAGE CONTENT ==================== -->
+        <section class="page-content">
+
+            <!-- Welcome Section -->
+            <div class="welcome-row">
+
+                <div>
+                    <p class="eyebrow">COMMUNICATION CENTER</p>
+                    <h1>Announcements</h1>
+                    <p class="subtitle">
+                        Keep students and staff informed with important updates.
+                    </p>
+                </div>
+
+                <button class="primary-btn" id="openCreate">
+                    <i class="fa-solid fa-plus"></i>
+                    Create announcement
+                </button>
+
+            </div>
+
+
+            <!-- ==================== STATISTICS ==================== -->
+            <div class="stats-grid">
+
+                <!-- Total Announcements -->
+                <article class="stat-card">
+
+                    <div class="stat-icon purple">
+                        <i class="fa-solid fa-bullhorn"></i>
+                    </div>
+
+                    <div>
+                        <p>Total announcements</p>
+                        <h2 id="totalStat">13</h2>
+                        <small>Across all categories</small>
+                    </div>
+
+                </article>
+
+
+                <!-- Published -->
+                <article class="stat-card">
+
+                    <div class="stat-icon green">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </div>
+
+                    <div>
+                        <p>Published</p>
+                        <h2 id="publishedStat">10</h2>
+                        <small>Visible to your audience</small>
+                    </div>
+
+                </article>
+
+
+                <!-- Drafts -->
+                <article class="stat-card">
+
+                    <div class="stat-icon orange">
+                        <i class="fa-regular fa-clock"></i>
+                    </div>
+
+                    <div>
+                        <p>Drafts</p>
+                        <h2 id="draftStat">3</h2>
+                        <small>Waiting to be published</small>
+                    </div>
+
+                </article>
+
+
+                <!-- Audience Groups -->
+                <article class="stat-card">
+
+                    <div class="stat-icon blue">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+
+                    <div>
+                        <p>Audience groups</p>
+                        <h2>4</h2>
+                        <small>Students, staff and more</small>
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <!-- ==================== ANNOUNCEMENTS TABLE ==================== -->
+            <section class="content-card">
+
+                <!-- Section Heading -->
+                <div class="section-heading">
+
+                    <div>
+                        <h2>All announcements</h2>
+                        <p>Manage, publish and update school notices.</p>
+                    </div>
+
+                </div>
+
+
+                <!-- Search and Filters -->
+                <div class="toolbar">
+
+                    <label class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input id="searchInput" type="search" placeholder="Search announcements...">
+                    </label>
+
+                    <select id="categoryFilter" aria-label="Filter category">
+                        <option value="All">All categories</option>
+                        <option>Academic</option>
+                        <option>Events</option>
+                        <option>Finance</option>
+                        <option>General</option>
+                        <option>Staff</option>
+                    </select>
+
+                    <select id="statusFilter" aria-label="Filter status">
+                        <option value="All">All statuses</option>
+                        <option>Published</option>
+                        <option>Draft</option>
+                    </select>
+
+                    <select id="audienceFilter" aria-label="Filter audience">
+                        <option value="All">All audiences</option>
+                        <option>All users</option>
+                        <option>Students</option>
+                        <option>Teaching staff</option>
+                        <option>Parents</option>
+                    </select>
+
+                </div>
+
+
+                <!-- Announcements Table -->
+                <div class="table-wrap">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>ANNOUNCEMENT</th>
+                                <th>CATEGORY</th>
+                                <th>AUDIENCE</th>
+                                <th>PUBLISH DATE</th>
+                                <th>STATUS</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="announcementRows"></tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState" hidden>
+
+                    <i class="fa-regular fa-folder-open"></i>
+
+                    <h3>No announcements found</h3>
+
+                    <p>Try a different search or create a new announcement.</p>
+
+                </div>
+
+
+                <!-- Table Footer -->
+                <div class="table-footer">
+
+                    <span id="resultCount">Showing 13 announcements</span>
+
+                    <span class="local-note">
+                        Changes are kept for this session only.
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- Footer -->
+            <footer>
+                © 2026 Ifexa Academy. All rights reserved.
+            </footer>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==================== CREATE / EDIT MODAL ==================== -->
+    <div class="overlay" id="modalOverlay">
+
+        <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+            <!-- Modal Header -->
+            <div class="modal-head">
+
+                <div>
+                    <p class="eyebrow">COMMUNICATION CENTER</p>
+                    <h2 id="modalTitle">Create announcement</h2>
+                </div>
+
+                <button class="close-btn" id="closeModal" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+
+            <!-- Announcement Form -->
+            <form id="announcementForm">
+
+                <input type="hidden" id="editId">
+
+
+                <!-- Announcement Title -->
+                <label>
+                    Announcement title <span>*</span>
+
+                    <input
+                        id="titleInput"
+                        required
+                        maxlength="100"
+                        placeholder="e.g. Examination timetable released"
+                    >
+                </label>
+
+
+                <!-- Category and Audience -->
+                <div class="form-grid">
+
+                    <label>
+                        Category <span>*</span>
+
+                        <select id="categoryInput" required>
+                            <option>Academic</option>
+                            <option>Events</option>
+                            <option>Finance</option>
+                            <option>General</option>
+                            <option>Staff</option>
+                        </select>
+                    </label>
+
+
+                    <label>
+                        Audience <span>*</span>
+
+                        <select id="audienceInput" required>
+                            <option>All users</option>
+                            <option>Students</option>
+                            <option>Teaching staff</option>
+                            <option>Parents</option>
+                        </select>
+                    </label>
+
+                </div>
+
+
+                <!-- Announcement Details -->
+                <label>
+                    Announcement details <span>*</span>
+
+                    <textarea
+                        id="bodyInput"
+                        required
+                        rows="5"
+                        placeholder="Write the important information here..."
+                    ></textarea>
+                </label>
+
+
+                <!-- Publish Date and Status -->
+                <div class="form-grid">
+
+                    <label>
+                        Publish date
+                        <input id="dateInput" type="date">
+                    </label>
+
+
+                    <label>
+                        Status
+
+                        <select id="statusInput">
+                            <option>Published</option>
+                            <option>Draft</option>
+                        </select>
+                    </label>
+
+                </div>
+
+
+                <!-- Modal Actions -->
+                <div class="modal-actions">
+
+                    <button type="button" class="secondary-btn" id="cancelModal">
+                        Cancel
+                    </button>
+
+                    <button type="submit" class="primary-btn">
+                        <i class="fa-solid fa-check"></i>
+                        Save announcement
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </div>
+
+
+    <!-- ==================== TOAST NOTIFICATION ==================== -->
+    <div class="toast" id="toast" role="status"></div>
+
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script src="Announcement.js"></script>
+
 </body>
 </html>

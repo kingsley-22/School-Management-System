@@ -444,14 +444,6 @@ function renderCourses() {
                             ${Number(course.hours) || 0} learning hours
                         </span>
 
-                        <button
-                            class="details-btn"
-                            type="button"
-                            data-details="${escapeHTML(course.id)}"
-                        >
-                            View details
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </button>
                     </div>
                 </div>
             </article>

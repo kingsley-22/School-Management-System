@@ -434,51 +434,6 @@ $("helpBtn").addEventListener("click", () => {
     );
 });
 
-/* EXPORT ANNOUNCEMENTS TO CSV */
-
-$("exportBtn").addEventListener("click", () => {
-    const header = [
-        "Title",
-        "Category",
-        "Audience",
-        "Publish Date",
-        "Status",
-        "Details"
-    ];
-
-    const rows = announcements.map(a => [
-        a.title,
-        a.category,
-        a.audience,
-        a.date,
-        a.status,
-        a.body
-    ]);
-
-    const csv = [header, ...rows]
-        .map(row =>
-            row.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`)
-                .join(",")
-        )
-        .join("\r\n");
-
-    const blob = new Blob([csv], {
-        type: "text/csv;charset=utf-8;"
-    });
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = "Ifexa-announcements.csv";
-
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-
-    showToast("Announcement list exported.");
-});
 
 /* INITIAL RENDER */
 
