@@ -1,0 +1,27 @@
+﻿# Secrets
+.env
+*.env
+backend/.env
+
+# Database files and backups
+*.sqlite3
+*.sqlite3-*
+*.db
+*.sqlite3.*
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+.venv/
+backend/venv/
+
+# Editors
+.vscode/
+.idea/
+
+# Django generated files
+staticfiles/
+media/
