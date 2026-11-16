@@ -114,7 +114,7 @@ class StudentProfileSerializer(serializers.ModelSerializer):
         return self.get_full_name(obj)
 
     def get_role_display(self, obj):
-        return "Student"
+        return obj.user.get_role_display() if hasattr(obj.user, "get_role_display") else obj.user.role
 
     def get_is_active(self, obj):
         return bool(obj.user.is_active and obj.status == StudentProfile.StatusChoices.ACTIVE)
@@ -385,7 +385,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
         ]
 
     def get_course_title(self, obj):
-        return obj.course.title if obj.course else "General"
+        return obj.course.title if obj.course else ""
 
 
 class AnnouncementSerializer(serializers.ModelSerializer):
@@ -409,7 +409,7 @@ class AnnouncementSerializer(serializers.ModelSerializer):
         ]
 
     def get_course_title(self, obj):
-        return obj.course.title if obj.course else "All Courses"
+        return obj.course.title if obj.course else ""
 
     def get_time_ago(self, obj):
         return format_relative_time(obj.created_at)

@@ -34,13 +34,13 @@ class StudentProfile(models.Model):
         related_name="student_profile",
     )
     student_id = models.CharField(max_length=30, unique=True, blank=True)
-    course = models.CharField(max_length=150, default="Computer Science", blank=True)
+    course = models.CharField(max_length=150, default="", blank=True)
     phone = models.CharField(max_length=30, blank=True, default="")
     bio = models.TextField(blank=True, default="")
     avatar_url = models.CharField(
         max_length=500,
         blank=True,
-        default="../../image/female.jpg",
+        default="",
     )
     status = models.CharField(
         max_length=20,
@@ -94,8 +94,8 @@ class Course(models.Model):
     title = models.CharField(max_length=200)
     code = models.CharField(max_length=50, unique=True)
     short_title = models.CharField(max_length=50, blank=True, default="")
-    category = models.CharField(max_length=150, default="Web Development")
-    art_style = models.CharField(max_length=50, default="html-art", blank=True)
+    category = models.CharField(max_length=150, blank=True, default="")
+    art_style = models.CharField(max_length=50, default="", blank=True)
     description = models.TextField(blank=True, default="")
     instructor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -105,7 +105,7 @@ class Course(models.Model):
         related_name="instructed_student_courses",
     )
     instructor_name = models.CharField(max_length=150, blank=True, default="")
-    total_lessons = models.PositiveIntegerField(default=10)
+    total_lessons = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -124,7 +124,7 @@ class Course(models.Model):
         if self.instructor:
             full_name = f"{self.instructor.first_name} {self.instructor.last_name}".strip()
             return full_name or self.instructor.email
-        return "IFEXA Instructor"
+        return ""
 
     def __str__(self):
         return f"{self.code} - {self.title}"
@@ -191,7 +191,7 @@ class Assignment(models.Model):
     description = models.TextField(blank=True, default="")
     due_date = models.DateField()
     max_score = models.PositiveIntegerField(default=100)
-    dot_color = models.CharField(max_length=30, default="green-dot", blank=True)
+    dot_color = models.CharField(max_length=30, default="", blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -257,7 +257,7 @@ class StudentResult(models.Model):
         on_delete=models.CASCADE,
         related_name="student_results",
     )
-    assessment_title = models.CharField(max_length=200, default="Course Assessment")
+    assessment_title = models.CharField(max_length=200, blank=True, default="")
     score = models.DecimalField(max_digits=5, decimal_places=2)
     max_score = models.DecimalField(
         max_digits=5,
@@ -397,7 +397,7 @@ class StudentPayment(models.Model):
     )
     reference = models.CharField(max_length=100, unique=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
-    description = models.CharField(max_length=255, default="Tuition Fee Payment")
+    description = models.CharField(max_length=255, blank=True, default="")
     status = models.CharField(
         max_length=20,
         choices=StatusChoices.choices,
