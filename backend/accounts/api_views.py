@@ -84,9 +84,13 @@ def verify_email(request, uid, token):
     user.is_verified = True
     user.save(update_fields=['is_verified'])
 
+    refresh = RefreshToken.for_user(user)
+    access_token = str(refresh.access_token)
+    refresh_token = str(refresh)
+
     return redirect(
-        'http://127.0.0.1:8080/pages/student/dashboard.html'
-        '?verified=success'
+        f'http://127.0.0.1:8080/pages/student/dashboard.html'
+        f'?verified=success&access={access_token}&refresh={refresh_token}'
     )
 
 

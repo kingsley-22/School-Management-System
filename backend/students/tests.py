@@ -390,3 +390,39 @@ class StudentDashboardAPITests(APITestCase):
         self.assertEqual(body["formatted_balance"], "₦45,000")
         self.assertEqual(body["amount_paid"], 55000.0)
         self.assertEqual(body["count"], 1)
+
+    def test_email_verification_redirect_includes_jwt_tokens_for_dashboard(self):
+        from urllib.parse import parse_qs, urlparse
+        from django.contrib.auth.tokens import default_token_generator
+        from django.utils.encoding import force_bytes
+        from django.utils.http import urlsafe_base64_encode
+
+        unverified_student = User.objects.create_user(
+            email="newstudent@gmail.com",
+            password="StrongPassword123!",
+            first_name="Chinedu",
+            last_name="Okafor",
+            role="STUDENT",
+            is_verified=False,
+        )
+        uid = urlsafe_base64_encode(force_bytes(unverified_student.pk))
+        token = default_token_generator.make_token(unverified_student)
+
+        verify_url = reverse("verify_email", kwargs={"uid": uid, "token": token})
+        resp = self.client.get(verify_url)
+        self.assertEqual(resp.status_code, status.HTTP_302_FOUND)
+
+        parsed = urlparse(resp["Location"])
+        params = parse_qs(parsed.query)
+        self.assertEqual(params.get("verified"), ["success"])
+        self.assertTrue("access" in params and len(params["access"][0]) > 10)
+        self.assertTrue("refresh" in params and len(params["refresh"][0]) > 10)
+
+        # Authenticate using the access token from the redirect URL and fetch dashboard
+        access_token = params["access"][0]
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+        dash_resp = self.client.get(reverse("students:student-dashboard"))
+        self.assertEqual(dash_resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(dash_resp.json()["profile"]["email"], "newstudent@gmail.com")
+        self.assertEqual(dash_resp.json()["profile"]["full_name"], "Chinedu Okafor")
+
