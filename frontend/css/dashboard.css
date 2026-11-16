@@ -96,24 +96,12 @@
 
 /* 2. RESET */
 
-
-
-\* {
-
-
-
+*,
+*::before,
+*::after {
     margin: 0;
-
-
-
     padding: 0;
-
-
-
     box-sizing: border-box;
-
-
-
 }
 
 
@@ -1314,17 +1302,14 @@ margin: 15px;
 
 
 
-/* .dashboard-center, */
-
-
-
+.dashboard-center,
 .dashboard-right {
-   width: 100%;
+    width: 100%;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 16px;
-    margin-left: 1px;
-
+    margin-left: 0;
 }
 
 
@@ -1457,18 +1442,9 @@ margin: 15px;
 
 
 
-.welcome-banner > \* {
-
-
-
+.welcome-banner > * {
     position: relative;
-
-
-
     z-index: 1;
-
-
-
 }
 
 
@@ -2304,13 +2280,9 @@ margin: 15px;
 
 
     /* Show hamburger */
-
     .hamburger {
-
         display: inline-flex;
-
-        margin-left: 320px;
-
+        margin-left: 0;
     }
 
 
@@ -3293,14 +3265,8 @@ margin: 15px;
 
 
     gap: 12px;
-
-
-
     margin-bottom: 16px;
-    margin-left:30px ;
-
-
-
+    margin-left: 0;
 }
 
 
@@ -4010,8 +3976,9 @@ margin: 15px;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
-    margin-left: 30px;
-
+    margin-left: 0;
+    width: 100%;
+    min-width: 0;
 }
 
 
@@ -5466,74 +5433,23 @@ margin: 15px;
 
 
 
-\#announcements > h3 {
-
-
-
+#announcements h3 {
     margin: 5px 0 9px;
-
-
-
     color: #253957;
-
-
-
     font-size: 12px;
-
-
-
     font-weight: 800;
-
-
-
 }
-
-
-
-
-
-
 
 .announcement-text {
-
-
-
     margin-bottom: 12px;
-
-
-
     color: #718097;
-
-
-
     font-size: 10px;
-
-
-
     line-height: 1.8;
-
-
-
 }
 
-
-
-
-
-
-
-\#announcements > small {
-
-
-
+#announcements small {
     color: #9ba6b6;
-
-
-
     font-size: 9px;
-
-
-
 }
 
 
@@ -6600,37 +6516,13 @@ margin: 15px;
 
 
 @media (prefers-reduced-motion: reduce) {
-
-
-
-    \*,
-
-
-
-    \*::before,
-
-
-
-    \*::after {
-
-
-
+    *,
+    *::before,
+    *::after {
         scroll-behavior: auto !important;
-
-
-
         transition-duration: 0.01ms !important;
-
-
-
         animation-duration: 0.01ms !important;
-
-
-
     }
-
-
-
 }
 
 
@@ -7101,15 +6993,68 @@ margin: 15px;
    FINAL RESPONSIVE FIX — IFEXA STUDENT DASHBOARD
    Keep this section at the very bottom of dashboard.css.
 ========================================================= */
-.dashboard-layout { min-height: 100vh; }
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.dashboard-layout {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    overflow-x: clip;
+}
 
 .main-content {
     min-width: 0;
+    max-width: 100%;
     width: calc(100% - 245px);
+    margin-left: 245px;
 }
 
-.topbar { width: 100%; min-width: 0; }
-.search-box { min-width: 0; }
+.topbar {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.search-box {
+    min-width: 0;
+}
+
+.dashboard-grid,
+.dashboard-center,
+.dashboard-right,
+.stats-grid,
+.course-grid,
+.lower-grid,
+.panel,
+.stat-card,
+.course-card,
+.welcome-banner,
+.payment-summary,
+.profile-card,
+.quick-actions {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.panel-heading {
+    margin-left: 0;
+    flex-wrap: wrap;
+}
+
+.lower-grid {
+    margin-left: 0;
+}
 
 .mobileMenu[hidden] { display: none !important; }
 .mobileMenu:not([hidden]) { display: block; }
@@ -7135,17 +7080,43 @@ margin: 15px;
     object-fit: contain;
 }
 
-@media (max-width: 1050px) and (min-width: 701px) {
+@media (max-width: 1280px) {
+    .dashboard-grid {
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: 14px;
+        padding: 14px;
+    }
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .course-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 1050px) and (min-width: 769px) {
     .sidebar { width: 205px; }
     .main-content {
         width: calc(100% - 205px);
         margin-left: 205px;
     }
+    .dashboard-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .dashboard-right {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+    }
 }
 
 @media (max-width: 768px) {
     .sidebar { display: none !important; }
-    .main-content { width: 100%; margin-left: 0; }
+    .main-content {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+    }
 
     .topbar {
         position: sticky;
@@ -7179,13 +7150,14 @@ margin: 15px;
         margin-left: auto;
         gap: 7px;
         flex-shrink: 0;
+        min-width: 0;
     }
 
     .search-box {
         order: 3;
         flex: 1 0 100%;
         width: 100%;
-        max-width: none;
+        max-width: 100%;
     }
 
     .mobileMenu {
@@ -7250,28 +7222,63 @@ margin: 15px;
         padding: 12px;
     }
 
-    .dashboard-center, .dashboard-right { min-width: 0; }
+    .dashboard-center,
+    .dashboard-right {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        width: 100%;
+    }
+
     .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .course-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .lower-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
+@media (max-width: 540px) {
+    .welcome-banner {
+        padding: 20px 18px;
+    }
+    .stats-grid,
+    .course-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .quick-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .progress-summary {
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: center;
+    }
+    .skill-list {
+        width: 100%;
+    }
+    .payment-summary {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .payment-summary .primary-button {
+        width: 100%;
+    }
+}
+
 @media (max-width: 400px) {
     .topbar-user-info { display: none; }
-    .topbar { gap: 8px; }
+    .topbar { gap: 8px; padding: 8px 10px; }
 
     .mobileMenu {
-        top: 118px;
+        top: 112px;
         right: 8px;
         width: calc(100vw - 16px);
         padding: 12px;
     }
 
     .mobile-menu-logo img { width: 135px; }
-    .stats-grid, .course-grid { grid-template-columns: minmax(0, 1fr); }
+    .dashboard-grid { padding: 10px; }
+    .panel { padding: 14px; }
 }
 
-@media (min-width: 701px) {
+@media (min-width: 769px) {
     .hamburger, .mobileMenu { display: none !important; }
 }
 

@@ -635,7 +635,7 @@ function setupMobileMenu() {
     });
 
     window.addEventListener("resize", () => {
-        if (window.innerWidth > 700) setMenuOpen(false);
+        if (window.innerWidth > 768) setMenuOpen(false);
     });
 }
 
@@ -857,7 +857,7 @@ notificationStyles.textContent = `
     font-size: 13px;
     padding: 10px 0;
 }
-@media (max-width: 700px) {
+@media (max-width: 768px) {
     .notification-panel { position: fixed; top: 65px; right: 12px; }
 }`;
 document.head.appendChild(notificationStyles);
