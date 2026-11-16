@@ -1,15 +1,543 @@
 /* =========================================================
    IFEXA ACADEMY — STUDENT DASHBOARD JAVASCRIPT
+   Authenticated Student Dashboard connected to Django REST API
+========================================================= */
+
+const API_BASE_URL = (
+    window.VITE_API_URL ||
+    window.API_BASE_URL ||
+    "http://127.0.0.1:8000/api"
+).replace(/\/+$/, "");
+
+const LOGIN_PAGE_URL = "../home/login.html";
+
+/* =========================================================
+   AUTHENTICATION & TOKEN MANAGEMENT
+========================================================= */
+
+function getAccessToken() {
+    return sessionStorage.getItem("accessToken") || "";
+}
+
+function getRefreshToken() {
+    return sessionStorage.getItem("refreshToken") || "";
+}
+
+function getStoredUser() {
+    try {
+        const raw = sessionStorage.getItem("user");
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+}
+
+function clearAuthState() {
+    sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+}
+
+function redirectToLogin() {
+    clearAuthState();
+    window.location.replace(LOGIN_PAGE_URL);
+}
+
+function enforceProtectedRoute() {
+    const access = getAccessToken();
+    const refresh = getRefreshToken();
+
+    if (!access && !refresh) {
+        redirectToLogin();
+        return false;
+    }
+
+    const user = getStoredUser();
+    if (user && user.role && user.role !== "STUDENT") {
+        if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
+            window.location.replace("../admin/admin.html");
+            return false;
+        }
+        if (user.role === "INSTRUCTOR") {
+            window.location.replace("../instructor/dashboard.html");
+            return false;
+        }
+        redirectToLogin();
+        return false;
+    }
+
+    return true;
+}
+
+async function refreshAccessToken() {
+    const refresh = getRefreshToken();
+    if (!refresh) {
+        return null;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/token/refresh/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+            body: JSON.stringify({ refresh }),
+        });
+
+        if (!response.ok) {
+            return null;
+        }
+
+        const data = await response.json();
+        if (data && data.access) {
+            sessionStorage.setItem("accessToken", data.access);
+            if (data.refresh) {
+                sessionStorage.setItem("refreshToken", data.refresh);
+            }
+            return data.access;
+        }
+        return null;
+    } catch {
+        return null;
+    }
+}
+
+async function apiRequest(endpoint, options = {}, retried = false) {
+    let token = getAccessToken();
+    if (!token && !retried) {
+        token = await refreshAccessToken();
+        if (!token) {
+            redirectToLogin();
+            throw new Error("Authentication required.");
+        }
+    }
+
+    const headers = {
+        "Accept": "application/json",
+        ...(options.body ? { "Content-Type": "application/json" } : {}),
+        ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+        ...(options.headers || {}),
+    };
+
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers,
+    });
+
+    if (response.status === 401 && !retried) {
+        const newToken = await refreshAccessToken();
+        if (newToken) {
+            return apiRequest(endpoint, options, true);
+        }
+        redirectToLogin();
+        throw new Error("Session expired. Please log in again.");
+    }
+
+    if (response.status === 403) {
+        redirectToLogin();
+        throw new Error("You do not have permission to access the student dashboard.");
+    }
+
+    const text = await response.text();
+    let data = {};
+    if (text) {
+        try {
+            data = JSON.parse(text);
+        } catch {
+            data = { error: "Unexpected response from server." };
+        }
+    }
+
+    if (!response.ok) {
+        const errorMessage =
+            data.error ||
+            data.detail ||
+            (typeof data === "object" ? Object.values(data).flat().join(" ") : "") ||
+            `Request failed with status ${response.status}`;
+        const err = new Error(errorMessage);
+        err.status = response.status;
+        throw err;
+    }
+
+    return data;
+}
+
+/* =========================================================
+   STUDENT DASHBOARD API SERVICE LAYER
+========================================================= */
+
+const StudentDashboardAPI = {
+    getDashboard: () => apiRequest("/students/dashboard/"),
+    getProfile: () => apiRequest("/students/profile/"),
+    updateProfile: (payload) =>
+        apiRequest("/students/profile/", {
+            method: "PATCH",
+            body: JSON.stringify(payload),
+        }),
+    getCourses: (params = "") =>
+        apiRequest(`/students/courses/${params ? `?${params}` : ""}`),
+    getCourseDetail: (courseId) => apiRequest(`/students/courses/${courseId}/`),
+    getAssignments: (params = "") =>
+        apiRequest(`/students/assignments/${params ? `?${params}` : ""}`),
+    submitAssignment: (assignmentId, payload) =>
+        apiRequest(`/students/assignments/${assignmentId}/submit/`, {
+            method: "POST",
+            body: JSON.stringify(payload),
+        }),
+    getGrades: () => apiRequest("/students/grades/"),
+    getResults: () => apiRequest("/students/results/"),
+    getAttendance: () => apiRequest("/students/attendance/"),
+    getDeadlines: () => apiRequest("/students/deadlines/"),
+    getAnnouncements: () => apiRequest("/students/announcements/"),
+    getNotifications: () => apiRequest("/students/notifications/"),
+    markNotificationRead: (notificationId) =>
+        apiRequest(`/students/notifications/${notificationId}/read/`, {
+            method: "POST",
+        }),
+    markAllNotificationsRead: () =>
+        apiRequest("/students/notifications/mark-all-read/", {
+            method: "POST",
+        }),
+    getPayments: () => apiRequest("/students/payments/"),
+};
+
+window.StudentDashboardAPI = StudentDashboardAPI;
+
+/* =========================================================
+   INITIALIZATION
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+    if (!enforceProtectedRoute()) {
+        return;
+    }
+
     setupMobileMenu();
     setupDashboardSearch();
     setupNotifications();
     setupActiveNavigation();
+    setupLogout();
+    loadStudentDashboard();
 });
 
-/* MOBILE MENU: open, close, outside click, Escape key */
+async function loadStudentDashboard() {
+    setLoadingStates();
+
+    try {
+        const data = await StudentDashboardAPI.getDashboard();
+
+        renderProfile(data.profile, data.greeting);
+        renderStats(data.stats);
+        renderCourses(data.courses);
+        renderProgressOverview(data.progress_overview);
+        renderAssignments(data.recent_assignments);
+        renderDeadlines(data.upcoming_deadlines);
+        renderPaymentSummary(data.payment_summary);
+        renderLatestAnnouncement(data.latest_announcement);
+        renderNotifications(data.notifications);
+    } catch (error) {
+        renderErrorStates(error.message || "Unable to load student dashboard data.");
+    }
+}
+
+function setLoadingStates() {
+    setText("topbarStudentName", "Loading...");
+    setText("welcomeStudentName", "Loading profile...");
+    setText("profileFullName", "Loading profile...");
+    setText("profileStudentId", "Loading...");
+    setText("profileEmail", "Loading...");
+    setText("profileCourse", "Loading...");
+    setText("profileJoined", "Loading...");
+
+    setHtml("coursesGrid", '<p class="dashboard-loading">Loading courses...</p>');
+    setHtml("gradesSkillList", '<p class="dashboard-loading">Loading grades...</p>');
+    setHtml("assignmentsList", '<p class="dashboard-loading">Loading assignments...</p>');
+    setHtml("deadlinesList", '<p class="dashboard-loading">Loading deadlines...</p>');
+    setHtml("announcementContent", '<p class="dashboard-loading">Loading announcement...</p>');
+}
+
+function renderErrorStates(message) {
+    const safeMsg = escapeHtml(message);
+    setText("welcomeStudentName", "Unable to load profile");
+    setText("profileFullName", "Error loading profile");
+    setHtml("coursesGrid", `<p class="dashboard-error">${safeMsg}</p>`);
+    setHtml("gradesSkillList", `<p class="dashboard-error">${safeMsg}</p>`);
+    setHtml("assignmentsList", `<p class="dashboard-error">${safeMsg}</p>`);
+    setHtml("deadlinesList", `<p class="dashboard-error">${safeMsg}</p>`);
+    setHtml("announcementContent", `<p class="dashboard-error">${safeMsg}</p>`);
+}
+
+/* =========================================================
+   SECTION RENDERERS
+========================================================= */
+
+function renderProfile(profile, greeting) {
+    if (!profile) return;
+
+    const fullName = profile.full_name || profile.name || profile.email || "Student";
+    const roleDisplay = profile.role_display || "Student";
+
+    setText("topbarStudentName", fullName);
+    setText("topbarStudentRole", roleDisplay);
+    setText("welcomeGreeting", `${greeting || "Welcome back"},`);
+    setText("welcomeStudentName", `${fullName} 👋`);
+
+    setText("profileFullName", fullName);
+    setText("profileRole", roleDisplay);
+    setText("profileStatus", `● ${profile.status || "Active"}`);
+    setText("profileStudentId", profile.student_id || "—");
+    setText("profileEmail", profile.email || "—");
+    setText("profileCourse", profile.course || "—");
+    setText("profileJoined", profile.joined_display || profile.joined_date || "—");
+
+    const topbarAvatar = document.getElementById("topbarAvatar");
+    const profileAvatar = document.getElementById("profileAvatar");
+    if (profile.avatar_url) {
+        if (topbarAvatar) {
+            topbarAvatar.src = profile.avatar_url;
+            topbarAvatar.alt = fullName;
+        }
+        if (profileAvatar) {
+            profileAvatar.src = profile.avatar_url;
+            profileAvatar.alt = fullName;
+        }
+    }
+}
+
+function renderStats(stats) {
+    if (!stats) return;
+
+    const enrolledCount = Number(stats.enrolled_courses_count ?? 0);
+    const dueCount = Number(stats.assignments_due_count ?? 0);
+    const progress = Number(stats.overall_progress ?? 0);
+    const balance = stats.formatted_balance || "₦0";
+
+    setText("statEnrolledCourses", String(enrolledCount));
+    setText("statAssignmentsDue", String(dueCount));
+    setText("statOverallProgress", `${progress}%`);
+    setText("statOutstandingBalance", balance);
+
+    const progressFill = document.getElementById("statProgressFill");
+    if (progressFill) {
+        progressFill.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+    }
+
+    ["sidebarAssignmentBadge", "mobileAssignmentBadge"].forEach((id) => {
+        const badge = document.getElementById(id);
+        if (!badge) return;
+        badge.textContent = String(dueCount);
+        badge.hidden = dueCount <= 0;
+    });
+}
+
+function renderCourses(courses) {
+    const grid = document.getElementById("coursesGrid");
+    if (!grid) return;
+
+    if (!Array.isArray(courses) || courses.length === 0) {
+        grid.innerHTML = '<p class="dashboard-empty">You are not enrolled in any courses yet.</p>';
+        return;
+    }
+
+    grid.innerHTML = courses
+        .map((course) => {
+            const progress = Math.min(100, Math.max(0, Number(course.progress) || 0));
+            return `
+                <article class="course-card" data-course-id="${course.id}">
+                    <div class="course-art ${escapeHtml(course.art_style || "html-art")}">
+                        ${escapeHtml(course.short_title || course.title)}
+                    </div>
+
+                    <h3>${escapeHtml(course.title)}</h3>
+                    <p>${escapeHtml(course.category || "")}</p>
+
+                    <div class="course-progress">
+                        <span><i style="width: ${progress}%"></i></span>
+                        <small>${progress}%</small>
+                    </div>
+
+                    <a href="#courses" class="course-button">
+                        Continue Learning →
+                    </a>
+                </article>
+            `;
+        })
+        .join("");
+}
+
+function renderProgressOverview(progressOverview) {
+    if (!progressOverview) return;
+
+    const overall = Number(progressOverview.overall_progress ?? 0);
+    setText("gradesOverallProgress", `${overall}%`);
+
+    const skillList = document.getElementById("gradesSkillList");
+    if (!skillList) return;
+
+    const courses = progressOverview.courses || [];
+    if (courses.length === 0) {
+        skillList.innerHTML = '<p class="dashboard-empty">No course grades or progress recorded yet.</p>';
+        return;
+    }
+
+    skillList.innerHTML = courses
+        .map((course) => {
+            const pct = Math.min(100, Math.max(0, Number(course.progress) || 0));
+            return `<p>${escapeHtml(course.title)} <b>${pct}%</b></p>`;
+        })
+        .join("");
+}
+
+function renderAssignments(assignments) {
+    const container = document.getElementById("assignmentsList");
+    if (!container) return;
+
+    if (!Array.isArray(assignments) || assignments.length === 0) {
+        container.innerHTML = '<p class="dashboard-empty">No assignments available for your courses.</p>';
+        return;
+    }
+
+    container.innerHTML = assignments
+        .map((item) => {
+            const isPending = item.status === "pending";
+            const statusClass = isPending ? "pending" : "submitted";
+            const duePart = item.due_date_display ? ` · Due ${item.due_date_display}` : "";
+            const subtitle = `${item.course_category || item.course_title || ""}${duePart}`;
+            const titleAttr = isPending ? 'title="Click to submit this assignment"' : "";
+            const cursorStyle = isPending ? 'style="cursor: pointer;"' : "";
+
+            return `
+                <div class="assignment-item" data-assignment-id="${item.id}" data-status="${escapeHtml(item.status)}" ${titleAttr} ${cursorStyle}>
+                    <i class="fa-regular fa-file-lines"></i>
+
+                    <div>
+                        <strong>${escapeHtml(item.title)}</strong>
+                        <small>${escapeHtml(subtitle)}</small>
+                    </div>
+
+                    <span class="status ${statusClass}">${escapeHtml(item.status_display || item.status)}</span>
+                </div>
+            `;
+        })
+        .join("");
+
+    container.querySelectorAll('.assignment-item[data-status="pending"]').forEach((itemEl) => {
+        itemEl.addEventListener("click", async () => {
+            const assignmentId = itemEl.getAttribute("data-assignment-id");
+            const assignmentTitle = itemEl.querySelector("strong")?.textContent || "Assignment";
+            const input = prompt(
+                `Submit "${assignmentTitle}":\nEnter your submission text or project link:`
+            );
+            if (!input || !input.trim()) return;
+
+            const trimmed = input.trim();
+            const isUrl = /^https?:\/\//i.test(trimmed);
+
+            try {
+                await StudentDashboardAPI.submitAssignment(assignmentId, {
+                    submission_text: trimmed,
+                    submission_url: isUrl ? trimmed : "",
+                });
+                await loadStudentDashboard();
+            } catch (error) {
+                alert(error.message || "Could not submit assignment.");
+            }
+        });
+    });
+}
+
+function renderDeadlines(deadlines) {
+    const container = document.getElementById("deadlinesList");
+    if (!container) return;
+
+    if (!Array.isArray(deadlines) || deadlines.length === 0) {
+        container.innerHTML = '<p class="dashboard-empty">No upcoming deadlines.</p>';
+        return;
+    }
+
+    container.innerHTML = deadlines
+        .map(
+            (deadline) => `
+                <div class="deadline-item">
+                    <span class="deadline-dot ${escapeHtml(deadline.dot_color || "green-dot")}"></span>
+                    <p>${escapeHtml(deadline.title)}</p>
+                    <small>${escapeHtml(deadline.due_date_display || "")}</small>
+                </div>
+            `
+        )
+        .join("");
+}
+
+function renderPaymentSummary(paymentSummary) {
+    if (!paymentSummary) return;
+    setText("paymentCurrentBalance", paymentSummary.formatted_balance || "₦0");
+}
+
+function renderLatestAnnouncement(announcement) {
+    const container = document.getElementById("announcementContent");
+    if (!container) return;
+
+    if (!announcement) {
+        container.innerHTML = '<p class="dashboard-empty">No announcements at this time.</p>';
+        return;
+    }
+
+    container.innerHTML = `
+        <h3>${escapeHtml(announcement.title)}</h3>
+        <p class="announcement-text">${escapeHtml(announcement.message || announcement.description || "")}</p>
+        <small>${escapeHtml(announcement.time_ago || "")}</small>
+    `;
+}
+
+function renderNotifications(notificationsPayload) {
+    const badge = document.getElementById("notificationBadge");
+    const panel = document.getElementById("notificationPanel");
+
+    const unreadCount = Number(notificationsPayload?.unread_count ?? 0);
+    if (badge) {
+        badge.textContent = String(unreadCount);
+        badge.hidden = unreadCount <= 0;
+    }
+
+    if (!panel) return;
+
+    const results = notificationsPayload?.results || [];
+    const listHtml =
+        results.length === 0
+            ? '<p class="dashboard-empty" style="padding: 12px 0; margin: 0;">No notifications yet.</p>'
+            : results
+                  .map(
+                      (item) => `
+                        <div class="notification-item ${item.is_read ? "is-read" : ""}" data-notification-id="${item.id}">
+                            <span class="notification-item-icon">
+                                <i class="${escapeHtml(item.icon || "fa-solid fa-bell")}"></i>
+                            </span>
+                            <div>
+                                <strong>${escapeHtml(item.title)}</strong>
+                                <p>${escapeHtml(item.message)}</p>
+                                <small>${escapeHtml(item.time_ago || "")}</small>
+                            </div>
+                        </div>
+                    `
+                  )
+                  .join("");
+
+    panel.innerHTML = `
+        <div class="notification-panel-heading">
+            <strong>Notifications</strong>
+            <button type="button" class="mark-notifications-read">Mark all as read</button>
+        </div>
+        ${listHtml}
+    `;
+}
+
+/* =========================================================
+   UI INTERACTIONS (MOBILE MENU, SEARCH, NOTIFICATIONS, NAV)
+========================================================= */
+
 function setupMobileMenu() {
     const hamburger = document.getElementById("hamburger");
     const mobileMenu = document.getElementById("mobileMenu");
@@ -45,7 +573,9 @@ function setupMobileMenu() {
             !mobileMenu.hidden &&
             !mobileMenu.contains(event.target) &&
             !hamburger.contains(event.target)
-        ) setMenuOpen(false);
+        ) {
+            setMenuOpen(false);
+        }
     });
 
     document.addEventListener("keydown", (event) => {
@@ -60,26 +590,23 @@ function setupMobileMenu() {
     });
 }
 
-/* SEARCH COURSES AND ASSIGNMENTS */
 function setupDashboardSearch() {
     const searchInput = document.getElementById("courseSearch");
     if (!searchInput) return;
 
-    const searchableItems = [
-        ...document.querySelectorAll(".course-card"),
-        ...document.querySelectorAll(".assignment-item"),
-        ...document.querySelectorAll(".deadline-item")
-    ];
-
     searchInput.addEventListener("input", () => {
         const query = searchInput.value.trim().toLowerCase();
+        const searchableItems = [
+            ...document.querySelectorAll(".course-card"),
+            ...document.querySelectorAll(".assignment-item"),
+            ...document.querySelectorAll(".deadline-item"),
+        ];
         searchableItems.forEach((item) => {
             item.hidden = !item.textContent.toLowerCase().includes(query);
         });
     });
 }
 
-/* NOTIFICATION DROPDOWN */
 function setupNotifications() {
     const bell = document.getElementById("notificationBell");
     const container = document.querySelector(".notification-container");
@@ -98,22 +625,8 @@ function setupNotifications() {
                 <strong>Notifications</strong>
                 <button type="button" class="mark-notifications-read">Mark all as read</button>
             </div>
-            <div class="notification-item">
-                <span class="notification-item-icon"><i class="fa-solid fa-file-lines"></i></span>
-                <div>
-                    <strong>Assignment reminder</strong>
-                    <p>Your Web Development assignment is awaiting submission.</p>
-                    <small>Recently</small>
-                </div>
-            </div>
-            <div class="notification-item">
-                <span class="notification-item-icon"><i class="fa-solid fa-bullhorn"></i></span>
-                <div>
-                    <strong>Academy announcement</strong>
-                    <p>Check the latest academy announcements for updates.</p>
-                    <small>Recently</small>
-                </div>
-            </div>`;
+            <p class="dashboard-loading" style="padding: 12px 0; margin: 0;">Loading notifications...</p>
+        `;
         container.appendChild(panel);
     }
 
@@ -129,14 +642,42 @@ function setupNotifications() {
         setPanelOpen(panel.hidden);
     });
 
-    panel.addEventListener("click", (event) => {
+    panel.addEventListener("click", async (event) => {
         event.stopPropagation();
+
         if (event.target.closest(".mark-notifications-read")) {
-            const badge = bell.querySelector("span");
-            if (badge) badge.remove();
-            panel.querySelectorAll(".notification-item").forEach((item) => {
-                item.classList.add("is-read");
-            });
+            try {
+                await StudentDashboardAPI.markAllNotificationsRead();
+                const badge = document.getElementById("notificationBadge");
+                if (badge) {
+                    badge.textContent = "0";
+                    badge.hidden = true;
+                }
+                panel.querySelectorAll(".notification-item").forEach((item) => {
+                    item.classList.add("is-read");
+                });
+            } catch (error) {
+                console.error("Failed to mark notifications as read:", error);
+            }
+            return;
+        }
+
+        const itemEl = event.target.closest(".notification-item");
+        if (itemEl && !itemEl.classList.contains("is-read")) {
+            const notificationId = itemEl.getAttribute("data-notification-id");
+            if (!notificationId) return;
+            try {
+                const res = await StudentDashboardAPI.markNotificationRead(notificationId);
+                itemEl.classList.add("is-read");
+                const badge = document.getElementById("notificationBadge");
+                if (badge) {
+                    const unread = Number(res.unread_count ?? 0);
+                    badge.textContent = String(unread);
+                    badge.hidden = unread <= 0;
+                }
+            } catch (error) {
+                console.error("Failed to mark notification as read:", error);
+            }
         }
     });
 
@@ -149,7 +690,6 @@ function setupNotifications() {
     });
 }
 
-/* Keep desktop and mobile active navigation in sync */
 function setupActiveNavigation() {
     const links = document.querySelectorAll(
         ".sidebar-nav .nav-link, .mobile-links .nav-link"
@@ -158,7 +698,7 @@ function setupActiveNavigation() {
     links.forEach((link) => {
         link.addEventListener("click", () => {
             const target = link.getAttribute("href");
-            if (!target || !target.startsWith("#")) return;
+            if (!target || !target.startsWith("#") || target === "#logout") return;
             links.forEach((item) => {
                 item.classList.toggle("active", item.getAttribute("href") === target);
             });
@@ -166,7 +706,39 @@ function setupActiveNavigation() {
     });
 }
 
-/* Notification panel styles */
+function setupLogout() {
+    const logoutLinks = document.querySelectorAll(".logout-link, a[href='#logout']");
+    logoutLinks.forEach((link) => {
+        link.addEventListener("click", (event) => {
+            event.preventDefault();
+            redirectToLogin();
+        });
+    });
+}
+
+/* =========================================================
+   DOM HELPERS & STYLES
+========================================================= */
+
+function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+}
+
+function setHtml(id, html) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+}
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
 const notificationStyles = document.createElement("style");
 notificationStyles.textContent = `
 .notification-container { position: relative; }
@@ -201,6 +773,7 @@ notificationStyles.textContent = `
     background: #edf4ff;
     color: #1769f5;
     font-size: 10px;
+    cursor: pointer;
 }
 .notification-item {
     display: flex;
@@ -208,6 +781,7 @@ notificationStyles.textContent = `
     gap: 10px;
     padding: 13px 0;
     border-bottom: 1px solid #edf1f7;
+    cursor: pointer;
 }
 .notification-item:last-child { border-bottom: 0; }
 .notification-item.is-read { opacity: .55; }
@@ -224,6 +798,16 @@ notificationStyles.textContent = `
 .notification-item strong { display: block; font-size: 11px; }
 .notification-item p { margin: 3px 0; color: #53627a; font-size: 11px; }
 .notification-item small { color: #8290a5; font-size: 10px; }
+.dashboard-loading, .dashboard-empty {
+    color: #53627a;
+    font-size: 13px;
+    padding: 10px 0;
+}
+.dashboard-error {
+    color: #d92d20;
+    font-size: 13px;
+    padding: 10px 0;
+}
 @media (max-width: 700px) {
     .notification-panel { position: fixed; top: 65px; right: 12px; }
 }`;

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,7 +48,7 @@
             <a href="#assignments" class="nav-link">
                 <i class="fa-solid fa-clipboard-list"></i>
                 <span>Assignments</span>
-                <b class="notification">3</b>
+                <b class="notification" id="sidebarAssignmentBadge" hidden>0</b>
             </a>
 
             <a href="#grades" class="nav-link">
@@ -144,7 +143,7 @@
             <a href="#assignments" class="nav-link">
                 <i class="fa-solid fa-clipboard-list"></i>
                 <span>Assignments</span>
-                <b class="notification">3</b>
+                <b class="notification" id="mobileAssignmentBadge" hidden>0</b>
             </a>
 
             <a href="#grades" class="nav-link">
@@ -183,8 +182,8 @@
 
 
     <!-- SEARCH BAR -->
-<label class="search-box"><i class="fa-solid fa-magnifying-glass"></i>
-<input type="search" id="courseSearch" placeholder="Search for courses, assignments, or anything..." aria-label="Search courses and assignments"></label>
+    <label class="search-box"><i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" id="courseSearch" placeholder="Search for courses, assignments, or anything..." aria-label="Search courses and assignments"></label>
 
             <!-- USER PROFILE -->
             <div class="topbar-user">
@@ -201,21 +200,22 @@
                         aria-controls="notificationPanel">
 
                         <i class="fa-regular fa-bell"></i>
-                        <span>2</span>
+                        <span id="notificationBadge" hidden>0</span>
                     </button>
 
-                    <!-- Notification panel can be created by JavaScript -->
+                    <!-- Notification panel created by JavaScript -->
 
                 </div>
 
                 <img
                     src="../../image/female.jpg"
                     alt="Student profile"
-                    class="topbar-avatar">
+                    class="topbar-avatar"
+                    id="topbarAvatar">
 
                 <div class="topbar-user-info">
-                    <strong>Ikechukwu Stephen</strong>
-                    <small>Student</small>
+                    <strong id="topbarStudentName">Loading...</strong>
+                    <small id="topbarStudentRole">Student</small>
                 </div>
 
             </div>
@@ -234,9 +234,9 @@
                 <!-- WELCOME BANNER -->
                 <section class="welcome-banner" id="dashboard">
 
-                    <p>Good morning,</p>
+                    <p id="welcomeGreeting">Welcome back,</p>
 
-                    <h1>Ikechukwu Stephen 👋</h1>
+                    <h1 id="welcomeStudentName">Loading profile...</h1>
 
                     <p>
                         Keep going! You're doing great on your
@@ -257,31 +257,31 @@
                     <article class="stat-card blue-card">
                         <i class="fa-solid fa-graduation-cap stat-icon"></i>
                         <p>Enrolled Courses</p>
-                        <h2>5</h2>
+                        <h2 id="statEnrolledCourses">—</h2>
                         <a href="#courses">View all →</a>
                     </article>
 
                     <article class="stat-card green-card">
                         <i class="fa-solid fa-file-lines stat-icon"></i>
                         <p>Assignments Due</p>
-                        <h2>3</h2>
+                        <h2 id="statAssignmentsDue">—</h2>
                         <a href="#assignments">View all →</a>
                     </article>
 
                     <article class="stat-card purple-card">
                         <i class="fa-solid fa-trophy stat-icon"></i>
                         <p>Overall Progress</p>
-                        <h2>68%</h2>
+                        <h2 id="statOverallProgress">—</h2>
 
                         <div class="progress-track">
-                            <span style="width: 68%"></span>
+                            <span id="statProgressFill" style="width: 0%"></span>
                         </div>
                     </article>
 
                     <article class="stat-card orange-card">
                         <i class="fa-solid fa-wallet stat-icon"></i>
                         <p>Outstanding Balance</p>
-                        <h2>₦45,000</h2>
+                        <h2 id="statOutstandingBalance">—</h2>
                         <a href="#payments">View details →</a>
                     </article>
 
@@ -296,90 +296,8 @@
                         <a href="#courses">View All Courses →</a>
                     </div>
 
-                    <div class="course-grid">
-
-                        <article class="course-card">
-                            <div class="course-art html-art">
-                                HTML · CSS · JS
-                            </div>
-
-                            <h3>HTML, CSS &amp; JavaScript</h3>
-                            <p>Web Development</p>
-
-                            <div class="course-progress">
-                                <span><i style="width: 80%"></i></span>
-                                <small>80%</small>
-                            </div>
-
-                            <a href="#" class="course-button">
-                                Continue Learning →
-                            </a>
-                        </article>
-
-                        <article class="course-card">
-                            <div class="course-art react-art">React</div>
-
-                            <h3>React</h3>
-                            <p>Frontend Development</p>
-
-                            <div class="course-progress">
-                                <span><i style="width: 65%"></i></span>
-                                <small>65%</small>
-                            </div>
-
-                            <a href="#" class="course-button">
-                                Continue Learning →
-                            </a>
-                        </article>
-
-                        <article class="course-card">
-                            <div class="course-art node-art">Node.js</div>
-
-                            <h3>Node.js</h3>
-                            <p>Backend Development</p>
-
-                            <div class="course-progress">
-                                <span><i style="width: 50%"></i></span>
-                                <small>50%</small>
-                            </div>
-
-                            <a href="#" class="course-button">
-                                Continue Learning →
-                            </a>
-                        </article>
-
-                        <article class="course-card">
-                            <div class="course-art python-art">Python</div>
-
-                            <h3>Python</h3>
-                            <p>Programming</p>
-
-                            <div class="course-progress">
-                                <span><i style="width: 90%"></i></span>
-                                <small>90%</small>
-                            </div>
-
-                            <a href="#" class="course-button">
-                                Continue Learning →
-                            </a>
-                        </article>
-
-                        <article class="course-card">
-                            <div class="course-art django-art">Django</div>
-
-                            <h3>Django</h3>
-                            <p>Full Stack Development</p>
-
-                            <div class="course-progress">
-                                <span><i style="width: 30%"></i></span>
-                                <small>30%</small>
-                            </div>
-
-                            <a href="#" class="course-button">
-                                Continue Learning →
-                            </a>
-                        </article>
-
+                    <div class="course-grid" id="coursesGrid">
+                        <p class="dashboard-loading">Loading courses...</p>
                     </div>
                 </section>
 
@@ -399,17 +317,13 @@
 
                             <div class="progress-circle">
                                 <div>
-                                    <strong>68%</strong>
+                                    <strong id="gradesOverallProgress">—</strong>
                                     <small>Overall Progress</small>
                                 </div>
                             </div>
 
-                            <div class="skill-list">
-                                <p>HTML, CSS &amp; JS <b>80%</b></p>
-                                <p>React <b>65%</b></p>
-                                <p>Node.js <b>50%</b></p>
-                                <p>Python <b>90%</b></p>
-                                <p>Django <b>30%</b></p>
+                            <div class="skill-list" id="gradesSkillList">
+                                <p class="dashboard-loading">Loading grades...</p>
                             </div>
 
                         </div>
@@ -424,37 +338,8 @@
                             <a href="#assignments">View All →</a>
                         </div>
 
-                        <div class="assignment-item">
-                            <i class="fa-regular fa-file-lines"></i>
-
-                            <div>
-                                <strong>Build a Portfolio Website</strong>
-                                <small>Web Development · Due Oct 10</small>
-                            </div>
-
-                            <span class="status pending">Pending</span>
-                        </div>
-
-                        <div class="assignment-item">
-                            <i class="fa-regular fa-file-lines"></i>
-
-                            <div>
-                                <strong>React State Management</strong>
-                                <small>Frontend Development</small>
-                            </div>
-
-                            <span class="status pending">Pending</span>
-                        </div>
-
-                        <div class="assignment-item">
-                            <i class="fa-regular fa-file-lines"></i>
-
-                            <div>
-                                <strong>Python Calculator</strong>
-                                <small>Programming</small>
-                            </div>
-
-                            <span class="status submitted">Submitted</span>
+                        <div id="assignmentsList">
+                            <p class="dashboard-loading">Loading assignments...</p>
                         </div>
 
                     </section>
@@ -474,10 +359,10 @@
 
                         <div>
                             <small>Current Balance</small>
-                            <h2>₦45,000</h2>
+                            <h2 id="paymentCurrentBalance">Loading...</h2>
                         </div>
 
-                        <a href="#" class="primary-button">
+                        <a href="#payments" class="primary-button">
                             Make Payment
                         </a>
 
@@ -498,34 +383,35 @@
 
                     <img
                         src="../../image/female.jpg"
-                        alt="Ikechukwu Stephen"
-                        class="profile-avatar">
+                        alt="Student profile avatar"
+                        class="profile-avatar"
+                        id="profileAvatar">
 
-                    <h2>Ikechukwu Stephen</h2>
-                    <p>Student</p>
+                    <h2 id="profileFullName">Loading profile...</h2>
+                    <p id="profileRole">Student</p>
 
-                    <span class="active-status">● Active</span>
+                    <span class="active-status" id="profileStatus">● Loading...</span>
 
-                    <div class="profile-details">
+                    <div class="profile-details" id="profileDetails">
 
                         <p>
                             <span>Student ID</span>
-                            <strong>STU2025001</strong>
+                            <strong id="profileStudentId">Loading...</strong>
                         </p>
 
                         <p>
                             <span>Email</span>
-                            <strong>stephen@gmail.com</strong>
+                            <strong id="profileEmail">Loading...</strong>
                         </p>
 
                         <p>
                             <span>Course</span>
-                            <strong>Computer Science</strong>
+                            <strong id="profileCourse">Loading...</strong>
                         </p>
 
                         <p>
                             <span>Joined</span>
-                            <strong>Aug 2025</strong>
+                            <strong id="profileJoined">Loading...</strong>
                         </p>
 
                     </div>
@@ -585,28 +471,8 @@
                         <a href="#deadlines">View All →</a>
                     </div>
 
-                    <div class="deadline-item">
-                        <span class="deadline-dot green-dot"></span>
-                        <p>Web Development Project</p>
-                        <small>Oct 10</small>
-                    </div>
-
-                    <div class="deadline-item">
-                        <span class="deadline-dot teal-dot"></span>
-                        <p>React Project Submission</p>
-                        <small>Oct 15</small>
-                    </div>
-
-                    <div class="deadline-item">
-                        <span class="deadline-dot orange-dot"></span>
-                        <p>Python Assignment</p>
-                        <small>Oct 18</small>
-                    </div>
-
-                    <div class="deadline-item">
-                        <span class="deadline-dot red-dot"></span>
-                        <p>Database Project</p>
-                        <small>Oct 22</small>
+                    <div id="deadlinesList">
+                        <p class="dashboard-loading">Loading deadlines...</p>
                     </div>
 
                 </section>
@@ -619,14 +485,9 @@
                         <h2>Latest Announcement</h2>
                     </div>
 
-                    <h3>End of Semester Exams</h3>
-
-                    <p class="announcement-text">
-                        Final exams will hold from Nov 10 – Nov 20.
-                        Check your timetable for details.
-                    </p>
-
-                    <small>2 hours ago</small>
+                    <div id="announcementContent">
+                        <p class="dashboard-loading">Loading announcement...</p>
+                    </div>
 
                 </section>
 
@@ -635,9 +496,6 @@
         </div>
 
     </main>
-
-
-
 
 </div>
 

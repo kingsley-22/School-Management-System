@@ -494,7 +494,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     window.location.href = "../instructor/instructor-dashboard.html";
 
                 } else if (data.user.role === "STUDENT") {
-                    window.location.href = "../student/student-dashboard.html";
+                    window.location.href = "../student/dashboard.html";
 
                 } else if (data.user.role === "SUPER_ADMIN") {
                     window.location.href = "../admin/admin.html";
