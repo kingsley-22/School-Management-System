@@ -279,10 +279,14 @@ def serialize_admin_course(course):
         'Technology': ('art-tech', 'fa-laptop-code'),
         'Web Development': ('art-tech', 'fa-code'),
         'Frontend Development': ('art-tech', 'fa-laptop-code'),
-        'Backend Development': ('art-tech', 'fa-database'),
+        'Backend Development': ('art-science', 'fa-database'),
         'Programming': ('art-tech', 'fa-terminal'),
         'Full Stack Development': ('art-tech', 'fa-layer-group'),
-        'Cybersecurity': ('art-tech', 'fa-shield-halved'),
+        'Software Engineering': ('art-tech', 'fa-microchip'),
+        'Data & AI': ('art-math', 'fa-brain'),
+        'Cybersecurity': ('art-business', 'fa-shield-halved'),
+        'Cloud & DevOps': ('art-science', 'fa-cloud'),
+        'Mobile Development': ('art-language', 'fa-mobile-screen-button'),
         'Business': ('art-business', 'fa-briefcase'),
         'Design': ('art-design', 'fa-pen-ruler'),
         'Product Design': ('art-design', 'fa-pen-ruler'),
@@ -290,7 +294,8 @@ def serialize_admin_course(course):
         'Languages': ('art-language', 'fa-language'),
         'Mathematics': ('art-math', 'fa-square-root-variable'),
     }
-    theme, icon = theme_map.get(course.category, ('art-tech', 'fa-book-open'))
+    theme, default_icon = theme_map.get(course.category, ('art-tech', 'fa-laptop-code'))
+    icon = course.art_style if (course.art_style and course.art_style.startswith('fa-')) else default_icon
     enrollments = (
         Enrollment.objects.filter(course=course)
         .exclude(status=Enrollment.StatusChoices.DROPPED)

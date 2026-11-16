@@ -515,9 +515,272 @@ def user_management(request, user_id):
 # ADMIN DASHBOARD, STUDENT, INSTRUCTOR, COURSE, ANNOUNCEMENT ENDPOINTS
 # =========================================================
 
+DEFAULT_TECH_COURSES = [
+    {
+        'code': 'CSC-101',
+        'title': 'Full-Stack Web Development',
+        'short_title': 'Full-Stack Web',
+        'category': 'Web Development',
+        'level': 'Intermediate',
+        'hours': 48,
+        'instructor_name': 'Dr. Kunle Adeyemi',
+        'icon_class': 'fa-layer-group',
+        'description': 'Build end-to-end modern web applications using HTML, CSS, JavaScript, React, and Django REST APIs.',
+    },
+    {
+        'code': 'CSC-102',
+        'title': 'Frontend Engineering with React & Next.js',
+        'short_title': 'React & Next.js',
+        'category': 'Frontend Development',
+        'level': 'Intermediate',
+        'hours': 40,
+        'instructor_name': 'Adaobi Nnaji',
+        'icon_class': 'fa-laptop-code',
+        'description': 'Master component architecture, hooks, state management, SSR, and responsive frontend engineering.',
+    },
+    {
+        'code': 'CSC-103',
+        'title': 'Backend Engineering with Python & Django',
+        'short_title': 'Python & Django',
+        'category': 'Backend Development',
+        'level': 'Intermediate',
+        'hours': 44,
+        'instructor_name': 'Ibrahim Musa',
+        'icon_class': 'fa-server',
+        'description': 'Design scalable RESTful APIs, authentication systems, ORM queries, and production backend services.',
+    },
+    {
+        'code': 'CSC-104',
+        'title': 'JavaScript & TypeScript Mastery',
+        'short_title': 'JS & TypeScript',
+        'category': 'Programming',
+        'level': 'Beginner',
+        'hours': 36,
+        'instructor_name': 'Chinedu Okafor',
+        'icon_class': 'fa-code',
+        'description': 'Deep dive into modern ES6+ JavaScript, asynchronous programming, DOM manipulation, and TypeScript types.',
+    },
+    {
+        'code': 'CSC-105',
+        'title': 'UI/UX Product Design & Prototyping',
+        'short_title': 'UI/UX Design',
+        'category': 'Product Design',
+        'level': 'Beginner',
+        'hours': 32,
+        'instructor_name': 'Zainab Bello',
+        'icon_class': 'fa-pen-ruler',
+        'description': 'Learn user research, wireframing, design systems, and interactive high-fidelity prototyping in Figma.',
+    },
+    {
+        'code': 'CSC-106',
+        'title': 'Data Science & Machine Learning',
+        'short_title': 'Data Science & ML',
+        'category': 'Data & AI',
+        'level': 'Advanced',
+        'hours': 52,
+        'instructor_name': 'Dr. Tunde Bakare',
+        'icon_class': 'fa-chart-line',
+        'description': 'Analyze complex datasets and train predictive machine learning models using NumPy, Pandas, and Scikit-Learn.',
+    },
+    {
+        'code': 'CSC-107',
+        'title': 'Artificial Intelligence & Deep Learning',
+        'short_title': 'AI & Deep Learning',
+        'category': 'Data & AI',
+        'level': 'Advanced',
+        'hours': 56,
+        'instructor_name': 'Dr. Ngozi Eze',
+        'icon_class': 'fa-brain',
+        'description': 'Build neural networks, computer vision pipelines, and LLM-powered applications with PyTorch and TensorFlow.',
+    },
+    {
+        'code': 'CSC-108',
+        'title': 'Cybersecurity & Ethical Hacking',
+        'short_title': 'Cybersecurity',
+        'category': 'Cybersecurity',
+        'level': 'Intermediate',
+        'hours': 45,
+        'instructor_name': 'Samuel Osei',
+        'icon_class': 'fa-shield-halved',
+        'description': 'Protect networks and web applications through vulnerability assessment, penetration testing, and security auditing.',
+    },
+    {
+        'code': 'CSC-109',
+        'title': 'Cloud Computing with AWS & Azure',
+        'short_title': 'Cloud Computing',
+        'category': 'Cloud & DevOps',
+        'level': 'Intermediate',
+        'hours': 42,
+        'instructor_name': 'Fatima Abdullahi',
+        'icon_class': 'fa-cloud',
+        'description': 'Architect, deploy, and manage resilient cloud infrastructure, serverless functions, and managed databases.',
+    },
+    {
+        'code': 'CSC-110',
+        'title': 'DevOps, CI/CD, Docker & Kubernetes',
+        'short_title': 'DevOps & K8s',
+        'category': 'Cloud & DevOps',
+        'level': 'Advanced',
+        'hours': 46,
+        'instructor_name': 'Emeka Nwosu',
+        'icon_class': 'fa-gears',
+        'description': 'Automate software delivery pipelines, containerize microservices with Docker, and orchestrate clusters with Kubernetes.',
+    },
+    {
+        'code': 'CSC-111',
+        'title': 'Mobile App Development with Flutter & Dart',
+        'short_title': 'Flutter & Dart',
+        'category': 'Mobile Development',
+        'level': 'Intermediate',
+        'hours': 40,
+        'instructor_name': 'Kemi Adebayo',
+        'icon_class': 'fa-mobile-screen-button',
+        'description': 'Create fast, native-quality iOS and Android applications from a single codebase using Flutter and Dart.',
+    },
+    {
+        'code': 'CSC-112',
+        'title': 'React Native Mobile App Engineering',
+        'short_title': 'React Native',
+        'category': 'Mobile Development',
+        'level': 'Intermediate',
+        'hours': 38,
+        'instructor_name': 'David Mensah',
+        'icon_class': 'fa-mobile-screen',
+        'description': 'Build cross-platform mobile apps with React Native, Expo, native device APIs, and smooth animations.',
+    },
+    {
+        'code': 'CSC-113',
+        'title': 'Database Engineering, SQL & PostgreSQL',
+        'short_title': 'SQL & PostgreSQL',
+        'category': 'Backend Development',
+        'level': 'Beginner',
+        'hours': 30,
+        'instructor_name': 'Halima Suleiman',
+        'icon_class': 'fa-database',
+        'description': 'Master relational database design, normalization, indexing, transactions, and high-performance SQL queries.',
+    },
+    {
+        'code': 'CSC-114',
+        'title': 'Data Analytics with Python, SQL & Power BI',
+        'short_title': 'Data Analytics',
+        'category': 'Data & AI',
+        'level': 'Beginner',
+        'hours': 36,
+        'instructor_name': 'Oluwaseun Ajayi',
+        'icon_class': 'fa-chart-pie',
+        'description': 'Transform raw data into actionable business dashboards and reports using SQL, Python, and Power BI.',
+    },
+    {
+        'code': 'CSC-115',
+        'title': 'Blockchain & Web3 Smart Contract Development',
+        'short_title': 'Blockchain & Web3',
+        'category': 'Software Engineering',
+        'level': 'Advanced',
+        'hours': 44,
+        'instructor_name': 'Victor Chukwu',
+        'icon_class': 'fa-cubes',
+        'description': 'Develop decentralized applications (dApps) and secure Solidity smart contracts on Ethereum-compatible networks.',
+    },
+    {
+        'code': 'CSC-116',
+        'title': 'Software Engineering & System Design',
+        'short_title': 'System Design',
+        'category': 'Software Engineering',
+        'level': 'Advanced',
+        'hours': 48,
+        'instructor_name': 'Dr. Kunle Adeyemi',
+        'icon_class': 'fa-sitemap',
+        'description': 'Learn distributed systems, load balancing, caching strategies, clean architecture, and design patterns.',
+    },
+    {
+        'code': 'CSC-117',
+        'title': 'Node.js, Express & Microservices API Development',
+        'short_title': 'Node.js & Express',
+        'category': 'Backend Development',
+        'level': 'Intermediate',
+        'hours': 42,
+        'instructor_name': 'Chinedu Okafor',
+        'icon_class': 'fa-network-wired',
+        'description': 'Build event-driven backend services, WebSocket servers, and REST/GraphQL APIs with Node.js and Express.',
+    },
+    {
+        'code': 'CSC-118',
+        'title': 'Quality Assurance (QA) & Automated Software Testing',
+        'short_title': 'QA & Test Automation',
+        'category': 'Software Engineering',
+        'level': 'Beginner',
+        'hours': 28,
+        'instructor_name': 'Blessing Udoh',
+        'icon_class': 'fa-vial-circle-check',
+        'description': 'Write unit, integration, and end-to-end automated test suites using Pytest, Jest, Playwright, and Cypress.',
+    },
+    {
+        'code': 'CSC-119',
+        'title': 'Linux Server Administration & Bash Scripting',
+        'short_title': 'Linux & Bash',
+        'category': 'Cloud & DevOps',
+        'level': 'Beginner',
+        'hours': 30,
+        'instructor_name': 'Ibrahim Musa',
+        'icon_class': 'fa-terminal',
+        'description': 'Configure Linux servers, permissions, networking, systemd services, and automate tasks with Bash scripts.',
+    },
+    {
+        'code': 'CSC-120',
+        'title': 'Tech Product Management & Agile Delivery',
+        'short_title': 'Tech Product Mgmt',
+        'category': 'Product Design',
+        'level': 'Beginner',
+        'hours': 26,
+        'instructor_name': 'Zainab Bello',
+        'icon_class': 'fa-diagram-project',
+        'description': 'Lead software product discovery, roadmapping, user stories, sprint planning, and Agile Scrum execution.',
+    },
+]
+
+
+def ensure_default_tech_courses():
+    if Course.objects.count() >= len(DEFAULT_TECH_COURSES):
+        return
+    for item in DEFAULT_TECH_COURSES:
+        exists = Course.objects.filter(
+            Q(code__iexact=item['code']) | Q(title__iexact=item['title'])
+        ).exists()
+        if not exists:
+            Course.objects.create(
+                code=item['code'],
+                title=item['title'],
+                short_title=item['short_title'],
+                category=item['category'],
+                level=item['level'],
+                hours=item['hours'],
+                total_lessons=max(1, item['hours'] // 2),
+                instructor_name=item['instructor_name'],
+                art_style=item['icon_class'],
+                description=item['description'],
+                is_active=True,
+            )
+
+
+def _resolve_course_reference(course_ref):
+    if not course_ref:
+        return None
+    ensure_default_tech_courses()
+    ref_str = str(course_ref).strip()
+    course = None
+    if ref_str.isdigit():
+        course = Course.objects.filter(pk=int(ref_str)).first()
+    if not course:
+        course = Course.objects.filter(
+            Q(code__iexact=ref_str) | Q(title__iexact=ref_str)
+        ).first()
+    return course
+
+
 @api_view(['GET'])
 @permission_classes([IsAdmin])
 def admin_dashboard(request):
+    ensure_default_tech_courses()
     students_qs = User.objects.filter(role='STUDENT').order_by('-date_joined', '-id')
     instructors_qs = User.objects.filter(role='INSTRUCTOR').order_by('-date_joined', '-id')
     courses_qs = Course.objects.all().order_by('id')
@@ -605,7 +868,7 @@ def admin_students(request):
     profile.save()
 
     if course_id:
-        course = Course.objects.filter(pk=course_id).first()
+        course = _resolve_course_reference(course_id)
         if course:
             Enrollment.objects.get_or_create(
                 student=student_user,
@@ -724,13 +987,7 @@ def admin_assign_course(request, student_identifier=None):
             status=status.HTTP_404_NOT_FOUND,
         )
 
-    course = None
-    if str(course_ref).strip().isdigit():
-        course = Course.objects.filter(pk=int(str(course_ref).strip())).first()
-    if not course:
-        course = Course.objects.filter(
-            Q(code__iexact=str(course_ref).strip()) | Q(title__iexact=str(course_ref).strip())
-        ).first()
+    course = _resolve_course_reference(course_ref)
     if not course:
         return Response(
             {'error': 'Invalid course ID. Course not found.'},
@@ -894,6 +1151,7 @@ def admin_instructor_detail(request, instructor_identifier):
 @permission_classes([IsAdmin])
 def admin_courses(request):
     if request.method == 'GET':
+        ensure_default_tech_courses()
         courses_qs = Course.objects.all().order_by('id')
         data = [serialize_admin_course(c) for c in courses_qs]
         return Response({'count': len(data), 'results': data})
