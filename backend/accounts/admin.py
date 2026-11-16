@@ -1,9 +1,8 @@
 ﻿from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User
+from .models import AdminProfile, InstructorProfile, User
 
 
-# Register your models here.
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     model = User
@@ -20,7 +19,6 @@ class CustomUserAdmin(UserAdmin):
         'role',
         'is_verified',
         'is_active',
-
     )
     ordering = ('email',)
     fieldsets = (
@@ -32,22 +30,33 @@ class CustomUserAdmin(UserAdmin):
             'is_staff',
             'is_superuser',
             'groups',
-            'user_permissions'
+            'user_permissions',
         )}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
 
     add_fieldsets = (
         (None, {
-            'classes': ('wide' ,),
+            'classes': ('wide',),
             'fields': (
                 'email',
                 'first_name',
                 'last_name',
                 'role',
                 'password1',
-                'password2'
+                'password2',
             ),
         }),
     )
 
+
+@admin.register(InstructorProfile)
+class InstructorProfileAdmin(admin.ModelAdmin):
+    list_display = ('instructor_id', 'user', 'department', 'specialization', 'phone', 'username')
+    search_fields = ('instructor_id', 'user__email', 'user__first_name', 'user__last_name', 'department')
+
+
+@admin.register(AdminProfile)
+class AdminProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'username', 'department', 'role_title', 'phone')
+    search_fields = ('user__email', 'username', 'department')

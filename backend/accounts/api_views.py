@@ -1,24 +1,69 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth.tokens import default_token_generator
-from django.urls import reverse
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
-from django.core.mail import send_mail
-from django.contrib.auth import get_user_model
-from django.contrib.auth import authenticate
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import IsAuthenticated
 import threading
-from django.shortcuts import redirect
+import secrets
+from datetime import date
 
-from .serializers import RegisterSerializer, AdminCreateUserSerializer
+from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 
-from .permissions import IsAdmin, IsStudent, IsInstructor
-
+from students.models import (
+    Announcement,
+    Course,
+    Enrollment,
+    StudentNotification,
+    StudentProfile,
+)
+from .models import AdminProfile, InstructorProfile
+from .permissions import IsAdmin, IsInstructor, IsStudent
+from .serializers import (
+    AdminCreateInstructorSerializer,
+    AdminCreateUserSerializer,
+    RegisterSerializer,
+    serialize_admin_announcement,
+    serialize_admin_course,
+    serialize_admin_instructor,
+    serialize_admin_profile,
+    serialize_admin_student,
+)
 
 User = get_user_model()
+
+
+def _resolve_student_user(identifier):
+    """Resolve a student User by integer pk or by StudentProfile.student_id."""
+    if identifier is None:
+        return None
+    ident_str = str(identifier).strip()
+    if ident_str.isdigit():
+        return User.objects.filter(pk=int(ident_str), role='STUDENT').first()
+    profile = StudentProfile.objects.filter(student_id__iexact=ident_str).select_related('user').first()
+    if profile and profile.user.role == 'STUDENT':
+        return profile.user
+    return User.objects.filter(email__iexact=ident_str, role='STUDENT').first()
+
+
+def _resolve_instructor_user(identifier):
+    """Resolve an instructor User by integer pk or by InstructorProfile.instructor_id."""
+    if identifier is None:
+        return None
+    ident_str = str(identifier).strip()
+    if ident_str.isdigit():
+        return User.objects.filter(pk=int(ident_str), role='INSTRUCTOR').first()
+    profile = InstructorProfile.objects.filter(instructor_id__iexact=ident_str).select_related('user').first()
+    if profile and profile.user.role == 'INSTRUCTOR':
+        return profile.user
+    return User.objects.filter(email__iexact=ident_str, role='INSTRUCTOR').first()
+
 
 @api_view(['POST'])
 def register(request):
@@ -30,38 +75,39 @@ def register(request):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
 
-        verification_url = (f"http://127.0.0.1:8000/api/verify-email/{uid}/{token}/")
+        verification_url = f"http://127.0.0.1:8000/api/verify-email/{uid}/{token}/"
         threading.Thread(
-          target=send_mail,
-          args=(
-         'Verify your Ifexa Academy account',
-         f'Hello {user.first_name},\n\n'
-         f'Click the link below to verify your email:\n\n'
-         f'{verification_url}\n\n'
-         f'If you did not create this account, you can ignore this email.',
-         'mikelchisom127@gmail.com',
-         [user.email],
+            target=send_mail,
+            args=(
+                'Verify your Ifexa Academy account',
+                f'Hello {user.first_name},\n\n'
+                f'Click the link below to verify your email:\n\n'
+                f'{verification_url}\n\n'
+                f'If you did not create this account, you can ignore this email.',
+                'mikelchisom127@gmail.com',
+                [user.email],
             ),
-         kwargs={
-         'fail_silently': False,
-    }
-    ).start()
+            kwargs={
+                'fail_silently': False,
+            },
+        ).start()
 
-        return Response({
-            'message': 'Registration successful. Please check your email to verify your account. ',
-            'user': {
-                'id': user.id,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'email': user.email,
-                'role': user.role,
-                'is_verified': user.is_verified,
-            }
-        }, status=status.HTTP_201_CREATED)
+        return Response(
+            {
+                'message': 'Registration successful. Please check your email to verify your account. ',
+                'user': {
+                    'id': user.id,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'email': user.email,
+                    'role': user.role,
+                    'is_verified': user.is_verified,
+                },
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 
 @api_view(['GET'])
@@ -72,13 +118,13 @@ def verify_email(request, uid, token):
     except (User.DoesNotExist, ValueError, TypeError, OverflowError):
         return Response(
             {'error': 'Invalid verification link.'},
-            status=status.HTTP_400_BAD_REQUEST
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     if not default_token_generator.check_token(user, token):
         return Response(
             {'error': 'Invalid or expired verification link.'},
-            status=status.HTTP_400_BAD_REQUEST
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     user.is_verified = True
@@ -100,43 +146,48 @@ def login(request):
     password = request.data.get('password')
 
     if not email or not password:
-        return Response({
-            'error': 'Email and password are required. '
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'error': 'Email and password are required. '},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     user = authenticate(
         request,
         email=email,
-        password=password
+        password=password,
     )
 
     if user is None:
-        return Response({
-            'error': 'Invalid email or password. '
-        }, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(
+            {'error': 'Invalid email or password. '},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
     if not user.is_verified:
-        return Response({
-            'error': 'Please verify your email. '
-        }, status=status.HTTP_403_FORBIDDEN)
+        return Response(
+            {'error': 'Please verify your email. '},
+            status=status.HTTP_403_FORBIDDEN,
+        )
 
     refresh = RefreshToken.for_user(user)
 
-    return Response({
-        'message': 'Login successful. ',
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
-        'user': {
-            'id': user.id,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'email': user.email,
-            'role': user.role,
-            'is_verified': user.is_verified,
+    return Response(
+        {
+            'message': 'Login successful. ',
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'user': {
+                'id': user.id,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'role': user.role,
+                'is_verified': user.is_verified,
+                'is_approved': user.is_approved,
+            },
         }
-    })
+    )
 
 
-# Forgot password
 @api_view(['POST'])
 def forgot_password(request):
     email = request.data.get('email', '').strip().lower()
@@ -144,23 +195,21 @@ def forgot_password(request):
     if not email:
         return Response(
             {'error': 'Email is required.'},
-            status=status.HTTP_400_BAD_REQUEST
+            status=status.HTTP_400_BAD_REQUEST,
         )
-
-    User = get_user_model()
 
     try:
         user = User.objects.get(email__iexact=email)
     except User.DoesNotExist:
-        # Don't reveal whether an email is registered.
-        return Response({
-            'message': 'If an account with that email exists, a reset link has been sent.'
-        })
+        return Response(
+            {
+                'message': 'If an account with that email exists, a reset link has been sent.'
+            }
+        )
 
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
 
-    # Open the FRONTEND reset page, not the Django API.
     reset_url = (
         f"http://127.0.0.1:8080/pages/home/reset-password.html"
         f"?uid={uid}&token={token}"
@@ -177,108 +226,99 @@ def forgot_password(request):
         fail_silently=False,
     )
 
-    return Response({
-        'message': 'If an account with that email exists, a reset link has been sent.'
-    })
+    return Response(
+        {
+            'message': 'If an account with that email exists, a reset link has been sent.'
+        }
+    )
 
 
-# Reset password
 @api_view(['POST'])
 def reset_password(request, uid, token):
     new_password = request.data.get('new_password')
     confirm_password = request.data.get('confirm_password')
 
     if not new_password or not confirm_password:
-        return Response({
-            'error': 'New password and confirm password are required.'
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'error': 'New password and confirm password are required.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     if new_password != confirm_password:
-        return Response({
-            'error': 'Passwords do not match.'
-        }, status=status.HTTP_400_BAD_REQUEST)
-
-    User = get_user_model()
+        return Response(
+            {'error': 'Passwords do not match.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     try:
         decoded_uid = urlsafe_base64_decode(uid).decode()
         user = User.objects.get(pk=decoded_uid)
-    except (
-        User.DoesNotExist,
-        ValueError,
-        TypeError,
-        OverflowError
-    ):
-        return Response({
-            'error': 'Invalid or expired reset link.'
-        }, status=status.HTTP_400_BAD_REQUEST)
+    except (User.DoesNotExist, ValueError, TypeError, OverflowError):
+        return Response(
+            {'error': 'Invalid or expired reset link.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-    # Verify the token before allowing a password change.
     if not default_token_generator.check_token(user, token):
-        return Response({
-            'error': 'Invalid or expired reset link.'
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'error': 'Invalid or expired reset link.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     user.set_password(new_password)
     user.save()
 
-    return Response({
-        'message': 'Password reset successful. You can now log in with your new password.'
-    })
-
+    return Response(
+        {
+            'message': 'Password reset successful. You can now log in with your new password.'
+        }
+    )
 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def my_profile(request):
-    return Response({
-        'id': request.user.id,
-        'first_name': request.user.first_name,
-        'last_name': request.user.last_name,
-        'email': request.user.email,
-        'role': request.user.role,
-        'is_verified': request.user.is_verified,
-    })
-
+    return Response(
+        {
+            'id': request.user.id,
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+            'email': request.user.email,
+            'role': request.user.role,
+            'is_verified': request.user.is_verified,
+            'is_approved': request.user.is_approved,
+        }
+    )
 
 
 @api_view(['POST'])
 @permission_classes([IsAdmin])
 def approve_instructor(request, user_id):
-    try:
-        instructor = User.objects.get(
-            id=user_id,
-            role='INSTRUCTOR',
+    instructor = _resolve_instructor_user(user_id)
+    if not instructor:
+        return Response(
+            {'error': 'Instructor not found.'},
+            status=status.HTTP_404_NOT_FOUND,
         )
-    except User.DoesNotExist:
-        return Response({
-            'error': 'Instructor not found.'
-        }, status=status.HTTP_404_NOT_FOUND)
 
     instructor.is_approved = True
-    instructor.save(update_fields=['is_approved'])
+    instructor.is_verified = True
+    instructor.save(update_fields=['is_approved', 'is_verified'])
 
-    return Response({
-        'message':'Instructor approved successfully.',
-        'instructor': {
-            'id': instructor.id,
-            'email': instructor.email,
-            'is_approved': instructor.is_approved,
+    return Response(
+        {
+            'message': 'Instructor approved successfully.',
+            'instructor': serialize_admin_instructor(instructor),
         }
-    })
+    )
 
-# User management
+
 @api_view(['GET'])
 @permission_classes([IsAdmin])
 def list_users(request):
-    User = get_user_model()
-
     users = User.objects.all().order_by('-date_joined')
-   
-    data = []
-
-    for user in users:
-        data.append({
+    data = [
+        {
             'id': user.id,
             'first_name': user.first_name,
             'last_name': user.last_name,
@@ -286,26 +326,30 @@ def list_users(request):
             'role': user.role,
             'is_verified': user.is_verified,
             'is_approved': user.is_approved,
-        })
+        }
+        for user in users
+    ]
     return Response(data)
 
-# Admin user creation api
+
 @api_view(['POST'])
 @permission_classes([IsAdmin])
 def create_staff_user(request):
-    role = request.data.get('role')
+    role = request.data.get('role', 'INSTRUCTOR')
 
     if role not in ['INSTRUCTOR', 'ADMIN']:
-        return Response({
-            'error': 'Admin can only create Instructor or Admin accounts.'
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'error': 'Admin can only create Instructor or Admin accounts.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     serializer = AdminCreateUserSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
-        return Response({
-            'message': 'User account created successfuly.',
-            'user': {
+        user_payload = (
+            serialize_admin_instructor(user)
+            if user.role == 'INSTRUCTOR'
+            else {
                 'id': user.id,
                 'first_name': user.first_name,
                 'last_name': user.last_name,
@@ -314,93 +358,141 @@ def create_staff_user(request):
                 'is_verified': user.is_verified,
                 'is_approved': user.is_approved,
             }
-        },status=status.HTTP_201_CREATED)
+        )
+        return Response(
+            {
+                'message': 'User account created successfully.',
+                'user': user_payload,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# Student profile API
 @api_view(['GET'])
 @permission_classes([IsStudent])
 def student_profile(request):
-    return Response({
-        'message': 'Welcome to the student API.',
-        'student': {
-            'id': request.user.id,
-            'first_name': request.user.first_name,
-            'last_name': request.user.last_name,
-            'email': request.user.email,
-            'role': request.user.role
+    return Response(
+        {
+            'message': 'Welcome to the student API.',
+            'student': {
+                'id': request.user.id,
+                'first_name': request.user.first_name,
+                'last_name': request.user.last_name,
+                'email': request.user.email,
+                'role': request.user.role,
+            },
         }
-    })
+    )
 
 
-# INstructor profile API
 @api_view(['GET'])
 @permission_classes([IsInstructor])
 def instructor_profile(request):
-    return Response({
-        'message': 'Welcome to the instructor API.',
-        'instructor': {
-            'id': request.user.id,
-            'first_name': request.user.first_name,
-            'last_name': request.user.last_name,
-            'email': request.user.email,
-            'role': request.user.role,
-            'is_approved': request.user.is_approved,
+    data = serialize_admin_instructor(request.user)
+    return Response(
+        {
+            'message': 'Welcome to the instructor API.',
+            'instructor': data,
+            **data,
         }
-    })
+    )
 
-# Admin profile API
-@api_view(['GET'])
+
+@api_view(['GET', 'PUT', 'PATCH'])
 @permission_classes([IsAdmin])
 def admin_profile(request):
-    return Response({
-        'message': 'Welcome to the admin API,',
-        'admin': {
-            'id': request.user.id,
-            'first_name': request.user.first_name,
-            'last_name': request.user.last_name,
-            'email': request.user.email,
-            'role': request.user.role,
-        }
-    })
+    user = request.user
+    profile = AdminProfile.get_or_create_for_user(user)
 
-#Admin ability to delete users
-#Admin ability to modify users and change their roles
+    if request.method in ('PUT', 'PATCH'):
+        full_name = (request.data.get('name') or request.data.get('full_name') or '').strip()
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
+        if full_name and first_name is None and last_name is None:
+            parts = full_name.split(None, 1)
+            user.first_name = parts[0]
+            user.last_name = parts[1] if len(parts) > 1 else ''
+        else:
+            if first_name is not None:
+                user.first_name = first_name.strip()
+            if last_name is not None:
+                user.last_name = last_name.strip()
+
+        email = (request.data.get('email') or '').strip().lower()
+        if email and email != user.email.lower():
+            if User.objects.filter(email__iexact=email).exclude(pk=user.pk).exists():
+                return Response(
+                    {'error': 'That email is already in use by another account.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user.email = email
+        user.save()
+
+        if 'username' in request.data:
+            profile.username = (request.data.get('username') or '').strip()
+        if 'phone' in request.data:
+            profile.phone = (request.data.get('phone') or '').strip()
+        if 'department' in request.data:
+            profile.department = (request.data.get('department') or '').strip()
+        if 'role' in request.data or 'role_title' in request.data:
+            profile.role_title = (request.data.get('role_title') or request.data.get('role') or '').strip()
+        if 'bio' in request.data:
+            profile.bio = (request.data.get('bio') or '').strip()
+        if 'avatar_url' in request.data:
+            profile.avatar_url = request.data.get('avatar_url') or ''
+        profile.save()
+
+        data = serialize_admin_profile(user)
+        return Response(
+            {
+                'message': 'Admin profile updated successfully.',
+                'admin': data,
+                **data,
+            }
+        )
+
+    data = serialize_admin_profile(user)
+    return Response(
+        {
+            'message': 'Welcome to the admin API.',
+            'admin': data,
+            **data,
+        }
+    )
+
+
 @api_view(['PATCH', 'DELETE'])
 @permission_classes([IsAdmin])
 def user_management(request, user_id):
-    User = get_user_model()
-    
     try:
-            user = User.objects.get(id=user_id)
+        user = User.objects.get(id=user_id)
     except User.DoesNotExist:
-            return Response({
-                'error': 'User not found.'
-            },status=status.HTTP_404_NOT_FOUND)
-    
-    if user.role == 'SUPER_ADMIN':
-         return Response({
-                'error': 'You cannot modify a Super Admin. '
-            }, status=status.HTTP_403_FORBIDDEN)
+        return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-    # UPDATE USER
+    if user.role == 'SUPER_ADMIN':
+        return Response(
+            {'error': 'You cannot modify a Super Admin. '},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
     if request.method == 'PATCH':
         allowed_fields = [
-                'first_name',
-                'last_name',
-                'email',
-                'role',
-                'is_verified',
-                'is_approved',
-            ]
+            'first_name',
+            'last_name',
+            'email',
+            'role',
+            'is_verified',
+            'is_approved',
+        ]
         for field in allowed_fields:
-                if field in request.data:
-                    setattr(user, field, request.data[field])
-        
+            if field in request.data:
+                setattr(user, field, request.data[field])
+
         user.save()
-        return Response({
+        return Response(
+            {
                 'message': 'User updated sucessfully. ',
                 'user': {
                     'id': user.id,
@@ -410,23 +502,567 @@ def user_management(request, user_id):
                     'role': user.role,
                     'is_verified': user.is_verified,
                     'is_approved': user.is_approved,
-                }
-            })
+                },
+            }
+        )
 
-    # DELETE USER
     if request.method == 'DELETE':
         user.delete()
-
-        return Response({
-            'message': 'User deleted successfully.'
-        })
-        
+        return Response({'message': 'User deleted successfully.'})
 
 
+# =========================================================
+# ADMIN DASHBOARD, STUDENT, INSTRUCTOR, COURSE, ANNOUNCEMENT ENDPOINTS
+# =========================================================
+
+@api_view(['GET'])
+@permission_classes([IsAdmin])
+def admin_dashboard(request):
+    students_qs = User.objects.filter(role='STUDENT').order_by('-date_joined', '-id')
+    instructors_qs = User.objects.filter(role='INSTRUCTOR').order_by('-date_joined', '-id')
+    courses_qs = Course.objects.all().order_by('id')
+
+    students_data = [serialize_admin_student(u) for u in students_qs]
+    instructors_data = [serialize_admin_instructor(u) for u in instructors_qs]
+    courses_data = [serialize_admin_course(c) for c in courses_qs]
+
+    pending_students = sum(1 for s in students_data if s['status'] == 'Pending')
+    pending_instructors = sum(1 for i in instructors_data if not i['is_approved'])
+
+    return Response(
+        {
+            'profile': serialize_admin_profile(request.user),
+            'stats': {
+                'total_students': len(students_data),
+                'total_instructors': len(instructors_data),
+                'total_courses': len(courses_data),
+                'active_courses': sum(1 for c in courses_data if c['active']),
+                'pending_approvals': pending_students,
+                'pending_instructors': pending_instructors,
+            },
+            'students': students_data,
+            'instructors': instructors_data,
+            'courses': courses_data,
+        }
+    )
 
 
+@api_view(['GET', 'POST'])
+@permission_classes([IsAdmin])
+def admin_students(request):
+    if request.method == 'GET':
+        students_qs = User.objects.filter(role='STUDENT').order_by('-date_joined', '-id')
+        data = [serialize_admin_student(u) for u in students_qs]
+        return Response({'count': len(data), 'results': data})
+
+    # POST: Create a new student record
+    email = (request.data.get('email') or '').strip().lower()
+    full_name = (request.data.get('name') or request.data.get('full_name') or '').strip()
+    first_name = (request.data.get('first_name') or '').strip()
+    last_name = (request.data.get('last_name') or '').strip()
+    if full_name and not first_name and not last_name:
+        parts = full_name.split(None, 1)
+        first_name = parts[0]
+        last_name = parts[1] if len(parts) > 1 else ''
+
+    phone = (request.data.get('phone') or '').strip()
+    department = (request.data.get('department') or request.data.get('course') or '').strip()
+    username = (request.data.get('username') or '').strip()
+    password = request.data.get('password') or secrets.token_urlsafe(12)
+    course_id = request.data.get('course_id')
+
+    if not email or not first_name:
+        return Response(
+            {'error': 'Student name and email are required.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if User.objects.filter(email__iexact=email).exists():
+        return Response(
+            {'error': 'A user with this email already exists.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if username and StudentProfile.objects.filter(username__iexact=username).exists():
+        return Response(
+            {'error': 'A student with this username already exists.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    student_user = User.objects.create_user(
+        email=email,
+        password=password,
+        first_name=first_name,
+        last_name=last_name,
+        role='STUDENT',
+        is_verified=False,
+        is_approved=False,
+    )
+    profile = StudentProfile.get_or_create_for_user(student_user)
+    profile.phone = phone
+    profile.course = department
+    profile.username = username or email.split('@')[0]
+    profile.save()
+
+    if course_id:
+        course = Course.objects.filter(pk=course_id).first()
+        if course:
+            Enrollment.objects.get_or_create(
+                student=student_user,
+                course=course,
+                defaults={'status': Enrollment.StatusChoices.ACTIVE, 'progress': 0},
+            )
+
+    return Response(
+        {
+            'message': 'Student created successfully.',
+            'student': serialize_admin_student(student_user),
+        },
+        status=status.HTTP_201_CREATED,
+    )
 
 
- 
-    
+@api_view(['GET', 'PATCH', 'DELETE'])
+@permission_classes([IsAdmin])
+def admin_student_detail(request, student_identifier):
+    student_user = _resolve_student_user(student_identifier)
+    if not student_user:
+        return Response({'error': 'Student not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+    if request.method == 'GET':
+        return Response(serialize_admin_student(student_user))
+
+    if request.method == 'PATCH':
+        profile = StudentProfile.get_or_create_for_user(student_user)
+        full_name = (request.data.get('name') or request.data.get('full_name') or '').strip()
+        if full_name:
+            parts = full_name.split(None, 1)
+            student_user.first_name = parts[0]
+            student_user.last_name = parts[1] if len(parts) > 1 else ''
+        if 'first_name' in request.data:
+            student_user.first_name = (request.data.get('first_name') or '').strip()
+        if 'last_name' in request.data:
+            student_user.last_name = (request.data.get('last_name') or '').strip()
+        if 'email' in request.data:
+            new_email = (request.data.get('email') or '').strip().lower()
+            if new_email and new_email != student_user.email.lower():
+                if User.objects.filter(email__iexact=new_email).exclude(pk=student_user.pk).exists():
+                    return Response({'error': 'Email already in use.'}, status=status.HTTP_400_BAD_REQUEST)
+                student_user.email = new_email
+        if 'status' in request.data:
+            st = (request.data.get('status') or '').strip().lower()
+            if st == 'approved':
+                student_user.is_approved = True
+                student_user.is_verified = True
+            elif st == 'pending':
+                student_user.is_approved = False
+        if 'is_approved' in request.data:
+            student_user.is_approved = bool(request.data.get('is_approved'))
+            if student_user.is_approved:
+                student_user.is_verified = True
+        student_user.save()
+
+        if 'phone' in request.data:
+            profile.phone = (request.data.get('phone') or '').strip()
+        if 'department' in request.data or 'course' in request.data:
+            profile.course = (request.data.get('department') or request.data.get('course') or '').strip()
+        if 'username' in request.data:
+            profile.username = (request.data.get('username') or '').strip()
+        profile.save()
+
+        return Response(
+            {
+                'message': 'Student updated successfully.',
+                'student': serialize_admin_student(student_user),
+            }
+        )
+
+    if request.method == 'DELETE':
+        student_user.delete()
+        return Response({'message': 'Student deleted successfully.'})
+
+
+@api_view(['POST'])
+@permission_classes([IsAdmin])
+def approve_student(request, student_identifier):
+    student_user = _resolve_student_user(student_identifier)
+    if not student_user:
+        return Response({'error': 'Student not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    student_user.is_approved = True
+    student_user.is_verified = True
+    student_user.save(update_fields=['is_approved', 'is_verified'])
+
+    profile = StudentProfile.get_or_create_for_user(student_user)
+    profile.status = StudentProfile.StatusChoices.ACTIVE
+    profile.save(update_fields=['status', 'updated_at'])
+
+    return Response(
+        {
+            'message': 'Student approved successfully.',
+            'student': serialize_admin_student(student_user),
+        }
+    )
+
+
+@api_view(['POST'])
+@permission_classes([IsAdmin])
+def admin_assign_course(request, student_identifier=None):
+    student_ref = student_identifier or request.data.get('student_id') or request.data.get('student')
+    course_ref = request.data.get('course_id') or request.data.get('course')
+
+    if not student_ref or not course_ref:
+        return Response(
+            {'error': 'Both student_id and course_id are required.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    student_user = _resolve_student_user(student_ref)
+    if not student_user:
+        return Response(
+            {'error': 'Invalid student ID. Student not found.'},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    course = None
+    if str(course_ref).strip().isdigit():
+        course = Course.objects.filter(pk=int(str(course_ref).strip())).first()
+    if not course:
+        course = Course.objects.filter(
+            Q(code__iexact=str(course_ref).strip()) | Q(title__iexact=str(course_ref).strip())
+        ).first()
+    if not course:
+        return Response(
+            {'error': 'Invalid course ID. Course not found.'},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    existing = Enrollment.objects.filter(student=student_user, course=course).first()
+    if existing and existing.status != Enrollment.StatusChoices.DROPPED:
+        return Response(
+            {'error': f"{student_user.email} is already assigned to {course.title}."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if existing:
+        existing.status = Enrollment.StatusChoices.ACTIVE
+        existing.save(update_fields=['status', 'updated_at'])
+        enrollment = existing
+    else:
+        enrollment = Enrollment.objects.create(
+            student=student_user,
+            course=course,
+            status=Enrollment.StatusChoices.ACTIVE,
+            progress=0,
+        )
+
+    StudentNotification.objects.create(
+        user=student_user,
+        title='New course assigned',
+        message=f"You have been enrolled in {course.title} by the administrator.",
+        notification_type=StudentNotification.TypeChoices.ANNOUNCEMENT,
+        is_read=False,
+    )
+
+    profile = StudentProfile.get_or_create_for_user(student_user)
+    if not profile.course:
+        profile.course = course.title
+        profile.save(update_fields=['course', 'updated_at'])
+
+    return Response(
+        {
+            'message': f"Course '{course.title}' assigned to student successfully.",
+            'enrollment': {
+                'id': enrollment.id,
+                'student_id': profile.student_id,
+                'user_id': student_user.id,
+                'course_id': course.id,
+                'course_code': course.code,
+                'course_title': course.title,
+                'status': enrollment.status,
+                'progress': enrollment.progress,
+            },
+            'student': serialize_admin_student(student_user),
+            'course': serialize_admin_course(course),
+        },
+        status=status.HTTP_201_CREATED,
+    )
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAdmin])
+def admin_unassign_course(request, student_identifier, course_id):
+    student_user = _resolve_student_user(student_identifier)
+    if not student_user:
+        return Response({'error': 'Student not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    deleted_count, _ = Enrollment.objects.filter(
+        student=student_user, course_id=course_id
+    ).delete()
+    if not deleted_count:
+        return Response(
+            {'error': 'This student is not assigned to that course.'},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+    return Response(
+        {
+            'message': 'Course unassigned from student successfully.',
+            'student': serialize_admin_student(student_user),
+        }
+    )
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAdmin])
+def admin_instructors(request):
+    if request.method == 'GET':
+        instructors_qs = User.objects.filter(role='INSTRUCTOR').order_by('-date_joined', '-id')
+        data = [serialize_admin_instructor(u) for u in instructors_qs]
+        return Response({'count': len(data), 'results': data})
+
+    # POST: Create a real Instructor account with hashed password
+    payload = request.data.copy() if hasattr(request.data, 'copy') else dict(request.data)
+    full_name = (payload.get('name') or payload.get('full_name') or '').strip()
+    if full_name and not payload.get('first_name') and not payload.get('last_name'):
+        parts = full_name.split(None, 1)
+        payload['first_name'] = parts[0]
+        payload['last_name'] = parts[1] if len(parts) > 1 else parts[0]
+
+    serializer = AdminCreateInstructorSerializer(data=payload)
+    if serializer.is_valid():
+        instructor_user = serializer.save()
+        return Response(
+            {
+                'message': 'Instructor account created successfully.',
+                'instructor': serialize_admin_instructor(instructor_user),
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PATCH', 'DELETE'])
+@permission_classes([IsAdmin])
+def admin_instructor_detail(request, instructor_identifier):
+    instructor_user = _resolve_instructor_user(instructor_identifier)
+    if not instructor_user:
+        return Response({'error': 'Instructor not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        return Response(serialize_admin_instructor(instructor_user))
+
+    if request.method == 'PATCH':
+        profile = InstructorProfile.get_or_create_for_user(instructor_user)
+        full_name = (request.data.get('name') or request.data.get('full_name') or '').strip()
+        if full_name:
+            parts = full_name.split(None, 1)
+            instructor_user.first_name = parts[0]
+            instructor_user.last_name = parts[1] if len(parts) > 1 else ''
+        if 'first_name' in request.data:
+            instructor_user.first_name = (request.data.get('first_name') or '').strip()
+        if 'last_name' in request.data:
+            instructor_user.last_name = (request.data.get('last_name') or '').strip()
+        if 'email' in request.data:
+            new_email = (request.data.get('email') or '').strip().lower()
+            if new_email and new_email != instructor_user.email.lower():
+                if User.objects.filter(email__iexact=new_email).exclude(pk=instructor_user.pk).exists():
+                    return Response({'error': 'Email already in use.'}, status=status.HTTP_400_BAD_REQUEST)
+                instructor_user.email = new_email
+        if 'is_approved' in request.data:
+            instructor_user.is_approved = bool(request.data.get('is_approved'))
+        instructor_user.save()
+
+        for field in ('phone', 'department', 'specialization', 'username'):
+            if field in request.data:
+                setattr(profile, field, (request.data.get(field) or '').strip())
+        profile.save()
+
+        return Response(
+            {
+                'message': 'Instructor updated successfully.',
+                'instructor': serialize_admin_instructor(instructor_user),
+            }
+        )
+
+    if request.method == 'DELETE':
+        instructor_user.delete()
+        return Response({'message': 'Instructor deleted successfully.'})
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAdmin])
+def admin_courses(request):
+    if request.method == 'GET':
+        courses_qs = Course.objects.all().order_by('id')
+        data = [serialize_admin_course(c) for c in courses_qs]
+        return Response({'count': len(data), 'results': data})
+
+    # POST: Create a new course
+    title = (request.data.get('title') or '').strip()
+    instructor_name = (request.data.get('instructor') or request.data.get('instructor_name') or '').strip()
+    category = (request.data.get('category') or 'Technology').strip()
+    level = (request.data.get('level') or 'Beginner').strip()
+    description = (request.data.get('description') or '').strip()
+    code = (request.data.get('code') or '').strip()
+    instructor_id = request.data.get('instructor_id')
+
+    try:
+        hours = int(request.data.get('hours', 24))
+    except (ValueError, TypeError):
+        return Response({'error': 'hours must be a positive integer.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not title or not category or not description:
+        return Response(
+            {'error': 'Course title, category, and description are required.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    instructor_user = None
+    if instructor_id:
+        instructor_user = _resolve_instructor_user(instructor_id)
+        if instructor_user and not instructor_name:
+            instructor_name = f"{instructor_user.first_name} {instructor_user.last_name}".strip()
+
+    course = Course.objects.create(
+        title=title,
+        code=code,
+        category=category,
+        level=level,
+        hours=max(1, hours),
+        total_lessons=max(1, hours // 2),
+        instructor=instructor_user,
+        instructor_name=instructor_name,
+        description=description,
+        is_active=bool(request.data.get('active', True)),
+    )
+
+    return Response(
+        {
+            'message': 'Course created successfully.',
+            'course': serialize_admin_course(course),
+        },
+        status=status.HTTP_201_CREATED,
+    )
+
+
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+@permission_classes([IsAdmin])
+def admin_course_detail(request, course_id):
+    course = get_object_or_404(Course, pk=course_id)
+
+    if request.method == 'GET':
+        return Response(serialize_admin_course(course))
+
+    if request.method in ('PUT', 'PATCH'):
+        for field in ('title', 'category', 'level', 'description', 'code'):
+            if field in request.data:
+                setattr(course, field, (request.data.get(field) or '').strip())
+        if 'instructor' in request.data or 'instructor_name' in request.data:
+            course.instructor_name = (
+                request.data.get('instructor') or request.data.get('instructor_name') or ''
+            ).strip()
+        if 'hours' in request.data:
+            try:
+                course.hours = max(1, int(request.data.get('hours')))
+            except (ValueError, TypeError):
+                return Response({'error': 'Invalid hours value.'}, status=status.HTTP_400_BAD_REQUEST)
+        if 'active' in request.data or 'is_active' in request.data:
+            val = request.data.get('active') if 'active' in request.data else request.data.get('is_active')
+            course.is_active = bool(val)
+        course.save()
+        return Response(
+            {
+                'message': 'Course updated successfully.',
+                'course': serialize_admin_course(course),
+            }
+        )
+
+    if request.method == 'DELETE':
+        course.delete()
+        return Response({'message': 'Course deleted successfully.'})
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAdmin])
+def admin_announcements(request):
+    if request.method == 'GET':
+        qs = Announcement.objects.all().order_by('-created_at', '-id')
+        data = [serialize_admin_announcement(a) for a in qs]
+        return Response({'count': len(data), 'results': data})
+
+    title = (request.data.get('title') or '').strip()
+    body = (request.data.get('body') or request.data.get('message') or '').strip()
+    category = (request.data.get('category') or 'General').strip()
+    audience = (request.data.get('audience') or 'All users').strip()
+    status_str = (request.data.get('status') or 'Published').strip()
+    date_str = (request.data.get('date') or '').strip()
+
+    if not title or not body:
+        return Response(
+            {'error': 'Announcement title and details are required.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    pub_date = timezone.localdate()
+    if date_str:
+        try:
+            pub_date = date.fromisoformat(date_str)
+        except ValueError:
+            pass
+
+    is_active = status_str.lower() != 'draft'
+    announcement = Announcement.objects.create(
+        title=title,
+        message=body,
+        category=category,
+        audience=audience,
+        publish_date=pub_date,
+        is_active=is_active,
+    )
+    return Response(
+        {
+            'message': 'Announcement created successfully.',
+            'announcement': serialize_admin_announcement(announcement),
+        },
+        status=status.HTTP_201_CREATED,
+    )
+
+
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+@permission_classes([IsAdmin])
+def admin_announcement_detail(request, announcement_id):
+    announcement = get_object_or_404(Announcement, pk=announcement_id)
+
+    if request.method == 'GET':
+        return Response(serialize_admin_announcement(announcement))
+
+    if request.method in ('PUT', 'PATCH'):
+        if 'title' in request.data:
+            announcement.title = (request.data.get('title') or '').strip()
+        if 'body' in request.data or 'message' in request.data:
+            announcement.message = (request.data.get('body') or request.data.get('message') or '').strip()
+        if 'category' in request.data:
+            announcement.category = (request.data.get('category') or '').strip()
+        if 'audience' in request.data:
+            announcement.audience = (request.data.get('audience') or '').strip()
+        if 'date' in request.data and request.data.get('date'):
+            try:
+                announcement.publish_date = date.fromisoformat(str(request.data.get('date')).strip())
+            except ValueError:
+                pass
+        if 'status' in request.data:
+            announcement.is_active = str(request.data.get('status')).strip().lower() != 'draft'
+        elif 'is_active' in request.data:
+            announcement.is_active = bool(request.data.get('is_active'))
+        announcement.save()
+        return Response(
+            {
+                'message': 'Announcement updated successfully.',
+                'announcement': serialize_admin_announcement(announcement),
+            }
+        )
+
+    if request.method == 'DELETE':
+        announcement.delete()
+        return Response({'message': 'Announcement deleted successfully.'})

@@ -34,6 +34,7 @@ class StudentProfile(models.Model):
         related_name="student_profile",
     )
     student_id = models.CharField(max_length=30, unique=True, blank=True)
+    username = models.CharField(max_length=100, blank=True, default="")
     course = models.CharField(max_length=150, default="", blank=True)
     phone = models.CharField(max_length=30, blank=True, default="")
     bio = models.TextField(blank=True, default="")
@@ -92,9 +93,11 @@ class StudentProfile(models.Model):
 
 class Course(models.Model):
     title = models.CharField(max_length=200)
-    code = models.CharField(max_length=50, unique=True)
+    code = models.CharField(max_length=50, unique=True, blank=True)
     short_title = models.CharField(max_length=50, blank=True, default="")
     category = models.CharField(max_length=150, blank=True, default="")
+    level = models.CharField(max_length=50, blank=True, default="Beginner")
+    hours = models.PositiveIntegerField(default=24)
     art_style = models.CharField(max_length=50, default="", blank=True)
     description = models.TextField(blank=True, default="")
     instructor = models.ForeignKey(
@@ -114,8 +117,16 @@ class Course(models.Model):
         ordering = ["id"]
 
     def save(self, *args, **kwargs):
-        if not self.short_title:
+        if not self.short_title and self.title:
             self.short_title = self.title[:30]
+        if not self.code:
+            prefix = "".join(ch for ch in (self.title or "CRS").upper() if ch.isalnum())[:4] or "CRS"
+            counter = Course.objects.count() + 1
+            candidate = f"{prefix}{counter:03d}"
+            while Course.objects.filter(code=candidate).exclude(pk=self.pk).exists():
+                counter += 1
+                candidate = f"{prefix}{counter:03d}"
+            self.code = candidate
         super().save(*args, **kwargs)
 
     def get_instructor_display(self):
@@ -328,14 +339,20 @@ class Announcement(models.Model):
         GENERAL = "general", "General"
         COURSE = "course", "Course Update"
         IMPORTANT = "important", "Important"
+        ACADEMIC = "Academic", "Academic"
+        EVENTS = "Events", "Events"
+        FINANCE = "Finance", "Finance"
+        STAFF = "Staff", "Staff"
 
     title = models.CharField(max_length=200)
     message = models.TextField()
     category = models.CharField(
-        max_length=30,
-        choices=CategoryChoices.choices,
+        max_length=50,
         default=CategoryChoices.GENERAL,
+        blank=True,
     )
+    audience = models.CharField(max_length=50, blank=True, default="All users")
+    publish_date = models.DateField(default=timezone.localdate)
     course = models.ForeignKey(
         Course,
         on_delete=models.SET_NULL,
