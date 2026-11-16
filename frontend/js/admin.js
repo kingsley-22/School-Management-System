@@ -1,573 +1,1079 @@
 // ==========================================
-// ADMIN PROFILE DROPDOWN
+// LEARNHUB SCHOOL MANAGEMENT SYSTEM
+// ADMIN DASHBOARD JAVASCRIPT
+// NO LOCAL STORAGE OR SESSION STORAGE
 // ==========================================
-
-const administration = document.getElementById("administration");
-const Bot = document.getElementById("Bot");
-const Edits = document.getElementById("Edit");
-
-administration.addEventListener("click", function () {
-
-    if (Bot.style.display === "block") {
-        Bot.style.display = "none";
-    } else {
-        Bot.style.display = "block";
-    }
-
-});
 
 
 // ==========================================
-// EDIT PROFILE
+// 1. GLOBAL VARIABLES
 // ==========================================
 
-function Editprofile() {
+let students = [];
+let instructors = [];
+let activities = [];
 
-    const saved = JSON.parse(
-        localStorage.getItem("adminProfile")
-    );
+let studentCounter = 1;
+let instructorCounter = 1;
 
-    if (saved) {
+let profileImageData = "";
 
-        document.getElementById("fullName").value =
-            saved.named || "";
+let toastTimer = null;
 
-        document.getElementById("username").value =
-            saved.userName || "";
+const $ = id => document.getElementById(id);
 
-        document.getElementById("email").value =
-            saved.email || "";
 
-        document.getElementById("phone").value =
-            saved.phone || "";
+// ==========================================
+// 2. HELPER FUNCTIONS
+// ==========================================
 
-        document.getElementById("department").value =
-            saved.department || "";
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    }[char]));
+}
 
-        document.getElementById("role").value =
-            saved.role || "";
 
-        document.getElementById("bio").value =
-            saved.bio || "";
-    }
+function getInitials(name) {
+    return String(name || "Admin")
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(word => word.charAt(0).toUpperCase())
+        .join("");
+}
 
-    Edits.style.display = "block";
-    Bot.style.display = "none";
+
+function getCurrentYear() {
+    return new Date().getFullYear();
+}
+
+
+function formatDate() {
+    return new Date().toLocaleDateString("en-NG", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
+}
+
+
+function formatTime() {
+    return new Date().toLocaleTimeString("en-NG", {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
 }
 
 
 // ==========================================
-// SAVE PROFILE
+// 3. UNIQUE ID GENERATORS
 // ==========================================
 
-function saveProfile() {
+function generateStudentID() {
+    const id = `STU-${getCurrentYear()}-${String(studentCounter).padStart(4, "0")}`;
 
-    const named =
-        document.getElementById("fullName").value.trim();
+    studentCounter++;
 
-    const userName =
-        document.getElementById("username").value.trim();
-
-    const email =
-        document.getElementById("email").value.trim();
-
-    const phone =
-        document.getElementById("phone").value.trim();
-
-    const department =
-        document.getElementById("department").value.trim();
-
-    const role =
-        document.getElementById("role").value.trim();
-
-    const bio =
-        document.getElementById("bio").value.trim();
+    return id;
+}
 
 
-    // Save profile information
-    const admin = {
+function generateInstructorID() {
+    const id = `INS-${getCurrentYear()}-${String(instructorCounter).padStart(4, "0")}`;
 
-        named: named,
-        userName: userName,
-        email: email,
-        phone: phone,
-        department: department,
-        role: role,
-        bio: bio
+    instructorCounter++;
 
+    return id;
+}
+
+
+
+
+// ==========================================
+// 5. ACTIVITY MANAGEMENT
+// ==========================================
+
+function logActivity(title, description, icon = "fa-circle-check") {
+
+    const activity = {
+        title,
+        description,
+        icon,
+        time: formatTime()
     };
 
+    activities.unshift(activity);
 
-    localStorage.setItem(
-        "adminProfile",
-        JSON.stringify(admin)
-    );
+    activities = activities.slice(0, 8);
 
-
-    // Display profile information
-    document.getElementById("showName").textContent =
-        named;
-
-    document.getElementById("showRole").textContent =
-        role;
-
-    document.getElementById("showEmail").textContent =
-        email;
-
-    document.getElementById("showPhone").textContent =
-        phone;
-
-    document.getElementById("showDepartment").textContent =
-        department;
-
-    document.getElementById("showUsername").textContent =
-        userName;
-
-    document.getElementById("showBio").textContent =
-        bio;
-
-    document.getElementById("userFullName").textContent =
-        named;
+    renderActivities();
+}
 
 
-    // ======================================
-    // SAVE PROFILE IMAGE
-    // ======================================
+function renderActivities() {
 
-    const imageInput =
-        document.getElementById("profileImage");
+    const activityList = $("activityList");
 
-    if (imageInput.files.length > 0) {
+    if (!activityList) return;
 
-        const image = imageInput.files[0];
+    if (activities.length === 0) {
+        activityList.innerHTML = `
+            <li>
+                <span class="activity-mark">
+                    <i class="fa-solid fa-clock"></i>
+                </span>
+                <div>
+                    <strong>No recent activity</strong>
+                    <p>Your recent actions will appear here.</p>
+                </div>
+            </li>
+        `;
 
-        const reader = new FileReader();
-
-        reader.onload = function () {
-
-            localStorage.setItem(
-                "adminImage",
-                reader.result
-            );
-
-            document.getElementById("showImage").src =
-                reader.result;
-
-            document.getElementById("showAdmin").src =
-                reader.result;
-        };
-
-        reader.readAsDataURL(image);
+        return;
     }
 
+    activityList.innerHTML = activities.map(activity => `
+        <li>
+            <span class="activity-mark">
+                <i class="fa-solid ${escapeHTML(activity.icon)}"></i>
+            </span>
 
-    // Show profile
-    Edits.style.display = "none";
-    Bot.style.display = "block";
+            <div>
+                <strong>${escapeHTML(activity.title)}</strong>
+                <p>${escapeHTML(activity.description)}</p>
+                <small>${escapeHTML(activity.time)}</small>
+            </div>
+        </li>
+    `).join("");
 }
 
 
 // ==========================================
-// LOAD EVERYTHING WHEN PAGE OPENS
+// 6. DASHBOARD STATISTICS
 // ==========================================
 
-document.addEventListener("DOMContentLoaded", function () {
+function updateDashboardStats() {
 
-    loadAdminProfile();
-
-    loadStudents();
-
-    updateDashboard();
-
-});
-
-
-// ==========================================
-// LOAD ADMIN PROFILE
-// ==========================================
-
-function loadAdminProfile() {
-
-    const saved =
-        JSON.parse(
-            localStorage.getItem("adminProfile")
-        );
-
-
-    if (saved) {
-
-        document.getElementById("showName").textContent =
-            saved.named || "Admin Name";
-
-        document.getElementById("showRole").textContent =
-            saved.role || "Administration";
-
-        document.getElementById("showEmail").textContent =
-            saved.email || "---";
-
-        document.getElementById("showPhone").textContent =
-            saved.phone || "---";
-
-        document.getElementById("showDepartment").textContent =
-            saved.department || "---";
-
-        document.getElementById("showUsername").textContent =
-            saved.userName || "---";
-
-        document.getElementById("showBio").textContent =
-            saved.bio || "---";
-
-        document.getElementById("userFullName").textContent =
-            saved.named || "";
+    if ($("totalStudents")) {
+        $("totalStudents").textContent = students.length;
     }
 
-
-    // Load saved image
-
-    const savedImage =
-        localStorage.getItem("adminImage");
-
-
-    if (savedImage) {
-
-        document.getElementById("showImage").src =
-            savedImage;
-
-        document.getElementById("showAdmin").src =
-            savedImage;
+    if ($("totalInstructors")) {
+        $("totalInstructors").textContent = instructors.length;
     }
 
+    const pendingStudents = students.filter(student =>
+        student.status === "Pending"
+    ).length;
+
+    if ($("totalPending")) {
+        $("totalPending").textContent = pendingStudents;
+    }
+
+    // Course count:
+    // Uses a course count supplied by another script if available.
+    // Otherwise, keeps the current HTML value (11).
+
+    updateCourseCount();
+}
+
+
+function updateCourseCount() {
+
+    const courseElement = $("totalCourses");
+
+    if (!courseElement) return;
+
+    if (
+        typeof window.learnHubCourseCount === "number" &&
+        Number.isFinite(window.learnHubCourseCount)
+    ) {
+        courseElement.textContent = window.learnHubCourseCount;
+    }
 }
 
 
 // ==========================================
-// HAMBURGER BUTTON
+// 7. STUDENT MANAGEMENT
 // ==========================================
 
-function HamButton() {
+function renderStudents() {
 
-    const sidebar =
-        document.querySelector(".Sidebar");
+    const studentList = $("studentList");
 
-    sidebar.classList.toggle("bar");
+    if (!studentList) return;
 
+    const searchValue = $("studentSearch")
+        ? $("studentSearch").value.toLowerCase().trim()
+        : "";
+
+    const statusValue = $("statusFilter")
+        ? $("statusFilter").value
+        : "all";
+
+    const filteredStudents = students.filter(student => {
+
+        const searchableText = [
+            student.id,
+            student.name,
+            student.email,
+            student.phone,
+            student.department,
+            student.username
+        ].join(" ").toLowerCase();
+
+        const matchesSearch = searchableText.includes(searchValue);
+
+        const matchesStatus =
+            statusValue === "all" ||
+            student.status === statusValue;
+
+        return matchesSearch && matchesStatus;
+    });
+
+
+    if (filteredStudents.length === 0) {
+
+        studentList.innerHTML = `
+            <tr>
+                <td colspan="8" class="empty-state">
+                    No student records found.
+                </td>
+            </tr>
+        `;
+
+    } else {
+
+        studentList.innerHTML = filteredStudents.map(student => `
+
+            <tr>
+                <td>
+                    <strong>${escapeHTML(student.id)}</strong>
+                </td>
+
+                <td>
+                    <div class="student-name">
+                        <strong>${escapeHTML(student.name)}</strong>
+                    </div>
+                </td>
+
+                <td>${escapeHTML(student.email)}</td>
+
+                <td>${escapeHTML(student.phone)}</td>
+
+                <td>${escapeHTML(student.department)}</td>
+
+                <td>${escapeHTML(student.username)}</td>
+
+                <td>
+                    <span class="status-badge ${student.status === "Approved" ? "approved" : "pending"}">
+                        ${escapeHTML(student.status)}
+                    </span>
+                </td>
+
+                <td>
+                    <div class="action-buttons">
+
+                        ${
+                            student.status === "Pending"
+                            ? `
+                                <button
+                                    type="button"
+                                    class="approve-btn"
+                                    onclick="approveStudent('${student.id}')"
+                                    title="Approve student"
+                                >
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                            `
+                            : ""
+                        }
+
+                        <button
+                            type="button"
+                            class="delete-btn"
+                            onclick="deleteStudent('${student.id}')"
+                            title="Delete student"
+                        >
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+
+                    </div>
+                </td>
+            </tr>
+
+        `).join("");
+    }
+
+
+    if ($("recordCount")) {
+        $("recordCount").textContent =
+            `Showing ${filteredStudents.length} of ${students.length} students`;
+    }
+
+    updateDashboardStats();
 }
 
 
 // ==========================================
-// STUDENT MANAGEMENT
+// 8. ADD STUDENT
 // ==========================================
 
-const form =
-    document.getElementById("Add_student");
-
-const studentList =
-    document.getElementById("studentList");
-
-
-// ==========================================
-// ADD STUDENT
-// ==========================================
-
-form.addEventListener("submit", function (event) {
+function addStudent(event) {
 
     event.preventDefault();
 
+    const name = $("inputName").value.trim();
+    const email = $("inputEmail").value.trim();
+    const phone = $("inputPhoneNumber").value.trim();
+    const department = $("inputDepartment").value.trim();
+    const username = $("inputUsername").value.trim();
 
-    const name =
-        document.getElementById("inputName").value.trim();
-
-    const email =
-        document.getElementById("inputEmail").value.trim();
-
-    const phone =
-        document.getElementById("inputPhoneNumber").value.trim();
-
-    const department =
-        document.getElementById("inputDepartment").value.trim();
-
-    const username =
-        document.getElementById("inputUsername").value.trim();
+    if (!name || !email || !phone || !department || !username) {
+        showToast("Please complete all student fields.");
+        return;
+    }
 
 
-    // Create student
+    // Check duplicate email and username
+
+    const duplicate = students.some(student =>
+        student.email.toLowerCase() === email.toLowerCase() ||
+        student.username.toLowerCase() === username.toLowerCase()
+    );
+
+    if (duplicate) {
+        showToast("Student email or username already exists.");
+        return;
+    }
+
 
     const student = {
-
-        id: Date.now(),
-
-        name: name,
-
-        email: email,
-
-        phone: phone,
-
-        department: department,
-
-        username: username,
-
-        status: "Pending"
-
+        id: generateStudentID(),
+        name,
+        email,
+        phone,
+        department,
+        username,
+        status: "Pending",
+        dateAdded: new Date().toISOString()
     };
 
 
-    // Get old students
-
-    let students =
-        JSON.parse(
-            localStorage.getItem("students")
-        ) || [];
-
-
-    // Add new student
-
     students.push(student);
 
+    $("Add_student").reset();
 
-    // Save students
+    renderStudents();
 
-    localStorage.setItem(
-        "students",
-        JSON.stringify(students)
+    logActivity(
+        "New student registered",
+        `${name} was added successfully.`,
+        "fa-user-plus"
     );
 
-
-    // Refresh table
-
-    loadStudents();
-
-
-    // Update dashboard
-
-    updateDashboard();
-
-
-    // Clear form
-
-    form.reset();
-
-});
+    showToast(`Student added! ID: ${student.id}`);
+}
 
 
 // ==========================================
-// LOAD STUDENTS
+// 9. APPROVE STUDENT
 // ==========================================
 
-function loadStudents() {
+function approveStudent(studentID) {
 
-    studentList.innerHTML = "";
+    const student = students.find(item => item.id === studentID);
 
+    if (!student) return;
 
-    const students =
-        JSON.parse(
-            localStorage.getItem("students")
-        ) || [];
+    if (student.status === "Approved") {
+        showToast("This student is already approved.");
+        return;
+    }
 
+    student.status = "Approved";
 
-    students.forEach(function (student) {
+    renderStudents();
 
-        const row =
-            document.createElement("tr");
+    logActivity(
+        "Student approved",
+        `${student.name} has been approved.`,
+        "fa-user-check"
+    );
 
-
-        // Status class
-
-        let statusClass = "pending";
-
-        if (student.status === "Approved") {
-
-            statusClass = "approved";
-
-        }
+    showToast("Student approved successfully!");
+}
 
 
-        row.innerHTML = `
+// ==========================================
+// 10. DELETE STUDENT
+// ==========================================
 
-            <td>${student.name}</td>
+function deleteStudent(studentID) {
 
-            <td>${student.email}</td>
+    const student = students.find(item => item.id === studentID);
 
-            <td>${student.phone}</td>
+    if (!student) return;
 
-            <td>${student.department}</td>
+    const confirmDelete = confirm(
+        `Are you sure you want to delete ${student.name}?`
+    );
 
-            <td>${student.username}</td>
+    if (!confirmDelete) return;
 
-            <td>
-                <span class="${statusClass}">
-                    ${student.status}
-                </span>
-            </td>
+    students = students.filter(item => item.id !== studentID);
 
-            <td>
+    renderStudents();
 
-                ${
-                    student.status === "Pending"
+    logActivity(
+        "Student deleted",
+        `${student.name} was removed from the records.`,
+        "fa-trash"
+    );
 
-                    ?
+    showToast("Student deleted successfully.");
+}
 
-                    `<button
-                        class="approve"
-                        onclick="approveStudent(${student.id})">
-                        Approve
-                    </button>`
 
-                    :
+// ==========================================
+// 11. INSTRUCTOR MANAGEMENT
+// ==========================================
 
-                    ""
-                }
+function renderInstructors() {
 
-                <button
-                    class="delete"
-                    onclick="deleteStudent(${student.id})">
-                    Delete
-                </button>
+    const instructorList = $("instructorList");
 
-            </td>
+    if (!instructorList) return;
 
+    const searchValue = $("instructorSearch")
+        ? $("instructorSearch").value.toLowerCase().trim()
+        : "";
+
+
+    const filteredInstructors = instructors.filter(instructor => {
+
+        const searchableText = [
+            instructor.id,
+            instructor.name,
+            instructor.email,
+            instructor.phone,
+            instructor.department,
+            instructor.specialization,
+            instructor.username
+        ].join(" ").toLowerCase();
+
+        return searchableText.includes(searchValue);
+    });
+
+
+    if (filteredInstructors.length === 0) {
+
+        instructorList.innerHTML = `
+            <tr>
+                <td colspan="8" class="empty-state">
+                    No instructor records found.
+                </td>
+            </tr>
         `;
 
+    } else {
 
-        studentList.appendChild(row);
+        instructorList.innerHTML = filteredInstructors.map(instructor => `
 
-    });
+            <tr>
 
+                <td>
+                    <strong>${escapeHTML(instructor.id)}</strong>
+                </td>
+
+                <td>${escapeHTML(instructor.name)}</td>
+
+                <td>${escapeHTML(instructor.email)}</td>
+
+                <td>${escapeHTML(instructor.phone)}</td>
+
+                <td>${escapeHTML(instructor.department)}</td>
+
+                <td>${escapeHTML(instructor.specialization)}</td>
+
+                <td>${escapeHTML(instructor.username)}</td>
+
+                <td>
+                    <div class="action-buttons">
+
+                        <button
+                            type="button"
+                            class="delete-btn"
+                            onclick="deleteInstructor('${instructor.id}')"
+                            title="Delete instructor"
+                        >
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+
+                    </div>
+                </td>
+
+            </tr>
+
+        `).join("");
+    }
+
+
+    if ($("instructorRecordCount")) {
+        $("instructorRecordCount").textContent =
+            `Showing ${filteredInstructors.length} of ${instructors.length} instructors`;
+    }
+
+    updateDashboardStats();
 }
 
 
 // ==========================================
-// APPROVE STUDENT
+// 12. ADD INSTRUCTOR
 // ==========================================
 
-function approveStudent(id) {
+function addInstructor(event) {
 
-    let students =
-        JSON.parse(
-            localStorage.getItem("students")
-        ) || [];
+    event.preventDefault();
+
+    const name = $("instructorName").value.trim();
+    const email = $("instructorEmail").value.trim();
+    const phone = $("instructorPhone").value.trim();
+    const department = $("instructorDepartment").value.trim();
+    const specialization = $("instructorSpecialization").value.trim();
+    const username = $("instructorUsername").value.trim();
 
 
-    students.forEach(function (student) {
+    if (
+        !name ||
+        !email ||
+        !phone ||
+        !department ||
+        !specialization ||
+        !username
+    ) {
+        showToast("Please complete all instructor fields.");
+        return;
+    }
 
-        if (student.id === id) {
 
-            student.status = "Approved";
+    // Check duplicate email and username
 
+    const duplicate = instructors.some(instructor =>
+        instructor.email.toLowerCase() === email.toLowerCase() ||
+        instructor.username.toLowerCase() === username.toLowerCase()
+    );
+
+    if (duplicate) {
+        showToast("Instructor email or username already exists.");
+        return;
+    }
+
+
+    const instructor = {
+        id: generateInstructorID(),
+        name,
+        email,
+        phone,
+        department,
+        specialization,
+        username,
+        dateAdded: new Date().toISOString()
+    };
+
+
+    instructors.push(instructor);
+
+    $("Add_instructor").reset();
+
+    renderInstructors();
+
+    logActivity(
+        "New instructor registered",
+        `${name} was added successfully.`,
+        "fa-chalkboard-user"
+    );
+
+    showToast(`Instructor added! ID: ${instructor.id}`);
+}
+
+
+// ==========================================
+// 13. DELETE INSTRUCTOR
+// ==========================================
+
+function deleteInstructor(instructorID) {
+
+    const instructor = instructors.find(
+        item => item.id === instructorID
+    );
+
+    if (!instructor) return;
+
+    const confirmDelete = confirm(
+        `Are you sure you want to delete ${instructor.name}?`
+    );
+
+    if (!confirmDelete) return;
+
+    instructors = instructors.filter(
+        item => item.id !== instructorID
+    );
+
+    renderInstructors();
+
+    logActivity(
+        "Instructor deleted",
+        `${instructor.name} was removed from the records.`,
+        "fa-trash"
+    );
+
+    showToast("Instructor deleted successfully.");
+}
+
+
+
+
+// ==========================================
+// 15. ADMIN PROFILE
+// ==========================================
+
+const defaultProfile = {
+    name: "Administrator",
+    username: "admin",
+    email: "admin@learnhub.com",
+    phone: "Not provided",
+    department: "Administration",
+    role: "Administration",
+    bio: "Welcome to LearnHub."
+};
+
+
+let adminProfile = { ...defaultProfile };
+
+
+function renderProfile() {
+
+    const profile = adminProfile;
+
+    if ($("showName")) {
+        $("showName").textContent = profile.name;
+    }
+
+    if ($("topAdminName")) {
+        $("topAdminName").textContent = profile.name;
+    }
+
+    if ($("userFullName")) {
+        $("userFullName").textContent = profile.name;
+    }
+
+    if ($("showRole")) {
+        $("showRole").textContent = profile.role;
+    }
+
+    if ($("showEmail")) {
+        $("showEmail").textContent = profile.email;
+    }
+
+    if ($("showPhone")) {
+        $("showPhone").textContent = profile.phone;
+    }
+
+    if ($("showDepartment")) {
+        $("showDepartment").textContent = profile.department;
+    }
+
+    if ($("showUsername")) {
+        $("showUsername").textContent = profile.username;
+    }
+
+    if ($("showBio")) {
+        $("showBio").textContent = profile.bio;
+    }
+
+
+    const avatar = profileImageData ||
+        `https://placehold.co/100x100/e8eef8/17366b?text=${encodeURIComponent(getInitials(profile.name))}`;
+
+    if ($("showAdmin")) {
+        $("showAdmin").src = avatar;
+    }
+
+    if ($("showImage")) {
+        $("showImage").src = avatar;
+    }
+}
+
+
+// ==========================================
+// 16. TOGGLE PROFILE
+// ==========================================
+
+function toggleProfile() {
+    const profile = $("Bot");
+    const toggle = $("profileToggle");
+    if (!profile) return;
+    const isOpen = profile.classList.toggle("active");
+    toggle?.setAttribute("aria-expanded", String(isOpen));
+}
+
+
+// ==========================================
+// 17. OPEN EDIT PROFILE
+// ==========================================
+
+function Editprofile() {
+    const editPanel = $("Edit");
+    if (!editPanel) {
+        showToast("The edit profile panel could not be found.");
+        return;
+    }
+    const values = {
+        fullName: adminProfile.name,
+        username: adminProfile.username,
+        email: adminProfile.email,
+        phone: adminProfile.phone === "Not provided" ? "" : adminProfile.phone,
+        department: adminProfile.department,
+        role: adminProfile.role,
+        bio: adminProfile.bio
+    };
+    Object.entries(values).forEach(([id, value]) => {
+        const field = $(id);
+        if (field) field.value = value;
+    });
+    $("Bot")?.classList.remove("active");
+    $("profileToggle")?.setAttribute("aria-expanded", "false");
+    editPanel.classList.add("active");
+}
+
+
+// ==========================================
+// 18. CLOSE EDIT PROFILE
+// ==========================================
+
+function closeEdit() {
+
+    if ($("Edit")) {
+        $("Edit").classList.remove("active");
+    }
+}
+
+
+// Backward-compatible function name
+
+function closeEditProfile() {
+    closeEdit();
+}
+
+
+// ==========================================
+// 19. SAVE ADMIN PROFILE
+// ==========================================
+
+function saveProfile(event) {
+    event.preventDefault();
+    const required = ["fullName", "username", "email", "department", "role"];
+    for (const id of required) {
+        const field = $(id);
+        if (!field || !field.value.trim()) {
+            showToast("Please complete all required profile fields.");
+            field?.focus();
+            return;
+        }
+    }
+    const email = $("email").value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast("Please enter a valid email address.");
+        $("email")?.focus();
+        return;
+    }
+    const valueOf = (id, fallback = "") => $(id)?.value.trim() ?? fallback;
+    adminProfile = {
+        name: valueOf("fullName"),
+        username: valueOf("username"),
+        email,
+        phone: valueOf("phone") || "Not provided",
+        department: valueOf("department"),
+        role: valueOf("role"),
+        bio: valueOf("bio") || "No bio provided."
+    };
+    renderProfile();
+
+    closeEdit();
+
+    logActivity(
+        "Admin profile updated",
+        "Your administrator profile was updated.",
+        "fa-user-pen"
+    );
+
+    showToast("Profile updated successfully!");
+}
+
+
+// ==========================================
+// 20. PROFILE IMAGE UPLOAD
+// ==========================================
+
+function handleProfileImage(event) {
+
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+        showToast("Please select a valid image.");
+        event.target.value = "";
+        return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+        showToast("Please choose an image smaller than 2 MB.");
+        event.target.value = "";
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        if (typeof e.target.result !== "string") {
+            showToast("Unable to load the selected image.");
+            return;
+        }
+        profileImageData = e.target.result;
+        renderProfile();
+        logActivity("Profile photo updated", "Your administrator profile photo was changed.", "fa-camera");
+        showToast("Profile photo updated.");
+    };
+    reader.onerror = function() {
+        showToast("Unable to load the selected image.");
+        event.target.value = "";
+    };
+    reader.readAsDataURL(file);
+}
+
+
+// ==========================================
+// 21. SIDEBAR / HAMBURGER
+// ==========================================
+
+function HamButton() {
+    const sidebar = $("Sidebar");
+    const overlay = $("sidebarOverlay");
+    const hamburger = $("hamburger");
+    if (!sidebar) return;
+    const isOpen = sidebar.classList.toggle("active");
+    overlay?.classList.toggle("active", isOpen);
+    hamburger?.setAttribute("aria-expanded", String(isOpen));
+}
+
+function closeSidebar() {
+    $("Sidebar")?.classList.remove("active");
+    $("sidebarOverlay")?.classList.remove("active");
+    $("hamburger")?.setAttribute("aria-expanded", "false");
+}
+
+
+// ==========================================
+// 22. LOGOUT
+// ==========================================
+
+function logout(event) {
+
+    if (event) {
+        event.preventDefault();
+    }
+
+    const confirmLogout = confirm(
+        "Are you sure you want to log out?"
+    );
+
+    if (!confirmLogout) return;
+
+    showToast("You have logged out.");
+
+    logActivity(
+        "Admin logged out",
+        "The administrator logged out of LearnHub.",
+        "fa-right-from-bracket"
+    );
+
+    sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
+    localStorage.removeItem("adminLoggedIn");
+    window.location.href = "../home/login.html";
+}
+
+
+// ==========================================
+// 23. PAGE INITIALIZATION
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", function() {
+
+
+    // Current year
+
+    if ($("currentYear")) {
+        $("currentYear").textContent = getCurrentYear();
+    }
+
+    if ($("footerYear")) {
+        $("footerYear").textContent = getCurrentYear();
+    }
+
+
+    // Current date
+
+    if ($("todayDate")) {
+        $("todayDate").textContent = formatDate();
+    }
+
+
+    // Add student form
+
+    if ($("Add_student")) {
+        $("Add_student").addEventListener(
+            "submit",
+            addStudent
+        );
+    }
+
+
+    // Add instructor form
+
+    if ($("Add_instructor")) {
+        $("Add_instructor").addEventListener(
+            "submit",
+            addInstructor
+        );
+    }
+
+
+    // Student search
+
+    if ($("studentSearch")) {
+        $("studentSearch").addEventListener(
+            "input",
+            renderStudents
+        );
+    }
+
+
+    // Student status filter
+
+    if ($("statusFilter")) {
+        $("statusFilter").addEventListener(
+            "change",
+            renderStudents
+        );
+    }
+
+
+    // Instructor search
+
+    if ($("instructorSearch")) {
+        $("instructorSearch").addEventListener(
+            "input",
+            renderInstructors
+        );
+    }
+
+
+    // Admin profile form
+
+    if ($("profileForm")) {
+        $("profileForm").addEventListener(
+            "submit",
+            saveProfile
+        );
+    }
+
+
+    // Profile image upload
+
+    if ($("profileImage")) {
+        $("profileImage").addEventListener(
+            "change",
+            handleProfileImage
+        );
+    }
+
+
+    // Close profile dropdown when clicking outside
+
+    document.addEventListener("click", function(event) {
+
+        const profileWrap = document.querySelector(".profile-wrap");
+
+        const profile = $("Bot");
+
+        if (
+            profileWrap &&
+            profile &&
+            !profileWrap.contains(event.target)
+        ) {
+            profile.classList.remove("active");
+            $("profileToggle")?.setAttribute("aria-expanded", "false");
         }
 
     });
 
 
-    // Save updated students
+    // Close sidebar when a navigation link is clicked
 
-    localStorage.setItem(
-        "students",
-        JSON.stringify(students)
-    );
+    document.querySelectorAll(".side-nav a").forEach(link => {
 
-
-    // Refresh table
-
-    loadStudents();
-
-
-    // Update dashboard
-
-    updateDashboard();
-
-}
-
-
-// ==========================================
-// DELETE STUDENT
-// ==========================================
-
-function deleteStudent(id) {
-
-    let students =
-        JSON.parse(
-            localStorage.getItem("students")
-        ) || [];
-
-
-    students =
-        students.filter(function (student) {
-
-            return student.id !== id;
-
+        link.addEventListener("click", function() {
+            closeSidebar();
         });
 
+    });
 
-    // Save new list
 
-    localStorage.setItem(
-        "students",
-        JSON.stringify(students)
+    // Close sidebar with Escape key
+
+    document.addEventListener("keydown", function(event) {
+
+        if (event.key === "Escape") {
+
+            closeSidebar();
+
+            $("Bot")?.classList.remove("active");
+            $("profileToggle")?.setAttribute("aria-expanded", "false");
+            closeEdit();
+        }
+
+    });
+
+
+    // Initial rendering
+
+    renderStudents();
+
+    renderInstructors();
+
+    renderActivities();
+
+    renderProfile();
+
+    updateDashboardStats();
+
+
+    // Initial dashboard activity
+
+    logActivity(
+        "Dashboard opened",
+        "You're ready to manage your school records.",
+        "fa-right-to-bracket"
     );
 
-
-    // Refresh table
-
-    loadStudents();
-
-
-    // Update dashboard
-
-    updateDashboard();
-
-}
-
-
-// ==========================================
-// UPDATE DASHBOARD CARDS
-// ==========================================
-
-function updateDashboard() {
-
-    const students =
-        JSON.parse(
-            localStorage.getItem("students")
-        ) || [];
-
-
-    // Total students
-
-    const totalStudents =
-        document.querySelector(".card_Students p");
-
-
-    if (totalStudents) {
-
-        totalStudents.textContent =
-            students.length;
-
-    }
-
-
-    // Pending students
-
-    const pendingStudents =
-        students.filter(function (student) {
-
-            return student.status === "Pending";
-
-        });
-
-
-    const pendingCount =
-        document.querySelector(".card_Approval p");
-
-
-    if (pendingCount) {
-
-        pendingCount.textContent =
-            pendingStudents.length;
-
-    }
-
-}
-
-function logout() {
-    // Remove saved login information
-    localStorage.removeItem("adminLoggedIn");
-}
+});
