@@ -15,17 +15,50 @@ const LOGIN_PAGE_URL = "../home/login.html";
    AUTHENTICATION & TOKEN MANAGEMENT
 ========================================================= */
 
+function captureUrlAuthTokens() {
+    const params = new URLSearchParams(window.location.search);
+    const access = params.get("access");
+    const refresh = params.get("refresh");
+
+    if (access) {
+        sessionStorage.setItem("accessToken", access);
+        localStorage.setItem("accessToken", access);
+    }
+    if (refresh) {
+        sessionStorage.setItem("refreshToken", refresh);
+        localStorage.setItem("refreshToken", refresh);
+    }
+
+    if (access || refresh) {
+        params.delete("access");
+        params.delete("refresh");
+        const remaining = params.toString();
+        const cleanUrl = `${window.location.pathname}${remaining ? `?${remaining}` : ""}${window.location.hash}`;
+        window.history.replaceState({}, document.title, cleanUrl);
+    }
+}
+
 function getAccessToken() {
-    return sessionStorage.getItem("accessToken") || "";
+    return (
+        sessionStorage.getItem("accessToken") ||
+        localStorage.getItem("accessToken") ||
+        ""
+    );
 }
 
 function getRefreshToken() {
-    return sessionStorage.getItem("refreshToken") || "";
+    return (
+        sessionStorage.getItem("refreshToken") ||
+        localStorage.getItem("refreshToken") ||
+        ""
+    );
 }
 
 function getStoredUser() {
     try {
-        const raw = sessionStorage.getItem("user");
+        const raw =
+            sessionStorage.getItem("user") ||
+            localStorage.getItem("user");
         return raw ? JSON.parse(raw) : null;
     } catch {
         return null;
@@ -38,6 +71,7 @@ function clearAuthState() {
     sessionStorage.removeItem("user");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
 }
 
 function redirectToLogin() {
@@ -46,6 +80,8 @@ function redirectToLogin() {
 }
 
 function enforceProtectedRoute() {
+    captureUrlAuthTokens();
+
     const access = getAccessToken();
     const refresh = getRefreshToken();
 
@@ -94,8 +130,10 @@ async function refreshAccessToken() {
         const data = await response.json();
         if (data && data.access) {
             sessionStorage.setItem("accessToken", data.access);
+            localStorage.setItem("accessToken", data.access);
             if (data.refresh) {
                 sessionStorage.setItem("refreshToken", data.refresh);
+                localStorage.setItem("refreshToken", data.refresh);
             }
             return data.access;
         }
@@ -276,6 +314,17 @@ function renderErrorStates(message) {
 
 function renderProfile(profile, greeting) {
     if (!profile) return;
+
+    const userObj = {
+        id: profile.user_id || profile.id,
+        first_name: profile.first_name || "",
+        last_name: profile.last_name || "",
+        email: profile.email || "",
+        role: profile.role || "STUDENT",
+        is_verified: Boolean(profile.is_verified),
+    };
+    sessionStorage.setItem("user", JSON.stringify(userObj));
+    localStorage.setItem("user", JSON.stringify(userObj));
 
     const fullName = profile.full_name || profile.name || profile.email || "Student";
     const roleDisplay = profile.role_display || "Student";

@@ -485,6 +485,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 sessionStorage.setItem("accessToken", data.access);
                 sessionStorage.setItem("refreshToken", data.refresh);
                 sessionStorage.setItem("user", JSON.stringify(data.user));
+                localStorage.setItem("accessToken", data.access);
+                localStorage.setItem("refreshToken", data.refresh);
+                localStorage.setItem("user", JSON.stringify(data.user));
 
                 /* Redirect based on the user's role. */
                 if (data.user.role === "ADMIN") {
