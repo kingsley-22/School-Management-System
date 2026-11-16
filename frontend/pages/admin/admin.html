@@ -228,7 +228,7 @@
     <span class="stat-tag">Learning</span>
     </div>
     <p class="stat-label">Total courses</p>
-    <h3 id="totalCourses">11</h3>
+    <h3 id="totalCourses">0</h3>
     <p class="stat-foot">Published course records</p>
     </article>
 
@@ -293,9 +293,51 @@
     <input type="text" id="inputUsername" placeholder="e.g. chika.okafor" required>
     </label>
 
+    <label>
+    Assign course (optional)
+    <select id="inputStudentCourse">
+    <option value="">Select a course (optional)</option>
+    </select>
+    </label>
+
     <div class="form-submit">
     <button type="submit" class="add">
     <i class="fa-solid fa-plus"></i> Add student
+    </button>
+    </div>
+
+    </form>
+    </div>
+
+    <div class="Student_form panel" id="assignCoursePanel">
+
+    <div class="panel-heading">
+    <span class="panel-icon"><i class="fa-solid fa-book-open"></i></span>
+    <div>
+    <h3>Assign course to student</h3>
+    <p>Select a student and a course to enroll the student in that course.</p>
+    </div>
+    </div>
+
+    <form class="Add_student" id="Assign_course">
+
+    <label>
+    Select student
+    <select id="assignStudentSelect" required>
+    <option value="">Select a student...</option>
+    </select>
+    </label>
+
+    <label>
+    Select course
+    <select id="assignCourseSelect" required>
+    <option value="">Select a course...</option>
+    </select>
+    </label>
+
+    <div class="form-submit">
+    <button type="submit" class="add">
+    <i class="fa-solid fa-check"></i> Assign course
     </button>
     </div>
 
@@ -335,6 +377,7 @@
     <th>Email</th>
     <th>Phone</th>
     <th>Department</th>
+    <th>Assigned Courses</th>
     <th>Username</th>
     <th>Status</th>
     <th>Actions</th>
@@ -376,8 +419,13 @@
     <form class="Add_student" id="Add_instructor">
 
     <label>
-    Full name
-    <input id="instructorName" type="text" placeholder="e.g. Daniel Okoro" required>
+    First name
+    <input id="instructorFirstName" type="text" placeholder="e.g. Daniel" required>
+    </label>
+
+    <label>
+    Last name
+    <input id="instructorLastName" type="text" placeholder="e.g. Okoro" required>
     </label>
 
     <label>
@@ -403,6 +451,16 @@
     <label>
     Username
     <input id="instructorUsername" type="text" placeholder="e.g. daniel.okoro" required>
+    </label>
+
+    <label>
+    Password
+    <input id="instructorPassword" type="password" minlength="8" placeholder="At least 8 characters" required>
+    </label>
+
+    <label>
+    Confirm password
+    <input id="instructorConfirmPassword" type="password" minlength="8" placeholder="Re-enter password" required>
     </label>
 
     <div class="form-submit">

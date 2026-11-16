@@ -1,30 +1,204 @@
 // ==========================================
-// LEARNHUB SCHOOL MANAGEMENT SYSTEM
-// ADMIN DASHBOARD JAVASCRIPT
-// NO LOCAL STORAGE OR SESSION STORAGE
+// IFEXA ACADEMY — ADMIN DASHBOARD JAVASCRIPT
+// Connected to Django REST Framework Admin API
 // ==========================================
 
+const API_BASE_URL = (
+    window.VITE_API_URL ||
+    window.API_BASE_URL ||
+    "http://127.0.0.1:8000/api"
+).replace(/\/+$/, "");
 
-// ==========================================
-// 1. GLOBAL VARIABLES
-// ==========================================
+const LOGIN_PAGE_URL = "../home/login.html";
 
 let students = [];
 let instructors = [];
+let courses = [];
 let activities = [];
-
-let studentCounter = 1;
-let instructorCounter = 1;
+let adminProfile = {
+    name: "",
+    username: "",
+    email: "",
+    phone: "",
+    department: "Administration",
+    role: "Administration",
+    bio: "",
+    avatar_url: "",
+};
 
 let profileImageData = "";
-
 let toastTimer = null;
 
 const $ = id => document.getElementById(id);
 
+// ==========================================
+// AUTHENTICATION & CENTRAL API CLIENT
+// ==========================================
+
+function getAccessToken() {
+    return (
+        sessionStorage.getItem("accessToken") ||
+        localStorage.getItem("accessToken") ||
+        ""
+    );
+}
+
+function getRefreshToken() {
+    return (
+        sessionStorage.getItem("refreshToken") ||
+        localStorage.getItem("refreshToken") ||
+        ""
+    );
+}
+
+function getStoredUser() {
+    try {
+        const raw =
+            sessionStorage.getItem("user") ||
+            localStorage.getItem("user");
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+}
+
+function clearAuthState() {
+    sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
+    localStorage.removeItem("adminLoggedIn");
+}
+
+function redirectToLogin() {
+    clearAuthState();
+    window.location.replace(LOGIN_PAGE_URL);
+}
+
+function enforceAdminAuth() {
+    const access = getAccessToken();
+    const refresh = getRefreshToken();
+
+    if (!access && !refresh) {
+        redirectToLogin();
+        return false;
+    }
+
+    const user = getStoredUser();
+    if (user && user.role && user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
+        if (user.role === "STUDENT") {
+            window.location.replace("../student/dashboard.html");
+            return false;
+        }
+        if (user.role === "INSTRUCTOR") {
+            window.location.replace("../instructor/dashboard.html");
+            return false;
+        }
+        redirectToLogin();
+        return false;
+    }
+
+    return true;
+}
+
+async function refreshAccessToken() {
+    const refresh = getRefreshToken();
+    if (!refresh) return null;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/token/refresh/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+            body: JSON.stringify({ refresh }),
+        });
+
+        if (!response.ok) return null;
+
+        const data = await response.json();
+        if (data && data.access) {
+            sessionStorage.setItem("accessToken", data.access);
+            localStorage.setItem("accessToken", data.access);
+            if (data.refresh) {
+                sessionStorage.setItem("refreshToken", data.refresh);
+                localStorage.setItem("refreshToken", data.refresh);
+            }
+            return data.access;
+        }
+        return null;
+    } catch {
+        return null;
+    }
+}
+
+async function apiRequest(endpoint, options = {}, retried = false) {
+    let token = getAccessToken();
+    if (!token && !retried) {
+        token = await refreshAccessToken();
+        if (!token) {
+            redirectToLogin();
+            throw new Error("Authentication required.");
+        }
+    }
+
+    const headers = {
+        "Accept": "application/json",
+        ...(options.body ? { "Content-Type": "application/json" } : {}),
+        ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+        ...(options.headers || {}),
+    };
+
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers,
+    });
+
+    if (response.status === 401 && !retried) {
+        const newToken = await refreshAccessToken();
+        if (newToken) {
+            return apiRequest(endpoint, options, true);
+        }
+        redirectToLogin();
+        throw new Error("Session expired. Please log in again.");
+    }
+
+    if (response.status === 403) {
+        redirectToLogin();
+        throw new Error("You do not have permission to access admin resources.");
+    }
+
+    const text = await response.text();
+    let data = {};
+    if (text) {
+        try {
+            data = JSON.parse(text);
+        } catch {
+            data = { error: "Unexpected response from server." };
+        }
+    }
+
+    if (!response.ok) {
+        const msg =
+            data.error ||
+            data.detail ||
+            (typeof data === "object"
+                ? Object.entries(data)
+                      .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(" ") : v}`)
+                      .join(" ")
+                : "") ||
+            `Request failed (${response.status})`;
+        throw new Error(msg);
+    }
+
+    return data;
+}
 
 // ==========================================
-// 2. HELPER FUNCTIONS
+// HELPER FUNCTIONS
 // ==========================================
 
 function escapeHTML(value) {
@@ -37,7 +211,6 @@ function escapeHTML(value) {
     }[char]));
 }
 
-
 function getInitials(name) {
     return String(name || "Admin")
         .trim()
@@ -47,11 +220,9 @@ function getInitials(name) {
         .join("");
 }
 
-
 function getCurrentYear() {
     return new Date().getFullYear();
 }
-
 
 function formatDate() {
     return new Date().toLocaleDateString("en-NG", {
@@ -62,7 +233,6 @@ function formatDate() {
     });
 }
 
-
 function formatTime() {
     return new Date().toLocaleTimeString("en-NG", {
         hour: "2-digit",
@@ -70,37 +240,11 @@ function formatTime() {
     });
 }
 
-
 // ==========================================
-// 3. UNIQUE ID GENERATORS
-// ==========================================
-
-function generateStudentID() {
-    const id = `STU-${getCurrentYear()}-${String(studentCounter).padStart(4, "0")}`;
-
-    studentCounter++;
-
-    return id;
-}
-
-
-function generateInstructorID() {
-    const id = `INS-${getCurrentYear()}-${String(instructorCounter).padStart(4, "0")}`;
-
-    instructorCounter++;
-
-    return id;
-}
-
-
-
-
-// ==========================================
-// 5. ACTIVITY MANAGEMENT
+// ACTIVITY MANAGEMENT
 // ==========================================
 
 function logActivity(title, description, icon = "fa-circle-check") {
-
     const activity = {
         title,
         description,
@@ -109,17 +253,12 @@ function logActivity(title, description, icon = "fa-circle-check") {
     };
 
     activities.unshift(activity);
-
     activities = activities.slice(0, 8);
-
     renderActivities();
 }
 
-
 function renderActivities() {
-
     const activityList = $("activityList");
-
     if (!activityList) return;
 
     if (activities.length === 0) {
@@ -134,7 +273,6 @@ function renderActivities() {
                 </div>
             </li>
         `;
-
         return;
     }
 
@@ -143,7 +281,6 @@ function renderActivities() {
             <span class="activity-mark">
                 <i class="fa-solid ${escapeHTML(activity.icon)}"></i>
             </span>
-
             <div>
                 <strong>${escapeHTML(activity.title)}</strong>
                 <p>${escapeHTML(activity.description)}</p>
@@ -153,60 +290,113 @@ function renderActivities() {
     `).join("");
 }
 
+// ==========================================
+// LOAD DASHBOARD DATA FROM BACKEND
+// ==========================================
+
+async function loadAdminDashboard() {
+    try {
+        const data = await apiRequest("/admin/dashboard/");
+        students = Array.isArray(data.students) ? data.students : [];
+        instructors = Array.isArray(data.instructors) ? data.instructors : [];
+        courses = Array.isArray(data.courses) ? data.courses : [];
+
+        if (data.profile) {
+            adminProfile = {
+                name: data.profile.name || data.profile.full_name || data.profile.email,
+                username: data.profile.username || "",
+                email: data.profile.email || "",
+                phone: data.profile.phone || "Not provided",
+                department: data.profile.department || "Administration",
+                role: data.profile.role || "Administration",
+                bio: data.profile.bio || "",
+                avatar_url: data.profile.avatar_url || "",
+            };
+            profileImageData = adminProfile.avatar_url || "";
+        }
+
+        renderProfile();
+        populateAssignmentSelects();
+        renderStudents();
+        renderInstructors();
+        updateDashboardStats(data.stats);
+    } catch (error) {
+        showToast(error.message || "Failed to load admin dashboard data.");
+    }
+}
 
 // ==========================================
-// 6. DASHBOARD STATISTICS
+// DASHBOARD STATISTICS
 // ==========================================
 
-function updateDashboardStats() {
+function updateDashboardStats(serverStats = null) {
+    const totalStudentsCount = serverStats?.total_students ?? students.length;
+    const totalInstructorsCount = serverStats?.total_instructors ?? instructors.length;
+    const totalCoursesCount = serverStats?.total_courses ?? courses.length;
+    const pendingStudentsCount =
+        serverStats?.pending_approvals ??
+        students.filter(student => student.status === "Pending").length;
 
     if ($("totalStudents")) {
-        $("totalStudents").textContent = students.length;
+        $("totalStudents").textContent = totalStudentsCount;
     }
 
     if ($("totalInstructors")) {
-        $("totalInstructors").textContent = instructors.length;
+        $("totalInstructors").textContent = totalInstructorsCount;
     }
 
-    const pendingStudents = students.filter(student =>
-        student.status === "Pending"
-    ).length;
+    if ($("totalCourses")) {
+        $("totalCourses").textContent = totalCoursesCount;
+    }
 
     if ($("totalPending")) {
-        $("totalPending").textContent = pendingStudents;
-    }
-
-    // Course count:
-    // Uses a course count supplied by another script if available.
-    // Otherwise, keeps the current HTML value (11).
-
-    updateCourseCount();
-}
-
-
-function updateCourseCount() {
-
-    const courseElement = $("totalCourses");
-
-    if (!courseElement) return;
-
-    if (
-        typeof window.learnHubCourseCount === "number" &&
-        Number.isFinite(window.learnHubCourseCount)
-    ) {
-        courseElement.textContent = window.learnHubCourseCount;
+        $("totalPending").textContent = pendingStudentsCount;
     }
 }
 
+function populateAssignmentSelects() {
+    const studentSelect = $("assignStudentSelect");
+    if (studentSelect) {
+        const currentStudentVal = studentSelect.value;
+        studentSelect.innerHTML =
+            '<option value="">Select a student...</option>' +
+            students
+                .map(
+                    s =>
+                        `<option value="${escapeHTML(s.user_id)}">${escapeHTML(s.name)} (${escapeHTML(s.id)} — ${escapeHTML(s.email)})</option>`
+                )
+                .join("");
+        if (currentStudentVal) studentSelect.value = currentStudentVal;
+    }
+
+    const courseOptionsHtml = courses
+        .map(
+            c =>
+                `<option value="${escapeHTML(c.id)}">${escapeHTML(c.title)} (${escapeHTML(c.category)})</option>`
+        )
+        .join("");
+
+    const assignCourseSelect = $("assignCourseSelect");
+    if (assignCourseSelect) {
+        const currentCourseVal = assignCourseSelect.value;
+        assignCourseSelect.innerHTML =
+            '<option value="">Select a course...</option>' + courseOptionsHtml;
+        if (currentCourseVal) assignCourseSelect.value = currentCourseVal;
+    }
+
+    const inputStudentCourse = $("inputStudentCourse");
+    if (inputStudentCourse) {
+        inputStudentCourse.innerHTML =
+            '<option value="">Select a course (optional)</option>' + courseOptionsHtml;
+    }
+}
 
 // ==========================================
-// 7. STUDENT MANAGEMENT
+// STUDENT MANAGEMENT
 // ==========================================
 
 function renderStudents() {
-
     const studentList = $("studentList");
-
     if (!studentList) return;
 
     const searchValue = $("studentSearch")
@@ -218,18 +408,20 @@ function renderStudents() {
         : "all";
 
     const filteredStudents = students.filter(student => {
-
+        const courseTitles = (student.assigned_courses || [])
+            .map(c => c.title)
+            .join(" ");
         const searchableText = [
             student.id,
             student.name,
             student.email,
             student.phone,
             student.department,
-            student.username
+            student.username,
+            courseTitles,
         ].join(" ").toLowerCase();
 
         const matchesSearch = searchableText.includes(searchValue);
-
         const matchesStatus =
             statusValue === "all" ||
             student.status === statusValue;
@@ -237,21 +429,21 @@ function renderStudents() {
         return matchesSearch && matchesStatus;
     });
 
-
     if (filteredStudents.length === 0) {
-
         studentList.innerHTML = `
             <tr>
-                <td colspan="8" class="empty-state">
+                <td colspan="9" class="empty-state">
                     No student records found.
                 </td>
             </tr>
         `;
-
     } else {
+        studentList.innerHTML = filteredStudents.map(student => {
+            const assignedList = Array.isArray(student.assigned_courses) && student.assigned_courses.length > 0
+                ? student.assigned_courses.map(c => escapeHTML(c.title)).join(", ")
+                : "None assigned";
 
-        studentList.innerHTML = filteredStudents.map(student => `
-
+            return `
             <tr>
                 <td>
                     <strong>${escapeHTML(student.id)}</strong>
@@ -265,9 +457,11 @@ function renderStudents() {
 
                 <td>${escapeHTML(student.email)}</td>
 
-                <td>${escapeHTML(student.phone)}</td>
+                <td>${escapeHTML(student.phone || "—")}</td>
 
-                <td>${escapeHTML(student.department)}</td>
+                <td>${escapeHTML(student.department || "—")}</td>
+
+                <td>${assignedList}</td>
 
                 <td>${escapeHTML(student.username)}</td>
 
@@ -279,14 +473,13 @@ function renderStudents() {
 
                 <td>
                     <div class="action-buttons">
-
                         ${
                             student.status === "Pending"
                             ? `
                                 <button
                                     type="button"
                                     class="approve-btn"
-                                    onclick="approveStudent('${student.id}')"
+                                    onclick="approveStudent('${escapeHTML(student.user_id)}')"
                                     title="Approve student"
                                 >
                                     <i class="fa-solid fa-check"></i>
@@ -297,20 +490,27 @@ function renderStudents() {
 
                         <button
                             type="button"
+                            class="approve-btn"
+                            onclick="selectStudentForCourse('${escapeHTML(student.user_id)}')"
+                            title="Assign course to student"
+                        >
+                            <i class="fa-solid fa-book-open"></i>
+                        </button>
+
+                        <button
+                            type="button"
                             class="delete-btn"
-                            onclick="deleteStudent('${student.id}')"
+                            onclick="deleteStudent('${escapeHTML(student.user_id)}')"
                             title="Delete student"
                         >
                             <i class="fa-solid fa-trash"></i>
                         </button>
-
                     </div>
                 </td>
             </tr>
-
-        `).join("");
+        `;
+        }).join("");
     }
-
 
     if ($("recordCount")) {
         $("recordCount").textContent =
@@ -320,13 +520,16 @@ function renderStudents() {
     updateDashboardStats();
 }
 
+function selectStudentForCourse(userId) {
+    const select = $("assignStudentSelect");
+    if (select) {
+        select.value = String(userId);
+        $("assignCoursePanel")?.scrollIntoView({ behavior: "smooth", block: "center" });
+        $("assignCourseSelect")?.focus();
+    }
+}
 
-// ==========================================
-// 8. ADD STUDENT
-// ==========================================
-
-function addStudent(event) {
-
+async function addStudent(event) {
     event.preventDefault();
 
     const name = $("inputName").value.trim();
@@ -334,130 +537,138 @@ function addStudent(event) {
     const phone = $("inputPhoneNumber").value.trim();
     const department = $("inputDepartment").value.trim();
     const username = $("inputUsername").value.trim();
+    const courseId = $("inputStudentCourse")?.value || "";
 
     if (!name || !email || !phone || !department || !username) {
         showToast("Please complete all student fields.");
         return;
     }
 
+    try {
+        const res = await apiRequest("/admin/students/", {
+            method: "POST",
+            body: JSON.stringify({
+                name,
+                email,
+                phone,
+                department,
+                username,
+                course_id: courseId || null,
+            }),
+        });
 
-    // Check duplicate email and username
+        $("Add_student").reset();
+        await loadAdminDashboard();
 
-    const duplicate = students.some(student =>
-        student.email.toLowerCase() === email.toLowerCase() ||
-        student.username.toLowerCase() === username.toLowerCase()
-    );
+        logActivity(
+            "New student registered",
+            `${res.student.name} (${res.student.id}) was added to the database.`,
+            "fa-user-plus"
+        );
+        showToast(`Student added! ID: ${res.student.id}`);
+    } catch (error) {
+        showToast(error.message || "Could not add student.");
+    }
+}
 
-    if (duplicate) {
-        showToast("Student email or username already exists.");
+async function assignCourseToStudent(event) {
+    event.preventDefault();
+
+    const studentId = $("assignStudentSelect")?.value;
+    const courseId = $("assignCourseSelect")?.value;
+
+    if (!studentId || !courseId) {
+        showToast("Please select both a student and a course.");
         return;
     }
 
+    try {
+        const res = await apiRequest("/admin/assign-course/", {
+            method: "POST",
+            body: JSON.stringify({
+                student_id: studentId,
+                course_id: courseId,
+            }),
+        });
 
-    const student = {
-        id: generateStudentID(),
-        name,
-        email,
-        phone,
-        department,
-        username,
-        status: "Pending",
-        dateAdded: new Date().toISOString()
-    };
+        $("Assign_course")?.reset();
+        await loadAdminDashboard();
 
-
-    students.push(student);
-
-    $("Add_student").reset();
-
-    renderStudents();
-
-    logActivity(
-        "New student registered",
-        `${name} was added successfully.`,
-        "fa-user-plus"
-    );
-
-    showToast(`Student added! ID: ${student.id}`);
+        logActivity(
+            "Course assigned",
+            res.message || "Course assigned to student.",
+            "fa-book-open"
+        );
+        showToast(res.message || "Course assigned successfully!");
+    } catch (error) {
+        showToast(error.message || "Failed to assign course.");
+    }
 }
 
-
-// ==========================================
-// 9. APPROVE STUDENT
-// ==========================================
-
-function approveStudent(studentID) {
-
-    const student = students.find(item => item.id === studentID);
-
+async function approveStudent(studentUserId) {
+    const student = students.find(
+        item => String(item.user_id) === String(studentUserId) || String(item.id) === String(studentUserId)
+    );
     if (!student) return;
 
-    if (student.status === "Approved") {
-        showToast("This student is already approved.");
-        return;
+    try {
+        await apiRequest(`/admin/students/${student.user_id}/approve/`, {
+            method: "POST",
+        });
+        await loadAdminDashboard();
+
+        logActivity(
+            "Student approved",
+            `${student.name} has been approved.`,
+            "fa-user-check"
+        );
+        showToast("Student approved successfully!");
+    } catch (error) {
+        showToast(error.message || "Failed to approve student.");
     }
-
-    student.status = "Approved";
-
-    renderStudents();
-
-    logActivity(
-        "Student approved",
-        `${student.name} has been approved.`,
-        "fa-user-check"
-    );
-
-    showToast("Student approved successfully!");
 }
 
-
-// ==========================================
-// 10. DELETE STUDENT
-// ==========================================
-
-function deleteStudent(studentID) {
-
-    const student = students.find(item => item.id === studentID);
-
+async function deleteStudent(studentUserId) {
+    const student = students.find(
+        item => String(item.user_id) === String(studentUserId) || String(item.id) === String(studentUserId)
+    );
     if (!student) return;
 
     const confirmDelete = confirm(
         `Are you sure you want to delete ${student.name}?`
     );
-
     if (!confirmDelete) return;
 
-    students = students.filter(item => item.id !== studentID);
+    try {
+        await apiRequest(`/admin/students/${student.user_id}/`, {
+            method: "DELETE",
+        });
+        await loadAdminDashboard();
 
-    renderStudents();
-
-    logActivity(
-        "Student deleted",
-        `${student.name} was removed from the records.`,
-        "fa-trash"
-    );
-
-    showToast("Student deleted successfully.");
+        logActivity(
+            "Student deleted",
+            `${student.name} was removed from the database.`,
+            "fa-trash"
+        );
+        showToast("Student deleted successfully.");
+    } catch (error) {
+        showToast(error.message || "Failed to delete student.");
+    }
 }
 
-
 // ==========================================
-// 11. INSTRUCTOR MANAGEMENT
+// INSTRUCTOR MANAGEMENT
 // ==========================================
 
 function renderInstructors() {
-
     const instructorList = $("instructorList");
-
     if (!instructorList) return;
 
     const searchValue = $("instructorSearch")
         ? $("instructorSearch").value.toLowerCase().trim()
         : "";
 
-
     const filteredInstructors = instructors.filter(instructor => {
-
         const searchableText = [
             instructor.id,
             instructor.name,
@@ -471,9 +682,7 @@ function renderInstructors() {
         return searchableText.includes(searchValue);
     });
 
-
     if (filteredInstructors.length === 0) {
-
         instructorList.innerHTML = `
             <tr>
                 <td colspan="8" class="empty-state">
@@ -481,49 +690,33 @@ function renderInstructors() {
                 </td>
             </tr>
         `;
-
     } else {
-
         instructorList.innerHTML = filteredInstructors.map(instructor => `
-
             <tr>
-
                 <td>
                     <strong>${escapeHTML(instructor.id)}</strong>
                 </td>
-
                 <td>${escapeHTML(instructor.name)}</td>
-
                 <td>${escapeHTML(instructor.email)}</td>
-
-                <td>${escapeHTML(instructor.phone)}</td>
-
-                <td>${escapeHTML(instructor.department)}</td>
-
-                <td>${escapeHTML(instructor.specialization)}</td>
-
+                <td>${escapeHTML(instructor.phone || "—")}</td>
+                <td>${escapeHTML(instructor.department || "—")}</td>
+                <td>${escapeHTML(instructor.specialization || "—")}</td>
                 <td>${escapeHTML(instructor.username)}</td>
-
                 <td>
                     <div class="action-buttons">
-
                         <button
                             type="button"
                             class="delete-btn"
-                            onclick="deleteInstructor('${instructor.id}')"
+                            onclick="deleteInstructor('${escapeHTML(instructor.user_id)}')"
                             title="Delete instructor"
                         >
                             <i class="fa-solid fa-trash"></i>
                         </button>
-
                     </div>
                 </td>
-
             </tr>
-
         `).join("");
     }
-
 
     if ($("instructorRecordCount")) {
         $("instructorRecordCount").textContent =
@@ -533,188 +726,130 @@ function renderInstructors() {
     updateDashboardStats();
 }
 
-
-// ==========================================
-// 12. ADD INSTRUCTOR
-// ==========================================
-
-function addInstructor(event) {
-
+async function addInstructor(event) {
     event.preventDefault();
 
-    const name = $("instructorName").value.trim();
-    const email = $("instructorEmail").value.trim();
+    const firstName = $("instructorFirstName")
+        ? $("instructorFirstName").value.trim()
+        : ($("instructorName")?.value.trim().split(/\s+/)[0] || "");
+    const lastName = $("instructorLastName")
+        ? $("instructorLastName").value.trim()
+        : ($("instructorName")?.value.trim().split(/\s+/).slice(1).join(" ") || "");
+    const email = $("instructorEmail").value.trim().toLowerCase();
     const phone = $("instructorPhone").value.trim();
     const department = $("instructorDepartment").value.trim();
     const specialization = $("instructorSpecialization").value.trim();
     const username = $("instructorUsername").value.trim();
-
+    const password = $("instructorPassword")?.value || "";
+    const confirmPassword = $("instructorConfirmPassword")?.value || "";
 
     if (
-        !name ||
+        !firstName ||
+        !lastName ||
         !email ||
         !phone ||
         !department ||
         !specialization ||
-        !username
+        !username ||
+        !password ||
+        !confirmPassword
     ) {
-        showToast("Please complete all instructor fields.");
+        showToast("Please complete all instructor fields including password.");
         return;
     }
 
-
-    // Check duplicate email and username
-
-    const duplicate = instructors.some(instructor =>
-        instructor.email.toLowerCase() === email.toLowerCase() ||
-        instructor.username.toLowerCase() === username.toLowerCase()
-    );
-
-    if (duplicate) {
-        showToast("Instructor email or username already exists.");
+    if (password.length < 8) {
+        showToast("Password must be at least 8 characters long.");
         return;
     }
 
+    if (password !== confirmPassword) {
+        showToast("Instructor passwords do not match.");
+        return;
+    }
 
-    const instructor = {
-        id: generateInstructorID(),
-        name,
-        email,
-        phone,
-        department,
-        specialization,
-        username,
-        dateAdded: new Date().toISOString()
-    };
+    try {
+        const res = await apiRequest("/admin/instructors/", {
+            method: "POST",
+            body: JSON.stringify({
+                first_name: firstName,
+                last_name: lastName,
+                email,
+                phone,
+                department,
+                specialization,
+                username,
+                password,
+                confirm_password: confirmPassword,
+            }),
+        });
 
+        $("Add_instructor").reset();
+        await loadAdminDashboard();
 
-    instructors.push(instructor);
-
-    $("Add_instructor").reset();
-
-    renderInstructors();
-
-    logActivity(
-        "New instructor registered",
-        `${name} was added successfully.`,
-        "fa-chalkboard-user"
-    );
-
-    showToast(`Instructor added! ID: ${instructor.id}`);
+        logActivity(
+            "New instructor registered",
+            `${res.instructor.name} (${res.instructor.id}) account created.`,
+            "fa-chalkboard-user"
+        );
+        showToast(`Instructor account created! ID: ${res.instructor.id}`);
+    } catch (error) {
+        showToast(error.message || "Could not create instructor account.");
+    }
 }
 
-
-// ==========================================
-// 13. DELETE INSTRUCTOR
-// ==========================================
-
-function deleteInstructor(instructorID) {
-
+async function deleteInstructor(instructorUserId) {
     const instructor = instructors.find(
-        item => item.id === instructorID
+        item => String(item.user_id) === String(instructorUserId) || String(item.id) === String(instructorUserId)
     );
-
     if (!instructor) return;
 
     const confirmDelete = confirm(
         `Are you sure you want to delete ${instructor.name}?`
     );
-
     if (!confirmDelete) return;
 
-    instructors = instructors.filter(
-        item => item.id !== instructorID
-    );
+    try {
+        await apiRequest(`/admin/instructors/${instructor.user_id}/`, {
+            method: "DELETE",
+        });
+        await loadAdminDashboard();
 
-    renderInstructors();
-
-    logActivity(
-        "Instructor deleted",
-        `${instructor.name} was removed from the records.`,
-        "fa-trash"
-    );
-
-    showToast("Instructor deleted successfully.");
+        logActivity(
+            "Instructor deleted",
+            `${instructor.name} was removed from the database.`,
+            "fa-trash"
+        );
+        showToast("Instructor deleted successfully.");
+    } catch (error) {
+        showToast(error.message || "Failed to delete instructor.");
+    }
 }
 
-
-
-
 // ==========================================
-// 15. ADMIN PROFILE
+// ADMIN PROFILE
 // ==========================================
-
-const defaultProfile = {
-    name: "Administrator",
-    username: "admin",
-    email: "admin@learnhub.com",
-    phone: "Not provided",
-    department: "Administration",
-    role: "Administration",
-    bio: "Welcome to LearnHub."
-};
-
-
-let adminProfile = { ...defaultProfile };
-
 
 function renderProfile() {
-
     const profile = adminProfile;
+    const displayName = profile.name || "Administrator";
 
-    if ($("showName")) {
-        $("showName").textContent = profile.name;
-    }
-
-    if ($("topAdminName")) {
-        $("topAdminName").textContent = profile.name;
-    }
-
-    if ($("userFullName")) {
-        $("userFullName").textContent = profile.name;
-    }
-
-    if ($("showRole")) {
-        $("showRole").textContent = profile.role;
-    }
-
-    if ($("showEmail")) {
-        $("showEmail").textContent = profile.email;
-    }
-
-    if ($("showPhone")) {
-        $("showPhone").textContent = profile.phone;
-    }
-
-    if ($("showDepartment")) {
-        $("showDepartment").textContent = profile.department;
-    }
-
-    if ($("showUsername")) {
-        $("showUsername").textContent = profile.username;
-    }
-
-    if ($("showBio")) {
-        $("showBio").textContent = profile.bio;
-    }
-
+    if ($("showName")) $("showName").textContent = displayName;
+    if ($("topAdminName")) $("topAdminName").textContent = displayName;
+    if ($("userFullName")) $("userFullName").textContent = displayName;
+    if ($("showRole")) $("showRole").textContent = profile.role || "Administration";
+    if ($("showEmail")) $("showEmail").textContent = profile.email || "---";
+    if ($("showPhone")) $("showPhone").textContent = profile.phone || "Not provided";
+    if ($("showDepartment")) $("showDepartment").textContent = profile.department || "Administration";
+    if ($("showUsername")) $("showUsername").textContent = profile.username || "---";
+    if ($("showBio")) $("showBio").textContent = profile.bio || "---";
 
     const avatar = profileImageData ||
-        `https://placehold.co/100x100/e8eef8/17366b?text=${encodeURIComponent(getInitials(profile.name))}`;
+        `https://placehold.co/100x100/e8eef8/17366b?text=${encodeURIComponent(getInitials(displayName))}`;
 
-    if ($("showAdmin")) {
-        $("showAdmin").src = avatar;
-    }
-
-    if ($("showImage")) {
-        $("showImage").src = avatar;
-    }
+    if ($("showAdmin")) $("showAdmin").src = avatar;
+    if ($("showImage")) $("showImage").src = avatar;
 }
-
-
-// ==========================================
-// 16. TOGGLE PROFILE
-// ==========================================
 
 function toggleProfile() {
     const profile = $("Bot");
@@ -723,11 +858,6 @@ function toggleProfile() {
     const isOpen = profile.classList.toggle("active");
     toggle?.setAttribute("aria-expanded", String(isOpen));
 }
-
-
-// ==========================================
-// 17. OPEN EDIT PROFILE
-// ==========================================
 
 function Editprofile() {
     const editPanel = $("Edit");
@@ -753,31 +883,17 @@ function Editprofile() {
     editPanel.classList.add("active");
 }
 
-
-// ==========================================
-// 18. CLOSE EDIT PROFILE
-// ==========================================
-
 function closeEdit() {
-
     if ($("Edit")) {
         $("Edit").classList.remove("active");
     }
 }
 
-
-// Backward-compatible function name
-
 function closeEditProfile() {
     closeEdit();
 }
 
-
-// ==========================================
-// 19. SAVE ADMIN PROFILE
-// ==========================================
-
-function saveProfile(event) {
+async function saveProfile(event) {
     event.preventDefault();
     const required = ["fullName", "username", "email", "department", "role"];
     for (const id of required) {
@@ -795,77 +911,77 @@ function saveProfile(event) {
         return;
     }
     const valueOf = (id, fallback = "") => $(id)?.value.trim() ?? fallback;
-    adminProfile = {
+
+    const payload = {
         name: valueOf("fullName"),
         username: valueOf("username"),
         email,
-        phone: valueOf("phone") || "Not provided",
+        phone: valueOf("phone"),
         department: valueOf("department"),
         role: valueOf("role"),
-        bio: valueOf("bio") || "No bio provided."
+        bio: valueOf("bio"),
     };
-    renderProfile();
 
-    closeEdit();
-
-    logActivity(
-        "Admin profile updated",
-        "Your administrator profile was updated.",
-        "fa-user-pen"
-    );
-
-    showToast("Profile updated successfully!");
-}
-
-
-// ==========================================
-// 20. PROFILE IMAGE UPLOAD
-// ==========================================
-
-function handleProfileImage(event) {
-
-    const file = event.target.files[0];
-
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-        showToast("Please select a valid image.");
-        event.target.value = "";
-        return;
+    const imageInput = $("profileImage");
+    const file = imageInput?.files?.[0];
+    if (file) {
+        const dataUrl = await new Promise(resolve => {
+            const reader = new FileReader();
+            reader.onload = e => resolve(e.target?.result || "");
+            reader.readAsDataURL(file);
+        });
+        payload.avatar_url = dataUrl;
+        profileImageData = dataUrl;
     }
-    if (file.size > 2 * 1024 * 1024) {
-        showToast("Please choose an image smaller than 2 MB.");
-        event.target.value = "";
-        return;
-    }
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        if (typeof e.target.result !== "string") {
-            showToast("Unable to load the selected image.");
-            return;
-        }
-        profileImageData = e.target.result;
+
+    try {
+        const res = await apiRequest("/admin/profile/", {
+            method: "PATCH",
+            body: JSON.stringify(payload),
+        });
+        adminProfile = {
+            name: res.name || payload.name,
+            username: res.username || payload.username,
+            email: res.email || payload.email,
+            phone: res.phone || "Not provided",
+            department: res.department || payload.department,
+            role: res.role || payload.role,
+            bio: res.bio || payload.bio,
+            avatar_url: res.avatar_url || profileImageData,
+        };
         renderProfile();
-        logActivity("Profile photo updated", "Your administrator profile photo was changed.", "fa-camera");
-        showToast("Profile photo updated.");
-    };
-    reader.onerror = function() {
-        showToast("Unable to load the selected image.");
-        event.target.value = "";
-    };
-    reader.readAsDataURL(file);
+        closeEdit();
+        logActivity("Profile updated", "Administrator profile details were updated.", "fa-user-pen");
+        showToast("Profile updated successfully!");
+    } catch (error) {
+        showToast(error.message || "Failed to update admin profile.");
+    }
 }
 
+// ==========================================
+// TOAST & SIDEBAR
+// ==========================================
 
-// ==========================================
-// 21. SIDEBAR / HAMBURGER
-// ==========================================
+function showToast(message) {
+    const toast = $("toast");
+    if (!toast) {
+        console.log(message);
+        return;
+    }
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 3000);
+}
 
 function HamButton() {
     const sidebar = $("Sidebar");
     const overlay = $("sidebarOverlay");
     const hamburger = $("hamburger");
     if (!sidebar) return;
+
     const isOpen = sidebar.classList.toggle("active");
     overlay?.classList.toggle("active", isOpen);
     hamburger?.setAttribute("aria-expanded", String(isOpen));
@@ -877,203 +993,67 @@ function closeSidebar() {
     $("hamburger")?.setAttribute("aria-expanded", "false");
 }
 
-
-// ==========================================
-// 22. LOGOUT
-// ==========================================
-
 function logout(event) {
-
     if (event) {
         event.preventDefault();
     }
 
-    const confirmLogout = confirm(
-        "Are you sure you want to log out?"
-    );
-
+    const confirmLogout = confirm("Are you sure you want to log out?");
     if (!confirmLogout) return;
 
-    showToast("You have logged out.");
-
-    logActivity(
-        "Admin logged out",
-        "The administrator logged out of LearnHub.",
-        "fa-right-from-bracket"
-    );
-
-    sessionStorage.removeItem("accessToken");
-    sessionStorage.removeItem("refreshToken");
-    sessionStorage.removeItem("user");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("user");
-    localStorage.removeItem("adminLoggedIn");
-    window.location.href = "../home/login.html";
+    redirectToLogin();
 }
 
-
 // ==========================================
-// 23. PAGE INITIALIZATION
+// PAGE INITIALIZATION
 // ==========================================
 
-document.addEventListener("DOMContentLoaded", function() {
-
-
-    // Current year
-
-    if ($("currentYear")) {
-        $("currentYear").textContent = getCurrentYear();
+document.addEventListener("DOMContentLoaded", function () {
+    if (!enforceAdminAuth()) {
+        return;
     }
 
-    if ($("footerYear")) {
-        $("footerYear").textContent = getCurrentYear();
-    }
+    if ($("currentYear")) $("currentYear").textContent = getCurrentYear();
+    if ($("footerYear")) $("footerYear").textContent = getCurrentYear();
+    if ($("todayDate")) $("todayDate").textContent = formatDate();
 
+    $("Add_student")?.addEventListener("submit", addStudent);
+    $("Assign_course")?.addEventListener("submit", assignCourseToStudent);
+    $("Add_instructor")?.addEventListener("submit", addInstructor);
+    $("profileForm")?.addEventListener("submit", saveProfile);
+    $("studentSearch")?.addEventListener("input", renderStudents);
+    $("statusFilter")?.addEventListener("change", renderStudents);
+    $("instructorSearch")?.addEventListener("input", renderInstructors);
 
-    // Current date
-
-    if ($("todayDate")) {
-        $("todayDate").textContent = formatDate();
-    }
-
-
-    // Add student form
-
-    if ($("Add_student")) {
-        $("Add_student").addEventListener(
-            "submit",
-            addStudent
-        );
-    }
-
-
-    // Add instructor form
-
-    if ($("Add_instructor")) {
-        $("Add_instructor").addEventListener(
-            "submit",
-            addInstructor
-        );
-    }
-
-
-    // Student search
-
-    if ($("studentSearch")) {
-        $("studentSearch").addEventListener(
-            "input",
-            renderStudents
-        );
-    }
-
-
-    // Student status filter
-
-    if ($("statusFilter")) {
-        $("statusFilter").addEventListener(
-            "change",
-            renderStudents
-        );
-    }
-
-
-    // Instructor search
-
-    if ($("instructorSearch")) {
-        $("instructorSearch").addEventListener(
-            "input",
-            renderInstructors
-        );
-    }
-
-
-    // Admin profile form
-
-    if ($("profileForm")) {
-        $("profileForm").addEventListener(
-            "submit",
-            saveProfile
-        );
-    }
-
-
-    // Profile image upload
-
-    if ($("profileImage")) {
-        $("profileImage").addEventListener(
-            "change",
-            handleProfileImage
-        );
-    }
-
-
-    // Close profile dropdown when clicking outside
-
-    document.addEventListener("click", function(event) {
-
+    document.addEventListener("click", function (event) {
         const profileWrap = document.querySelector(".profile-wrap");
-
         const profile = $("Bot");
-
-        if (
-            profileWrap &&
-            profile &&
-            !profileWrap.contains(event.target)
-        ) {
+        if (profileWrap && profile && !profileWrap.contains(event.target)) {
             profile.classList.remove("active");
             $("profileToggle")?.setAttribute("aria-expanded", "false");
         }
-
     });
-
-
-    // Close sidebar when a navigation link is clicked
 
     document.querySelectorAll(".side-nav a").forEach(link => {
-
-        link.addEventListener("click", function() {
+        link.addEventListener("click", function () {
             closeSidebar();
         });
-
     });
 
-
-    // Close sidebar with Escape key
-
-    document.addEventListener("keydown", function(event) {
-
+    document.addEventListener("keydown", function (event) {
         if (event.key === "Escape") {
-
             closeSidebar();
-
             $("Bot")?.classList.remove("active");
             $("profileToggle")?.setAttribute("aria-expanded", "false");
             closeEdit();
         }
-
     });
-
-
-    // Initial rendering
-
-    renderStudents();
-
-    renderInstructors();
-
-    renderActivities();
-
-    renderProfile();
-
-    updateDashboardStats();
-
-
-    // Initial dashboard activity
 
     logActivity(
         "Dashboard opened",
-        "You're ready to manage your school records.",
+        "Connected to live school management database.",
         "fa-right-to-bracket"
     );
 
+    loadAdminDashboard();
 });

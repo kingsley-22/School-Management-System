@@ -1,126 +1,117 @@
-const seedAnnouncements = [
-    {
-        id: 1,
-        title: "First Semester Examination Timetable",
-        category: "Academic",
-        audience: "Students",
-        date: "2026-10-24",
-        status: "Published",
-        body: "The first semester examination timetable is now available. Students should check their course schedules and contact their department if they notice any conflict."
-    },
-    {
-        id: 2,
-        title: "Course Registration Deadline",
-        category: "Academic",
-        audience: "Students",
-        date: "2026-10-22",
-        status: "Published",
-        body: "All students are reminded to complete course registration before the deadline. Late registration may require departmental approval."
-    },
-    {
-        id: 3,
-        title: "Campus Clean-Up Day",
-        category: "Events",
-        audience: "All users",
-        date: "2026-10-25",
-        status: "Published",
-        body: "Join the campus clean-up exercise this Saturday. Please meet at the main assembly point at 8:00 AM and bring reusable gloves if available."
-    },
-    {
-        id: 4,
-        title: "Outstanding School Fees Reminder",
-        category: "Finance",
-        audience: "Parents",
-        date: "2026-10-21",
-        status: "Published",
-        body: "Parents and guardians are encouraged to review outstanding school fees and contact the finance office if they need assistance with payment records."
-    },
-    {
-        id: 5,
-        title: "New Student Orientation",
-        category: "Events",
-        audience: "Students",
-        date: "2026-10-28",
-        status: "Published",
-        body: "New students are invited to orientation for an introduction to campus facilities, academic policies, student support services and the LearnHub portal."
-    },
-    {
-        id: 6,
-        title: "Staff Development Workshop",
-        category: "Staff",
-        audience: "Teaching staff",
-        date: "2026-10-29",
-        status: "Published",
-        body: "Teaching staff are invited to a professional development workshop on effective classroom engagement and digital learning tools."
-    },
-    {
-        id: 7,
-        title: "Library Opening Hours Update",
-        category: "General",
-        audience: "All users",
-        date: "2026-10-20",
-        status: "Published",
-        body: "The library will operate from 8:00 AM to 7:00 PM on weekdays during the examination preparation period."
-    },
-    {
-        id: 8,
-        title: "Continuous Assessment Results",
-        category: "Academic",
-        audience: "Students",
-        date: "2026-10-23",
-        status: "Published",
-        body: "Continuous assessment results will be uploaded to the student portal. Please contact your lecturer for questions about a recorded score."
-    },
-    {
-        id: 9,
-        title: "Interdepartmental Sports Festival",
-        category: "Events",
-        audience: "All users",
-        date: "2026-11-02",
-        status: "Published",
-        body: "The annual sports festival is coming soon. Departments should submit team entries to the student affairs office."
-    },
-    {
-        id: 10,
-        title: "Student Portal Maintenance",
-        category: "General",
-        audience: "All users",
-        date: "2026-10-26",
-        status: "Published",
-        body: "The student portal may be unavailable briefly for scheduled maintenance. Please save your work before the maintenance window."
-    },
-    {
-        id: 11,
-        title: "Teaching Staff Meeting",
-        category: "Staff",
-        audience: "Teaching staff",
-        date: "2026-10-27",
-        status: "Draft",
-        body: "Agenda includes academic progress, examination preparation and updates to departmental reporting."
-    },
-    {
-        id: 12,
-        title: "Scholarship Application Information",
-        category: "Finance",
-        audience: "Students",
-        date: "2026-11-04",
-        status: "Draft",
-        body: "Eligible students should prepare the required documents and check the scholarship noticeboard for application guidance."
-    },
-    {
-        id: 13,
-        title: "Parent-Teacher Engagement Day",
-        category: "Events",
-        audience: "Parents",
-        date: "2026-11-06",
-        status: "Draft",
-        body: "Parents and guardians will have an opportunity to discuss student progress with teachers and school administrators."
-    }
-];
+// ==========================================
+// IFEXA ACADEMY — ADMIN ANNOUNCEMENTS
+// Connected to Django REST Framework Admin API
+// ==========================================
+
+const API_BASE_URL = (
+    window.VITE_API_URL ||
+    window.API_BASE_URL ||
+    "http://127.0.0.1:8000/api"
+).replace(/\/+$/, "");
+
+const LOGIN_PAGE_URL = "../home/login.html";
 
 const $ = id => document.getElementById(id);
 
-let announcements = seedAnnouncements.map(a => ({ ...a }));
+let announcements = [];
+
+function getAccessToken() {
+    return (
+        sessionStorage.getItem("accessToken") ||
+        localStorage.getItem("accessToken") ||
+        ""
+    );
+}
+
+function getRefreshToken() {
+    return (
+        sessionStorage.getItem("refreshToken") ||
+        localStorage.getItem("refreshToken") ||
+        ""
+    );
+}
+
+function clearAuthState() {
+    sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
+}
+
+function redirectToLogin() {
+    clearAuthState();
+    window.location.replace(LOGIN_PAGE_URL);
+}
+
+async function refreshAccessToken() {
+    const refresh = getRefreshToken();
+    if (!refresh) return null;
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/token/refresh/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+            body: JSON.stringify({ refresh }),
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (data?.access) {
+            sessionStorage.setItem("accessToken", data.access);
+            localStorage.setItem("accessToken", data.access);
+            return data.access;
+        }
+        return null;
+    } catch {
+        return null;
+    }
+}
+
+async function apiRequest(endpoint, options = {}, retried = false) {
+    let token = getAccessToken();
+    if (!token && !retried) {
+        token = await refreshAccessToken();
+        if (!token) {
+            redirectToLogin();
+            throw new Error("Authentication required.");
+        }
+    }
+
+    const headers = {
+        "Accept": "application/json",
+        ...(options.body ? { "Content-Type": "application/json" } : {}),
+        ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+        ...(options.headers || {}),
+    };
+
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers,
+    });
+
+    if (response.status === 401 && !retried) {
+        const newToken = await refreshAccessToken();
+        if (newToken) return apiRequest(endpoint, options, true);
+        redirectToLogin();
+        throw new Error("Session expired.");
+    }
+
+    if (response.status === 403) {
+        redirectToLogin();
+        throw new Error("Admin access required.");
+    }
+
+    const text = await response.text();
+    const data = text ? JSON.parse(text) : {};
+    if (!response.ok) {
+        throw new Error(data.error || data.detail || "Request failed.");
+    }
+    return data;
+}
 
 function escapeHTML(value) {
     return String(value ?? "").replace(/[&<>"']/g, ch => ({
@@ -134,9 +125,8 @@ function escapeHTML(value) {
 
 function formatDate(value) {
     if (!value) return "Not scheduled";
-
     const d = new Date(value + "T00:00:00");
-
+    if (isNaN(d.getTime())) return value;
     return d.toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "short",
@@ -152,6 +142,16 @@ function iconFor(category) {
         General: "fa-circle-info",
         Staff: "fa-people-group"
     }[category] || "fa-bullhorn";
+}
+
+async function loadAnnouncementsFromBackend() {
+    try {
+        const data = await apiRequest("/admin/announcements/");
+        announcements = Array.isArray(data.results) ? data.results : [];
+        render();
+    } catch (error) {
+        showToast(error.message || "Failed to load announcements.");
+    }
 }
 
 function render() {
@@ -259,7 +259,6 @@ function showToast(message) {
     toast.classList.add("show");
 
     clearTimeout(showToast.timer);
-
     showToast.timer = setTimeout(() => {
         toast.classList.remove("show");
     }, 2600);
@@ -267,7 +266,6 @@ function showToast(message) {
 
 function openModal(item = null) {
     $("announcementForm").reset();
-
     $("editId").value = item ? item.id : "";
 
     $("modalTitle").textContent = item
@@ -278,10 +276,8 @@ function openModal(item = null) {
     $("categoryInput").value = item?.category || "Academic";
     $("audienceInput").value = item?.audience || "All users";
     $("bodyInput").value = item?.body || "";
-
     $("dateInput").value =
         item?.date || new Date().toISOString().slice(0, 10);
-
     $("statusInput").value = item?.status || "Published";
 
     $("modalOverlay").classList.add("show");
@@ -295,12 +291,8 @@ function closeModal() {
     document.body.style.overflow = "";
 }
 
-/* MODAL EVENT LISTENERS */
-
 $("openCreate").addEventListener("click", () => openModal());
-
 $("closeModal").addEventListener("click", closeModal);
-
 $("cancelModal").addEventListener("click", closeModal);
 
 $("modalOverlay").addEventListener("click", e => {
@@ -317,50 +309,46 @@ document.addEventListener("keydown", e => {
     }
 });
 
-/* CREATE AND UPDATE ANNOUNCEMENTS */
-
-$("announcementForm").addEventListener("submit", e => {
+$("announcementForm").addEventListener("submit", async e => {
     e.preventDefault();
 
     const id = $("editId").value;
-
-    const item = {
-        id: id ? Number(id) : Date.now(),
+    const payload = {
         title: $("titleInput").value.trim(),
         category: $("categoryInput").value,
         audience: $("audienceInput").value,
         body: $("bodyInput").value.trim(),
         date: $("dateInput").value,
-        status: $("statusInput").value
+        status: $("statusInput").value,
     };
 
-    if (id) {
-        announcements = announcements.map(a =>
-            a.id === Number(id) ? item : a
-        );
-
-        showToast("Announcement updated successfully.");
-    } else {
-        announcements.unshift(item);
-
-        showToast("Announcement created successfully.");
+    try {
+        if (id) {
+            await apiRequest(`/admin/announcements/${id}/`, {
+                method: "PATCH",
+                body: JSON.stringify(payload),
+            });
+            showToast("Announcement updated successfully.");
+        } else {
+            await apiRequest("/admin/announcements/", {
+                method: "POST",
+                body: JSON.stringify(payload),
+            });
+            showToast("Announcement created successfully.");
+        }
+        closeModal();
+        await loadAnnouncementsFromBackend();
+    } catch (error) {
+        showToast(error.message || "Failed to save announcement.");
     }
-
-    render();
-    closeModal();
 });
 
-/* EDIT, PUBLISH, AND DELETE */
-
-$("announcementRows").addEventListener("click", e => {
+$("announcementRows").addEventListener("click", async e => {
     const button = e.target.closest("button[data-action]");
-
     if (!button) return;
 
     const id = Number(button.dataset.id);
-
     const item = announcements.find(a => a.id === id);
-
     if (!item) return;
 
     switch (button.dataset.action) {
@@ -368,33 +356,40 @@ $("announcementRows").addEventListener("click", e => {
             openModal(item);
             break;
 
-        case "toggle":
-            item.status = item.status === "Published"
-                ? "Draft"
-                : "Published";
-
-            render();
-
-            showToast(
-                item.status === "Published"
-                    ? "Announcement published."
-                    : "Announcement moved to drafts."
-            );
+        case "toggle": {
+            const nextStatus = item.status === "Published" ? "Draft" : "Published";
+            try {
+                await apiRequest(`/admin/announcements/${id}/`, {
+                    method: "PATCH",
+                    body: JSON.stringify({ status: nextStatus }),
+                });
+                await loadAnnouncementsFromBackend();
+                showToast(
+                    nextStatus === "Published"
+                        ? "Announcement published."
+                        : "Announcement moved to drafts."
+                );
+            } catch (error) {
+                showToast(error.message || "Failed to update status.");
+            }
             break;
+        }
 
         case "delete":
             if (confirm(`Delete "${item.title}"? This cannot be undone.`)) {
-                announcements = announcements.filter(a => a.id !== id);
-
-                render();
-
-                showToast("Announcement deleted.");
+                try {
+                    await apiRequest(`/admin/announcements/${id}/`, {
+                        method: "DELETE",
+                    });
+                    await loadAnnouncementsFromBackend();
+                    showToast("Announcement deleted.");
+                } catch (error) {
+                    showToast(error.message || "Failed to delete announcement.");
+                }
             }
             break;
     }
 });
-
-/* SEARCH AND FILTERS */
 
 [
     "searchInput",
@@ -407,8 +402,6 @@ $("announcementRows").addEventListener("click", e => {
         render
     );
 });
-
-/* MOBILE SIDEBAR */
 
 $("menuToggle").addEventListener("click", () => {
     const isOpen = $("sidebar").classList.toggle("open");
@@ -426,15 +419,14 @@ document.addEventListener("click", e => {
     }
 });
 
-/* HELP BUTTON */
-
 $("helpBtn").addEventListener("click", () => {
-    showToast(
-        "Please contact your school system administrator for support."
-    );
+    showToast("Please contact your school system administrator for support.");
 });
 
-
-/* INITIAL RENDER */
-
-render();
+document.addEventListener("DOMContentLoaded", () => {
+    if (!getAccessToken() && !getRefreshToken()) {
+        redirectToLogin();
+        return;
+    }
+    loadAnnouncementsFromBackend();
+});
