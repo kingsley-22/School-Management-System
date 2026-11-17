@@ -589,13 +589,20 @@ function renderNotifications(notificationsPayload) {
 
 function setupMobileMenu() {
     const hamburger = document.getElementById("hamburger");
-    const mobileMenu = document.getElementById("mobileMenu");
-    if (!hamburger || !mobileMenu) return;
+    const sidebar = document.getElementById("sidebar") || document.querySelector(".sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+    const sidebarClose = document.getElementById("sidebarClose");
+    if (!hamburger || !sidebar) return;
 
     const icon = hamburger.querySelector("i");
 
     function setMenuOpen(open) {
-        mobileMenu.hidden = !open;
+        sidebar.classList.toggle("active", open);
+        sidebar.classList.toggle("open", open);
+        if (overlay) {
+            overlay.classList.toggle("active", open);
+            overlay.classList.toggle("show", open);
+        }
         hamburger.setAttribute("aria-expanded", String(open));
         hamburger.setAttribute(
             "aria-label",
@@ -610,25 +617,24 @@ function setupMobileMenu() {
 
     hamburger.addEventListener("click", (event) => {
         event.stopPropagation();
-        setMenuOpen(mobileMenu.hidden);
+        const isOpen = sidebar.classList.contains("active");
+        setMenuOpen(!isOpen);
     });
 
-    mobileMenu.addEventListener("click", (event) => {
+    if (overlay) {
+        overlay.addEventListener("click", () => setMenuOpen(false));
+    }
+
+    if (sidebarClose) {
+        sidebarClose.addEventListener("click", () => setMenuOpen(false));
+    }
+
+    sidebar.addEventListener("click", (event) => {
         if (event.target.closest("a")) setMenuOpen(false);
     });
 
-    document.addEventListener("click", (event) => {
-        if (
-            !mobileMenu.hidden &&
-            !mobileMenu.contains(event.target) &&
-            !hamburger.contains(event.target)
-        ) {
-            setMenuOpen(false);
-        }
-    });
-
     document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && !mobileMenu.hidden) {
+        if (event.key === "Escape" && sidebar.classList.contains("active")) {
             setMenuOpen(false);
             hamburger.focus();
         }

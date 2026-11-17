@@ -29,19 +29,20 @@
         <!-- ==================== SIDEBAR ==================== -->
         <aside class="sidebar" id="sidebar">
 
+            <button type="button" class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
             <!-- Brand -->
-            <a class="brand" href="../admin/admin.html">
+            <div class="logo">
+                <a class="brand" href="../admin/admin.html">
+                    <img src="../../images/Top_Left-removebg-preview.png" alt="IFEXA Academy Logo">
+                </a>
+            </div>
 
-                <span class="brand-icon">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                </span>
-
-                <span>
-                    <b>Ifexa Academy</b>
-                    <small>School Management</small>
-                </span>
-
-            </a>
+            <div class="logo-badge">
+                <small>Learn. Grow. Succeed.</small>
+            </div>
 
             <p class="nav-title">WORKSPACE</p>
 
@@ -324,12 +325,16 @@
                     <!-- Category Filter -->
                     <select id="categoryFilter" aria-label="Filter by category">
                         <option value="All">All categories</option>
-                        <option>Technology</option>
-                        <option>Business</option>
-                        <option>Design</option>
-                        <option>Science</option>
-                        <option>Languages</option>
-                        <option>Mathematics</option>
+                        <option>Web Development</option>
+                        <option>Frontend Development</option>
+                        <option>Backend Development</option>
+                        <option>Programming</option>
+                        <option>Product Design</option>
+                        <option>Data &amp; AI</option>
+                        <option>Cybersecurity</option>
+                        <option>Cloud &amp; DevOps</option>
+                        <option>Mobile Development</option>
+                        <option>Software Engineering</option>
                     </select>
 
                     <!-- Level Filter -->
@@ -357,28 +362,44 @@
                         All courses <span>0</span>
                     </button>
 
-                    <button class="chip" data-category="Technology">
-                        Technology
+                    <button class="chip" data-category="Web Development">
+                        Web Development
                     </button>
 
-                    <button class="chip" data-category="Business">
-                        Business
+                    <button class="chip" data-category="Frontend Development">
+                        Frontend Development
                     </button>
 
-                    <button class="chip" data-category="Design">
-                        Design
+                    <button class="chip" data-category="Backend Development">
+                        Backend Development
                     </button>
 
-                    <button class="chip" data-category="Science">
-                        Science
+                    <button class="chip" data-category="Programming">
+                        Programming
                     </button>
 
-                    <button class="chip" data-category="Languages">
-                        Languages
+                    <button class="chip" data-category="Product Design">
+                        Product Design
                     </button>
 
-                    <button class="chip" data-category="Mathematics">
-                        Mathematics
+                    <button class="chip" data-category="Data &amp; AI">
+                        Data &amp; AI
+                    </button>
+
+                    <button class="chip" data-category="Cybersecurity">
+                        Cybersecurity
+                    </button>
+
+                    <button class="chip" data-category="Cloud &amp; DevOps">
+                        Cloud &amp; DevOps
+                    </button>
+
+                    <button class="chip" data-category="Mobile Development">
+                        Mobile Development
+                    </button>
+
+                    <button class="chip" data-category="Software Engineering">
+                        Software Engineering
                     </button>
 
                 </div>
@@ -459,13 +480,11 @@
 
                 <!-- Instructor -->
                 <label>
-                    Instructor
+                    Instructor (optional)
 
-                    <input
-                        id="newInstructor"
-                        required
-                        placeholder="e.g. Dr. Ada James"
-                    >
+                    <select id="newInstructor">
+                        <option value="">Unassigned (assign later)</option>
+                    </select>
                 </label>
 
                 <!-- Category -->
@@ -474,12 +493,16 @@
 
                     <select id="newCategory" required>
                         <option value="">Choose category</option>
-                        <option>Technology</option>
-                        <option>Business</option>
-                        <option>Design</option>
-                        <option>Science</option>
-                        <option>Languages</option>
-                        <option>Mathematics</option>
+                        <option>Web Development</option>
+                        <option>Frontend Development</option>
+                        <option>Backend Development</option>
+                        <option>Programming</option>
+                        <option>Product Design</option>
+                        <option>Data &amp; AI</option>
+                        <option>Cybersecurity</option>
+                        <option>Cloud &amp; DevOps</option>
+                        <option>Mobile Development</option>
+                        <option>Software Engineering</option>
                     </select>
                 </label>
 

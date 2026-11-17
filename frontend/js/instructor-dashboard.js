@@ -439,13 +439,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const menuToggle = document.querySelector(".menu-toggle");
     const sidebar = document.querySelector(".sidebar");
+    const sidebarClose = document.getElementById("sidebarClose");
+
+    function closeInstructorSidebar() {
+        if (!sidebar) return;
+        sidebar.classList.remove("active");
+        sidebar.classList.remove("show");
+        document.body.classList.remove("menu-open");
+        const icon = menuToggle?.querySelector("i");
+        if (icon) icon.className = "fa-solid fa-bars";
+    }
 
     if (menuToggle && sidebar) {
         menuToggle.addEventListener("click", () => {
-            sidebar.classList.toggle("active");
-            sidebar.classList.toggle("show");
-            document.body.classList.toggle("menu-open");
+            const isOpen = !sidebar.classList.contains("active");
+            sidebar.classList.toggle("active", isOpen);
+            sidebar.classList.toggle("show", isOpen);
+            document.body.classList.toggle("menu-open", isOpen);
+            const icon = menuToggle.querySelector("i");
+            if (icon) icon.className = isOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars";
         });
+    }
+
+    if (sidebarClose) {
+        sidebarClose.addEventListener("click", closeInstructorSidebar);
     }
 
 

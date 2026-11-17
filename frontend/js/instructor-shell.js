@@ -399,11 +399,26 @@ document.addEventListener("DOMContentLoaded", () => {
     // ========================================
     const menuToggle = document.querySelector(".menu-toggle");
     const sidebar = document.querySelector(".sidebar");
+    const sidebarClose = document.getElementById("sidebarClose");
+
+    function closeInstructorSidebar() {
+        if (!sidebar) return;
+        sidebar.classList.remove("show");
+        sidebar.classList.remove("active");
+        document.body.classList.remove("menu-open");
+        const icon = menuToggle?.querySelector("i");
+        if (icon) icon.className = "fa-solid fa-bars";
+    }
 
     if (menuToggle && sidebar) {
         menuToggle.addEventListener("click", () => {
-            sidebar.classList.toggle("show");
-            sidebar.classList.toggle("active");
+            const isOpen = sidebar.classList.contains("show") || sidebar.classList.contains("active");
+            const icon = menuToggle.querySelector("i");
+            if (icon) icon.className = isOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars";
         });
+    }
+
+    if (sidebarClose) {
+        sidebarClose.addEventListener("click", closeInstructorSidebar);
     }
 });

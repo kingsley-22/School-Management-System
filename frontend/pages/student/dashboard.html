@@ -19,11 +19,17 @@
 <!-- DASHBOARD LAYOUT -->
 <div class="dashboard-layout">
 
-    <!-- DESKTOP SIDEBAR -->
-    <aside class="sidebar">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <button type="button" class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
 
         <div class="logo">
-            <a href="../../pages/home/home.html">
+            <a class="brand" href="../../pages/home/home.html">
                 <img src="../../images/Top_Left-removebg-preview.png"
                      alt="IFEXA Academy Logo">
             </a>
@@ -32,6 +38,8 @@
         <div class="logo-badge">
             <small>Learn. Grow. Succeed.</small>
         </div>
+
+        <p class="nav-label">WORKSPACE</p>
 
         <nav class="sidebar-nav" aria-label="Main navigation">
 
@@ -76,19 +84,25 @@
                 <span>Profile</span>
             </a>
 
-            <a href="#logout" class="nav-link logout-link">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                <span>Logout</span>
-            </a>
-
         </nav>
 
-        <!-- SIDEBAR PROMO -->
-        <div class="sidebar-promo">
-            <i class="fa-solid fa-graduation-cap"></i>
-            <h3>Small steps,<br>create big dreams.</h3>
-            <p>Keep learning, keep growing.</p>
+        <div class="sidebar-help">
+            <span class="help-icon"><i class="fa-regular fa-circle-question"></i></span>
+            <strong>Need help?</strong>
+            <p>Manage your learning workspace with ease.</p>
+            <a href="mailto:ifexatechnologies@gmail.com">
+                Contact support <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
         </div>
+
+        <div class="Sidebar_down">
+            <a href="#logout" class="nav-link logout-link">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Log out</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">© 2026 Ifexa Academy</div>
 
     </aside>
 
@@ -107,78 +121,9 @@
         id="hamburger"
         aria-label="Open navigation menu"
         aria-expanded="false"
-        aria-controls="mobileMenu">
+        aria-controls="sidebar">
         <i class="fa-solid fa-bars"></i>
     </button>
-
-    
-    <!-- MOBILE NAVIGATION MENU -->
-    <div class="mobileMenu" id="mobileMenu" hidden>
-
-        <!-- MOBILE LOGO -->
-        <div class="mobile-menu-header">
-            <a href="../../pages/home/home.html"
-               class="mobile-menu-logo"
-               aria-label="IFEXA Academy Home">
-
-                <img
-                    src="../../images/Top_Left-removebg-preview.png"
-                    alt="IFEXA Academy Logo">
-            </a>
-        </div>
-
-        <!-- MOBILE LINKS -->
-        <nav class="mobile-links" aria-label="Mobile navigation">
-
-            <a href="#dashboard" class="nav-link active">
-                <i class="fa-solid fa-house"></i>
-                <span>Dashboard</span>
-            </a>
-
-            <a href="#courses" class="nav-link">
-                <i class="fa-solid fa-book-open"></i>
-                <span>My Courses</span>
-            </a>
-
-            <a href="#assignments" class="nav-link">
-                <i class="fa-solid fa-clipboard-list"></i>
-                <span>Assignments</span>
-                <b class="notification" id="mobileAssignmentBadge" hidden>0</b>
-            </a>
-
-            <a href="#grades" class="nav-link">
-                <i class="fa-solid fa-chart-column"></i>
-                <span>Grades</span>
-            </a>
-
-            <a href="#payments" class="nav-link">
-                <i class="fa-solid fa-wallet"></i>
-                <span>Payments</span>
-            </a>
-
-            <a href="#messages" class="nav-link">
-                <i class="fa-solid fa-comments"></i>
-                <span>Messages</span>
-            </a>
-
-            <a href="#announcements" class="nav-link">
-                <i class="fa-solid fa-bell"></i>
-                <span>Announcements</span>
-            </a>
-
-            <a href="#profile" class="nav-link">
-                <i class="fa-solid fa-user"></i>
-                <span>Profile</span>
-            </a>
-
-            <a href="#logout" class="nav-link logout-link">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                <span>Logout</span>
-            </a>
-
-        </nav>
-
-    </div>
 
 
     <!-- SEARCH BAR -->

@@ -11,9 +11,32 @@ const API_BASE_URL = (
 
 const LOGIN_PAGE_URL = "../home/login.html";
 
+const DEFAULT_TECH_COURSES = [
+    { id: "CSC-101", code: "CSC-101", title: "Full-Stack Web Development", category: "Web Development" },
+    { id: "CSC-102", code: "CSC-102", title: "Frontend Engineering with React & Next.js", category: "Frontend Development" },
+    { id: "CSC-103", code: "CSC-103", title: "Backend Engineering with Python & Django", category: "Backend Development" },
+    { id: "CSC-104", code: "CSC-104", title: "JavaScript & TypeScript Mastery", category: "Programming" },
+    { id: "CSC-105", code: "CSC-105", title: "UI/UX Product Design & Prototyping", category: "Product Design" },
+    { id: "CSC-106", code: "CSC-106", title: "Data Science & Machine Learning", category: "Data & AI" },
+    { id: "CSC-107", code: "CSC-107", title: "Artificial Intelligence & Deep Learning", category: "Data & AI" },
+    { id: "CSC-108", code: "CSC-108", title: "Cybersecurity & Ethical Hacking", category: "Cybersecurity" },
+    { id: "CSC-109", code: "CSC-109", title: "Cloud Computing with AWS & Azure", category: "Cloud & DevOps" },
+    { id: "CSC-110", code: "CSC-110", title: "DevOps, CI/CD, Docker & Kubernetes", category: "Cloud & DevOps" },
+    { id: "CSC-111", code: "CSC-111", title: "Mobile App Development with Flutter & Dart", category: "Mobile Development" },
+    { id: "CSC-112", code: "CSC-112", title: "React Native Mobile App Engineering", category: "Mobile Development" },
+    { id: "CSC-113", code: "CSC-113", title: "Database Engineering, SQL & PostgreSQL", category: "Backend Development" },
+    { id: "CSC-114", code: "CSC-114", title: "Data Analytics with Python, SQL & Power BI", category: "Data & AI" },
+    { id: "CSC-115", code: "CSC-115", title: "Blockchain & Web3 Smart Contract Development", category: "Software Engineering" },
+    { id: "CSC-116", code: "CSC-116", title: "Software Engineering & System Design", category: "Software Engineering" },
+    { id: "CSC-117", code: "CSC-117", title: "Node.js, Express & Microservices API Development", category: "Backend Development" },
+    { id: "CSC-118", code: "CSC-118", title: "Quality Assurance (QA) & Automated Software Testing", category: "Software Engineering" },
+    { id: "CSC-119", code: "CSC-119", title: "Linux Server Administration & Bash Scripting", category: "Cloud & DevOps" },
+    { id: "CSC-120", code: "CSC-120", title: "Tech Product Management & Agile Delivery", category: "Product Design" },
+];
+
 let students = [];
 let instructors = [];
-let courses = [];
+let courses = [...DEFAULT_TECH_COURSES];
 let activities = [];
 let adminProfile = {
     name: "",
@@ -299,7 +322,10 @@ async function loadAdminDashboard() {
         const data = await apiRequest("/admin/dashboard/");
         students = Array.isArray(data.students) ? data.students : [];
         instructors = Array.isArray(data.instructors) ? data.instructors : [];
-        courses = Array.isArray(data.courses) ? data.courses : [];
+        courses =
+            Array.isArray(data.courses) && data.courses.length > 0
+                ? data.courses
+                : [...DEFAULT_TECH_COURSES];
 
         if (data.profile) {
             adminProfile = {
@@ -363,16 +389,32 @@ function populateAssignmentSelects() {
             students
                 .map(
                     s =>
-                        `<option value="${escapeHTML(s.user_id)}">${escapeHTML(s.name)} (${escapeHTML(s.id)} — ${escapeHTML(s.email)})</option>`
+                        `<option value="${escapeHTML(s.user_id)}">${escapeHTML(s.name)} (${escapeHTML(s.id)})</option>`
                 )
                 .join("");
         if (currentStudentVal) studentSelect.value = currentStudentVal;
     }
 
-    const courseOptionsHtml = courses
+    const instructorSelect = $("assignInstructorSelect");
+    if (instructorSelect) {
+        const currentInstVal = instructorSelect.value;
+        instructorSelect.innerHTML =
+            '<option value="">Select an instructor...</option>' +
+            instructors
+                .map(
+                    inst =>
+                        `<option value="${escapeHTML(inst.user_id)}">${escapeHTML(inst.name)} (${escapeHTML(inst.id)})</option>`
+                )
+                .join("");
+        if (currentInstVal) instructorSelect.value = currentInstVal;
+    }
+
+    const availableCourses =
+        Array.isArray(courses) && courses.length > 0 ? courses : DEFAULT_TECH_COURSES;
+    const courseOptionsHtml = availableCourses
         .map(
             c =>
-                `<option value="${escapeHTML(c.id)}">${escapeHTML(c.title)} (${escapeHTML(c.category)})</option>`
+                `<option value="${escapeHTML(c.id)}">${escapeHTML(c.title)}</option>`
         )
         .join("");
 
@@ -388,6 +430,20 @@ function populateAssignmentSelects() {
     if (inputStudentCourse) {
         inputStudentCourse.innerHTML =
             '<option value="">Select a course (optional)</option>' + courseOptionsHtml;
+    }
+
+    const instructorCourseSelect = $("instructorCourseSelect");
+    if (instructorCourseSelect) {
+        instructorCourseSelect.innerHTML =
+            '<option value="">Select a course (optional)</option>' + courseOptionsHtml;
+    }
+
+    const assignInstructorCourseSelect = $("assignInstructorCourseSelect");
+    if (assignInstructorCourseSelect) {
+        const currentInstCourseVal = assignInstructorCourseSelect.value;
+        assignInstructorCourseSelect.innerHTML =
+            '<option value="">Select a course...</option>' + courseOptionsHtml;
+        if (currentInstCourseVal) assignInstructorCourseSelect.value = currentInstCourseVal;
     }
 }
 
@@ -669,6 +725,9 @@ function renderInstructors() {
         : "";
 
     const filteredInstructors = instructors.filter(instructor => {
+        const courseTitles = (instructor.assigned_courses || [])
+            .map(c => c.title)
+            .join(" ");
         const searchableText = [
             instructor.id,
             instructor.name,
@@ -676,7 +735,8 @@ function renderInstructors() {
             instructor.phone,
             instructor.department,
             instructor.specialization,
-            instructor.username
+            instructor.username,
+            courseTitles
         ].join(" ").toLowerCase();
 
         return searchableText.includes(searchValue);
@@ -685,13 +745,18 @@ function renderInstructors() {
     if (filteredInstructors.length === 0) {
         instructorList.innerHTML = `
             <tr>
-                <td colspan="8" class="empty-state">
+                <td colspan="9" class="empty-state">
                     No instructor records found.
                 </td>
             </tr>
         `;
     } else {
-        instructorList.innerHTML = filteredInstructors.map(instructor => `
+        instructorList.innerHTML = filteredInstructors.map(instructor => {
+            const assignedList = Array.isArray(instructor.assigned_courses) && instructor.assigned_courses.length > 0
+                ? instructor.assigned_courses.map(c => escapeHTML(c.title)).join(", ")
+                : "None assigned";
+
+            return `
             <tr>
                 <td>
                     <strong>${escapeHTML(instructor.id)}</strong>
@@ -701,9 +766,18 @@ function renderInstructors() {
                 <td>${escapeHTML(instructor.phone || "—")}</td>
                 <td>${escapeHTML(instructor.department || "—")}</td>
                 <td>${escapeHTML(instructor.specialization || "—")}</td>
+                <td>${assignedList}</td>
                 <td>${escapeHTML(instructor.username)}</td>
                 <td>
                     <div class="action-buttons">
+                        <button
+                            type="button"
+                            class="approve-btn"
+                            onclick="selectInstructorForCourse('${escapeHTML(instructor.user_id)}')"
+                            title="Assign course to instructor"
+                        >
+                            <i class="fa-solid fa-book-open"></i>
+                        </button>
                         <button
                             type="button"
                             class="delete-btn"
@@ -715,7 +789,8 @@ function renderInstructors() {
                     </div>
                 </td>
             </tr>
-        `).join("");
+        `;
+        }).join("");
     }
 
     if ($("instructorRecordCount")) {
@@ -742,6 +817,7 @@ async function addInstructor(event) {
     const username = $("instructorUsername").value.trim();
     const password = $("instructorPassword")?.value || "";
     const confirmPassword = $("instructorConfirmPassword")?.value || "";
+    const courseId = $("instructorCourseSelect")?.value || "";
 
     if (
         !firstName ||
@@ -781,6 +857,7 @@ async function addInstructor(event) {
                 username,
                 password,
                 confirm_password: confirmPassword,
+                course_id: courseId || null,
             }),
         });
 
@@ -795,6 +872,49 @@ async function addInstructor(event) {
         showToast(`Instructor account created! ID: ${res.instructor.id}`);
     } catch (error) {
         showToast(error.message || "Could not create instructor account.");
+    }
+}
+
+function selectInstructorForCourse(userId) {
+    const select = $("assignInstructorSelect");
+    if (select) {
+        select.value = String(userId);
+        $("assignInstructorPanel")?.scrollIntoView({ behavior: "smooth", block: "center" });
+        $("assignInstructorCourseSelect")?.focus();
+    }
+}
+
+async function assignInstructorToCourse(event) {
+    event.preventDefault();
+
+    const instructorId = $("assignInstructorSelect")?.value;
+    const courseId = $("assignInstructorCourseSelect")?.value;
+
+    if (!instructorId || !courseId) {
+        showToast("Please select both an instructor and a course.");
+        return;
+    }
+
+    try {
+        const res = await apiRequest("/admin/assign-instructor/", {
+            method: "POST",
+            body: JSON.stringify({
+                instructor_id: instructorId,
+                course_id: courseId,
+            }),
+        });
+
+        $("Assign_instructor_course")?.reset();
+        await loadAdminDashboard();
+
+        logActivity(
+            "Instructor assigned to course",
+            res.message || "Instructor assigned to course.",
+            "fa-chalkboard-user"
+        );
+        showToast(res.message || "Instructor assigned to course successfully!");
+    } catch (error) {
+        showToast(error.message || "Failed to assign instructor to course.");
     }
 }
 
@@ -985,12 +1105,21 @@ function HamButton() {
     const isOpen = sidebar.classList.toggle("active");
     overlay?.classList.toggle("active", isOpen);
     hamburger?.setAttribute("aria-expanded", String(isOpen));
+    const icon = hamburger?.querySelector("i");
+    if (icon) {
+        icon.className = isOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars";
+    }
 }
 
 function closeSidebar() {
     $("Sidebar")?.classList.remove("active");
     $("sidebarOverlay")?.classList.remove("active");
-    $("hamburger")?.setAttribute("aria-expanded", "false");
+    const hamburger = $("hamburger");
+    hamburger?.setAttribute("aria-expanded", "false");
+    const icon = hamburger?.querySelector("i");
+    if (icon) {
+        icon.className = "fa-solid fa-bars";
+    }
 }
 
 function logout(event) {
@@ -1020,6 +1149,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $("Add_student")?.addEventListener("submit", addStudent);
     $("Assign_course")?.addEventListener("submit", assignCourseToStudent);
     $("Add_instructor")?.addEventListener("submit", addInstructor);
+    $("Assign_instructor_course")?.addEventListener("submit", assignInstructorToCourse);
     $("profileForm")?.addEventListener("submit", saveProfile);
     $("studentSearch")?.addEventListener("input", renderStudents);
     $("statusFilter")?.addEventListener("change", renderStudents);

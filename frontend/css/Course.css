@@ -1,17 +1,21 @@
 /* Ifexa professional course catalogue */
 
 :root {
-    --navy: #102347;
-    --navy2: #193a70;
-    --blue: #3569e8;
-    --blue2: #2454c6;
-    --ink: #1b2940;
-    --muted: #7f8ba0;
+    --primary: #1769f5;
+    --primary-dark: #1052cf;
+    --sidebar: #0d1b38;
+    --sidebar-light: #14284c;
+    --navy: #0d1b38;
+    --navy2: #14284c;
+    --blue: #1769f5;
+    --blue2: #1052cf;
+    --ink: #152440;
+    --muted: #8290a5;
     --line: #e7edf5;
-    --bg: #f5f7fb;
-    --white: #fff;
-    --radius: 16px;
-    --shadow: 0 8px 28px #19345f0c;
+    --bg: #f4f7fc;
+    --white: #ffffff;
+    --radius: 14px;
+    --shadow: 0 3px 14px rgba(28, 52, 91, 0.045);
 }
 
 * {
@@ -59,8 +63,8 @@ a {
     position: fixed;
     inset: 0 auto 0 0;
     width: 255px;
-    padding: 27px 18px 17px;
-    background: linear-gradient(180deg, #102347, #0d1c37);
+    padding: 22px 16px 18px;
+    background: var(--sidebar);
     color: white;
     display: flex;
     flex-direction: column;
@@ -69,35 +73,47 @@ a {
 }
 
 /* BRAND */
-.brand {
+.logo {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
+    padding: 0 7px;
+    margin: 0 0 12px;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
     gap: 12px;
-    padding: 0 8px 32px;
+    width: 100%;
+    padding: 0;
 }
 
-.brand-icon {
-    width: 43px;
-    height: 43px;
-    border-radius: 13px;
-    background: linear-gradient(135deg, #7898ff, #3569e8);
-    display: grid;
-    place-items: center;
-    font-size: 21px;
-    box-shadow: 0 8px 18px #07162f55;
-}
-
-.brand b {
+.brand img {
+    width: 150px;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
     display: block;
-    font-size: 19px;
-    letter-spacing: -.5px;
 }
 
-.brand small {
-    display: block;
-    font-size: 10px;
-    color: #aab9d3;
-    margin-top: 1px;
+.logo-badge {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 12px;
+    margin-bottom: 16px;
+    color: #fff;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.logo-badge small {
+    color: #d0daeb;
+    font-size: 9px;
+    letter-spacing: 0.2px;
+    margin: 0 8px;
 }
 
 /* SIDEBAR NAVIGATION */
@@ -134,11 +150,15 @@ a {
     font-size: 15px;
 }
 
-.sidebar nav a:hover,
-.sidebar nav a.active {
-    background: linear-gradient(90deg, #3569e8, #4778ee);
+.sidebar nav a:hover {
+    background: var(--sidebar-light);
     color: #fff;
-    box-shadow: 0 7px 16px #07162f40;
+}
+
+.sidebar nav a.active {
+    background: linear-gradient(110deg, #3280ff, #1761ed);
+    color: #fff;
+    box-shadow: 0 5px 14px rgba(23, 105, 245, 0.2);
 }
 
 .nav-pill {
@@ -218,12 +238,21 @@ a {
 /* MAIN CONTENT */
 .main {
     margin-left: 255px;
-    padding: 0 36px 24px;
+    padding: 80px 36px 24px;
     max-width: 1800px;
 }
 
 .topbar {
-    min-height: 80px;
+    position: fixed;
+    top: 0;
+    left: 255px;
+    right: 0;
+    z-index: 50;
+    min-height: 70px;
+    padding: 0 36px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 3px 14px rgba(28, 52, 91, 0.045);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1141,7 +1170,7 @@ a {
 
 .add-course-form {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 13px;
     margin-top: 18px;
 }
@@ -1153,12 +1182,17 @@ a {
     color: #52617a;
     font-size: 10px;
     font-weight: 700;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .add-course-form input,
 .add-course-form select,
 .add-course-form textarea {
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     border: 1px solid #dfe5ef;
     border-radius: 8px;
     padding: 10px;
@@ -1166,6 +1200,8 @@ a {
     color: #26354d;
     background: #fff;
     font-size: 11px;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .add-course-form input:focus,
@@ -1259,6 +1295,11 @@ a {
         width: 245px;
     }
 
+    .topbar {
+        left: 245px;
+        padding: 0 20px;
+    }
+
     .main {
         margin-left: 245px;
         padding-left: 20px;
@@ -1279,6 +1320,10 @@ a {
     }
 }
 
+.sidebar-close {
+    display: none;
+}
+
 /* RESPONSIVE: MOBILE */
 @media (max-width: 700px) {
     .sidebar {
@@ -1293,6 +1338,29 @@ a {
         box-shadow: 15px 0 45px #0c1d3a35;
     }
 
+    .sidebar-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
+        font-size: 16px;
+        cursor: pointer;
+        z-index: 5;
+        transition: background 0.2s ease;
+    }
+
+    .sidebar-close:hover {
+        background: rgba(255, 255, 255, 0.22);
+    }
+
     .overlay.open {
         display: block;
         position: fixed;
@@ -1303,7 +1371,7 @@ a {
 
     .main {
         margin-left: 0;
-        padding: 0 18px 18px;
+        padding: 74px 18px 18px;
     }
 
     .menu-btn {
@@ -1312,6 +1380,8 @@ a {
     }
 
     .topbar {
+        left: 0;
+        padding: 0 18px;
         min-height: 68px;
     }
 

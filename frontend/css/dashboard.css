@@ -7010,20 +7010,128 @@ body {
     width: 100%;
     max-width: 100%;
     min-height: 100vh;
-    overflow-x: clip;
+}
+
+.sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 260px;
+    min-height: 100vh;
+    background: var(--sidebar);
+    color: #fff;
+    padding: 22px 16px 18px;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow-y: auto;
+    transition: transform 0.3s ease, visibility 0.3s ease;
+}
+
+.nav-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #9cacc5;
+    margin: 0 10px 12px;
+}
+
+.sidebar-help {
+    margin-top: auto;
+    border: 1px solid rgba(85, 139, 255, 0.3);
+    background:
+        radial-gradient(circle at 90% 100%, #164c9b 0, transparent 45%),
+        linear-gradient(145deg, #112e62, #07152f);
+    border-radius: 14px;
+    padding: 18px 14px;
+    margin-bottom: 18px;
+}
+
+.sidebar-help strong {
+    display: block;
+    font-size: 14px;
+    margin: 9px 0 5px;
+    color: #fff;
+}
+
+.sidebar-help p {
+    font-size: 10px;
+    color: #a9bddb;
+    line-height: 1.7;
+}
+
+.sidebar-help a {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 11px;
+    color: #3686ff;
+    font-weight: 600;
+}
+
+.help-icon {
+    font-size: 24px;
+    color: #3686ff;
+}
+
+.Sidebar_down {
+    border-top: 1px solid #ffffff20;
+    padding-top: 12px;
+}
+
+.Sidebar_down a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 43px;
+    padding: 0 13px;
+    border-radius: 9px;
+    color: #c0cce0;
+    font-size: 12px;
+    font-weight: 500;
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+.Sidebar_down a:hover {
+    background: var(--sidebar-light);
+    color: #fff;
+}
+
+.sidebar-footer {
+    font-size: 10px;
+    color: #9cacc5;
+    padding: 15px 10px 0;
+}
+
+.sidebar-overlay {
+    display: none;
+}
+
+.sidebar-close {
+    display: none;
 }
 
 .main-content {
     min-width: 0;
     max-width: 100%;
-    width: calc(100% - 245px);
-    margin-left: 245px;
+    width: calc(100% - 260px);
+    margin-left: 260px;
+    padding-top: 74px;
 }
 
 .topbar {
-    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 260px;
+    right: 0;
+    width: auto;
     max-width: 100%;
     min-width: 0;
+    z-index: 50;
+    min-height: 70px;
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 3px 14px rgba(28, 52, 91, 0.045);
 }
 
 .search-box {
@@ -7095,10 +7203,11 @@ body {
 }
 
 @media (max-width: 1050px) and (min-width: 769px) {
-    .sidebar { width: 205px; }
+    .sidebar { width: 220px; }
+    .topbar { left: 220px; }
     .main-content {
-        width: calc(100% - 205px);
-        margin-left: 205px;
+        width: calc(100% - 220px);
+        margin-left: 220px;
     }
     .dashboard-grid {
         grid-template-columns: minmax(0, 1fr);
@@ -7111,16 +7220,69 @@ body {
 }
 
 @media (max-width: 768px) {
-    .sidebar { display: none !important; }
+    .sidebar {
+        display: flex !important;
+        width: 260px;
+        max-width: 85vw;
+        height: 100dvh;
+        overflow-y: auto;
+        transform: translateX(-100%);
+        visibility: hidden;
+        transition: transform 0.3s ease, visibility 0.3s ease;
+        z-index: 1000;
+    }
+
+    .sidebar.open,
+    .sidebar.active {
+        transform: translateX(0);
+        visibility: visible;
+    }
+
+    .sidebar-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
+        font-size: 16px;
+        cursor: pointer;
+        z-index: 5;
+        transition: background 0.2s ease;
+    }
+
+    .sidebar-close:hover {
+        background: rgba(255, 255, 255, 0.22);
+    }
+
+    .sidebar-overlay.show,
+    .sidebar-overlay.active {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 22, 45, 0.5);
+        backdrop-filter: blur(2px);
+        z-index: 900;
+    }
+
     .main-content {
         width: 100%;
         max-width: 100%;
         margin-left: 0;
+        padding-top: 118px;
     }
 
     .topbar {
-        position: sticky;
+        position: fixed;
         top: 0;
+        left: 0;
+        right: 0;
         z-index: 500;
         display: flex;
         flex-wrap: wrap;

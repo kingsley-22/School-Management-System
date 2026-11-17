@@ -408,6 +408,11 @@ $("menuToggle").addEventListener("click", () => {
     $("menuToggle").setAttribute("aria-expanded", String(isOpen));
 });
 
+$("sidebarClose")?.addEventListener("click", () => {
+    $("sidebar").classList.remove("open");
+    $("menuToggle").setAttribute("aria-expanded", "false");
+});
+
 document.addEventListener("click", e => {
     if (
         window.innerWidth <= 760 &&

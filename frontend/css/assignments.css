@@ -593,6 +593,10 @@ td {
 
 }
 
+.sidebar-close {
+    display: none;
+}
+
 @media (max-width: 768px) {
 
     .sidebar {
@@ -602,6 +606,29 @@ td {
 
     .sidebar.show {
         transform: translateX(0);
+    }
+
+    .sidebar-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        background: #f1f5f9;
+        color: #1e293b;
+        font-size: 16px;
+        cursor: pointer;
+        z-index: 5;
+        transition: background 0.2s ease;
+    }
+
+    .sidebar-close:hover {
+        background: #e2e8f0;
     }
 
     .main-content {

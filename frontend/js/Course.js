@@ -13,6 +13,7 @@ const LOGIN_PAGE_URL = "../home/login.html";
 
 let courses = [];
 let studentsList = [];
+let instructorsList = [];
 let selectedCourseId = null;
 let toastTimer = null;
 
@@ -153,15 +154,29 @@ function showToast(message) {
 
 async function loadCoursesFromBackend() {
     try {
-        const [coursesRes, studentsRes] = await Promise.all([
+        const [coursesRes, studentsRes, instructorsRes] = await Promise.all([
             apiRequest("/admin/courses/"),
             apiRequest("/admin/students/"),
+            apiRequest("/admin/instructors/"),
         ]);
         courses = Array.isArray(coursesRes.results) ? coursesRes.results : [];
         studentsList = Array.isArray(studentsRes.results) ? studentsRes.results : [];
+        instructorsList = Array.isArray(instructorsRes.results) ? instructorsRes.results : [];
 
         if ($("studentNavCount")) {
             $("studentNavCount").textContent = studentsList.length;
+        }
+
+        const newInstructorSelect = $("newInstructor");
+        if (newInstructorSelect && newInstructorSelect.tagName === "SELECT") {
+            newInstructorSelect.innerHTML =
+                '<option value="">Unassigned (assign later)</option>' +
+                instructorsList
+                    .map(
+                        inst =>
+                            `<option value="${escapeHTML(inst.user_id)}">${escapeHTML(inst.name)} (${escapeHTML(inst.id)})</option>`
+                    )
+                    .join("");
         }
 
         renderMetrics();
@@ -293,16 +308,19 @@ function renderCourses() {
 
                     <div class="instructor">
                         <span class="instructor-avatar">
-                            ${escapeHTML(initials(course.instructor))}
+                            ${escapeHTML(course.instructor && course.instructor !== "Unassigned" ? initials(course.instructor) : "—")}
                         </span>
 
                         <div>
                             <small>Course instructor</small>
-                            <strong>${escapeHTML(course.instructor)}</strong>
+                            <strong>${escapeHTML(course.instructor || "Unassigned")}</strong>
                         </div>
 
-                        <i class="fa-solid fa-circle-check"
-                           title="Instructor assigned"></i>
+                        ${
+                            course.instructor && course.instructor !== "Unassigned"
+                                ? '<i class="fa-solid fa-circle-check" title="Instructor assigned"></i>'
+                                : '<i class="fa-regular fa-clock" style="color:#9aa4b4;" title="No instructor assigned yet"></i>'
+                        }
                     </div>
 
                     <div class="course-bottom">
@@ -311,7 +329,16 @@ function renderCourses() {
                             ${Number(course.hours) || 0} hrs · ${enrolledCount} student${enrolledCount === 1 ? "" : "s"}
                         </span>
 
-                        <div style="display:flex; gap:6px;">
+                        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                            <button
+                                type="button"
+                                class="secondary-btn"
+                                data-assign-instructor="${escapeHTML(course.id)}"
+                                style="padding:5px 9px; font-size:11px;"
+                                title="Assign instructor to this course"
+                            >
+                                <i class="fa-solid fa-chalkboard-user"></i> Instructor
+                            </button>
                             <button
                                 type="button"
                                 class="secondary-btn"
@@ -319,7 +346,7 @@ function renderCourses() {
                                 style="padding:5px 9px; font-size:11px;"
                                 title="Assign student to this course"
                             >
-                                <i class="fa-solid fa-user-plus"></i> Assign
+                                <i class="fa-solid fa-user-plus"></i> Student
                             </button>
                             <button
                                 type="button"
@@ -383,18 +410,18 @@ async function addCourse(event) {
     }
 
     const title = $("newTitle").value.trim();
-    const instructor = $("newInstructor").value.trim();
+    const instructorVal = $("newInstructor")?.value?.trim() || "";
     const category = $("newCategory").value;
     const level = $("newLevel").value;
     const hours = Number($("newHours").value);
     const description = $("newDescription").value.trim();
 
     if (
-        !title || !instructor || !category ||
+        !title || !category ||
         !level || !description ||
         !Number.isFinite(hours) || hours < 1 || hours > 500
     ) {
-        showToast("Please enter valid information in every field.");
+        showToast("Please enter valid information in every required field.");
         return;
     }
 
@@ -403,7 +430,7 @@ async function addCourse(event) {
             method: "POST",
             body: JSON.stringify({
                 title,
-                instructor,
+                instructor_id: instructorVal || null,
                 category,
                 level,
                 hours,
@@ -422,6 +449,40 @@ async function addCourse(event) {
         showToast("Course added to database successfully.");
     } catch (error) {
         showToast(error.message || "Could not create course.");
+    }
+}
+
+async function assignInstructorToCoursePrompt(courseId) {
+    const course = courses.find(c => String(c.id) === String(courseId));
+    if (!course) return;
+
+    if (instructorsList.length === 0) {
+        showToast("No instructors registered yet. Add an instructor on the Admin Dashboard first.");
+        return;
+    }
+
+    const instructorListing = instructorsList
+        .map(inst => `${inst.id} (${inst.name} — ${inst.email})`)
+        .slice(0, 10)
+        .join("\n");
+
+    const instructorRef = prompt(
+        `Assign an instructor to "${course.title}".\nEnter Instructor ID or Email:\n\nAvailable instructors:\n${instructorListing}`
+    );
+    if (!instructorRef || !instructorRef.trim()) return;
+
+    try {
+        const res = await apiRequest("/admin/assign-instructor/", {
+            method: "POST",
+            body: JSON.stringify({
+                instructor_id: instructorRef.trim(),
+                course_id: course.id,
+            }),
+        });
+        await loadCoursesFromBackend();
+        showToast(res.message || "Instructor assigned to course successfully!");
+    } catch (error) {
+        showToast(error.message || "Failed to assign instructor to course.");
     }
 }
 
@@ -508,6 +569,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     $("menuBtn")?.addEventListener("click", toggleSidebar);
     $("overlay")?.addEventListener("click", closeSidebar);
+    $("sidebarClose")?.addEventListener("click", closeSidebar);
 
     $("sidebar")?.querySelectorAll("nav a").forEach(link => {
         link.addEventListener("click", closeSidebar);
@@ -526,6 +588,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     $("coursesContainer")?.addEventListener("click", event => {
+        const assignInstBtn = event.target.closest("[data-assign-instructor]");
+        if (assignInstBtn) {
+            assignInstructorToCoursePrompt(assignInstBtn.dataset.assignInstructor);
+            return;
+        }
+
         const assignBtn = event.target.closest("[data-assign]");
         if (assignBtn) {
             assignStudentToCoursePrompt(assignBtn.dataset.assign);

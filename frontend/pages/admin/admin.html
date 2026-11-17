@@ -21,13 +21,19 @@
 
     <aside class="Sidebar" id="Sidebar">
 
-    <a class="brand" href="#">
-    <span class="brand-mark"><i class="fa-solid fa-graduation-cap"></i></span>
-    <span>
-    <strong>Ifexa Academy</strong>
-    <small>School Management</small>
-    </span>
+    <button type="button" class="sidebar-close" id="sidebarClose" onclick="closeSidebar()" aria-label="Close sidebar">
+    <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <div class="logo">
+    <a class="brand" href="../home/home.html">
+    <img src="../../images/Top_Left-removebg-preview.png" alt="IFEXA Academy Logo">
     </a>
+    </div>
+
+    <div class="logo-badge">
+    <small>Learn. Grow. Succeed.</small>
+    </div>
 
     <p class="nav-label">WORKSPACE</p>
 
@@ -297,6 +303,26 @@
     Assign course (optional)
     <select id="inputStudentCourse">
     <option value="">Select a course (optional)</option>
+    <option value="CSC-101">Full-Stack Web Development</option>
+    <option value="CSC-102">Frontend Engineering with React &amp; Next.js</option>
+    <option value="CSC-103">Backend Engineering with Python &amp; Django</option>
+    <option value="CSC-104">JavaScript &amp; TypeScript Mastery</option>
+    <option value="CSC-105">UI/UX Product Design &amp; Prototyping</option>
+    <option value="CSC-106">Data Science &amp; Machine Learning</option>
+    <option value="CSC-107">Artificial Intelligence &amp; Deep Learning</option>
+    <option value="CSC-108">Cybersecurity &amp; Ethical Hacking</option>
+    <option value="CSC-109">Cloud Computing with AWS &amp; Azure</option>
+    <option value="CSC-110">DevOps, CI/CD, Docker &amp; Kubernetes</option>
+    <option value="CSC-111">Mobile App Development with Flutter &amp; Dart</option>
+    <option value="CSC-112">React Native Mobile App Engineering</option>
+    <option value="CSC-113">Database Engineering, SQL &amp; PostgreSQL</option>
+    <option value="CSC-114">Data Analytics with Python, SQL &amp; Power BI</option>
+    <option value="CSC-115">Blockchain &amp; Web3 Smart Contract Development</option>
+    <option value="CSC-116">Software Engineering &amp; System Design</option>
+    <option value="CSC-117">Node.js, Express &amp; Microservices API Development</option>
+    <option value="CSC-118">Quality Assurance (QA) &amp; Automated Software Testing</option>
+    <option value="CSC-119">Linux Server Administration &amp; Bash Scripting</option>
+    <option value="CSC-120">Tech Product Management &amp; Agile Delivery</option>
     </select>
     </label>
 
@@ -332,6 +358,26 @@
     Select course
     <select id="assignCourseSelect" required>
     <option value="">Select a course...</option>
+    <option value="CSC-101">Full-Stack Web Development</option>
+    <option value="CSC-102">Frontend Engineering with React &amp; Next.js</option>
+    <option value="CSC-103">Backend Engineering with Python &amp; Django</option>
+    <option value="CSC-104">JavaScript &amp; TypeScript Mastery</option>
+    <option value="CSC-105">UI/UX Product Design &amp; Prototyping</option>
+    <option value="CSC-106">Data Science &amp; Machine Learning</option>
+    <option value="CSC-107">Artificial Intelligence &amp; Deep Learning</option>
+    <option value="CSC-108">Cybersecurity &amp; Ethical Hacking</option>
+    <option value="CSC-109">Cloud Computing with AWS &amp; Azure</option>
+    <option value="CSC-110">DevOps, CI/CD, Docker &amp; Kubernetes</option>
+    <option value="CSC-111">Mobile App Development with Flutter &amp; Dart</option>
+    <option value="CSC-112">React Native Mobile App Engineering</option>
+    <option value="CSC-113">Database Engineering, SQL &amp; PostgreSQL</option>
+    <option value="CSC-114">Data Analytics with Python, SQL &amp; Power BI</option>
+    <option value="CSC-115">Blockchain &amp; Web3 Smart Contract Development</option>
+    <option value="CSC-116">Software Engineering &amp; System Design</option>
+    <option value="CSC-117">Node.js, Express &amp; Microservices API Development</option>
+    <option value="CSC-118">Quality Assurance (QA) &amp; Automated Software Testing</option>
+    <option value="CSC-119">Linux Server Administration &amp; Bash Scripting</option>
+    <option value="CSC-120">Tech Product Management &amp; Agile Delivery</option>
     </select>
     </label>
 
@@ -463,9 +509,91 @@
     <input id="instructorConfirmPassword" type="password" minlength="8" placeholder="Re-enter password" required>
     </label>
 
+    <label>
+    Assign course (optional)
+    <select id="instructorCourseSelect">
+    <option value="">Select a course (optional)</option>
+    <option value="CSC-101">Full-Stack Web Development</option>
+    <option value="CSC-102">Frontend Engineering with React &amp; Next.js</option>
+    <option value="CSC-103">Backend Engineering with Python &amp; Django</option>
+    <option value="CSC-104">JavaScript &amp; TypeScript Mastery</option>
+    <option value="CSC-105">UI/UX Product Design &amp; Prototyping</option>
+    <option value="CSC-106">Data Science &amp; Machine Learning</option>
+    <option value="CSC-107">Artificial Intelligence &amp; Deep Learning</option>
+    <option value="CSC-108">Cybersecurity &amp; Ethical Hacking</option>
+    <option value="CSC-109">Cloud Computing with AWS &amp; Azure</option>
+    <option value="CSC-110">DevOps, CI/CD, Docker &amp; Kubernetes</option>
+    <option value="CSC-111">Mobile App Development with Flutter &amp; Dart</option>
+    <option value="CSC-112">React Native Mobile App Engineering</option>
+    <option value="CSC-113">Database Engineering, SQL &amp; PostgreSQL</option>
+    <option value="CSC-114">Data Analytics with Python, SQL &amp; Power BI</option>
+    <option value="CSC-115">Blockchain &amp; Web3 Smart Contract Development</option>
+    <option value="CSC-116">Software Engineering &amp; System Design</option>
+    <option value="CSC-117">Node.js, Express &amp; Microservices API Development</option>
+    <option value="CSC-118">Quality Assurance (QA) &amp; Automated Software Testing</option>
+    <option value="CSC-119">Linux Server Administration &amp; Bash Scripting</option>
+    <option value="CSC-120">Tech Product Management &amp; Agile Delivery</option>
+    </select>
+    </label>
+
     <div class="form-submit">
     <button type="submit" class="add">
     <i class="fa-solid fa-plus"></i> Add instructor
+    </button>
+    </div>
+
+    </form>
+    </div>
+
+    <div class="Student_form panel" id="assignInstructorPanel">
+
+    <div class="panel-heading">
+    <span class="panel-icon"><i class="fa-solid fa-chalkboard-user"></i></span>
+    <div>
+    <h3>Assign instructor to course</h3>
+    <p>Select an instructor and a course to place that instructor in charge of the course.</p>
+    </div>
+    </div>
+
+    <form class="Add_student" id="Assign_instructor_course">
+
+    <label>
+    Select instructor
+    <select id="assignInstructorSelect" required>
+    <option value="">Select an instructor...</option>
+    </select>
+    </label>
+
+    <label>
+    Select course
+    <select id="assignInstructorCourseSelect" required>
+    <option value="">Select a course...</option>
+    <option value="CSC-101">Full-Stack Web Development</option>
+    <option value="CSC-102">Frontend Engineering with React &amp; Next.js</option>
+    <option value="CSC-103">Backend Engineering with Python &amp; Django</option>
+    <option value="CSC-104">JavaScript &amp; TypeScript Mastery</option>
+    <option value="CSC-105">UI/UX Product Design &amp; Prototyping</option>
+    <option value="CSC-106">Data Science &amp; Machine Learning</option>
+    <option value="CSC-107">Artificial Intelligence &amp; Deep Learning</option>
+    <option value="CSC-108">Cybersecurity &amp; Ethical Hacking</option>
+    <option value="CSC-109">Cloud Computing with AWS &amp; Azure</option>
+    <option value="CSC-110">DevOps, CI/CD, Docker &amp; Kubernetes</option>
+    <option value="CSC-111">Mobile App Development with Flutter &amp; Dart</option>
+    <option value="CSC-112">React Native Mobile App Engineering</option>
+    <option value="CSC-113">Database Engineering, SQL &amp; PostgreSQL</option>
+    <option value="CSC-114">Data Analytics with Python, SQL &amp; Power BI</option>
+    <option value="CSC-115">Blockchain &amp; Web3 Smart Contract Development</option>
+    <option value="CSC-116">Software Engineering &amp; System Design</option>
+    <option value="CSC-117">Node.js, Express &amp; Microservices API Development</option>
+    <option value="CSC-118">Quality Assurance (QA) &amp; Automated Software Testing</option>
+    <option value="CSC-119">Linux Server Administration &amp; Bash Scripting</option>
+    <option value="CSC-120">Tech Product Management &amp; Agile Delivery</option>
+    </select>
+    </label>
+
+    <div class="form-submit">
+    <button type="submit" class="add">
+    <i class="fa-solid fa-check"></i> Assign instructor
     </button>
     </div>
 
@@ -498,6 +626,7 @@
     <th>Phone</th>
     <th>Department</th>
     <th>Specialization</th>
+    <th>Assigned Courses</th>
     <th>Username</th>
     <th>Actions</th>
     </tr>
