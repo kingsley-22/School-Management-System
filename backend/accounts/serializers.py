@@ -232,6 +232,15 @@ def serialize_admin_instructor(user):
     profile = InstructorProfile.get_or_create_for_user(user)
     full_name = f"{user.first_name} {user.last_name}".strip() or user.email.split('@')[0]
     username = profile.username or (user.email.split('@')[0] if user.email else '')
+    assigned_courses = [
+        {
+            'id': c.id,
+            'code': c.code,
+            'title': c.title,
+            'category': c.category,
+        }
+        for c in Course.objects.filter(instructor=user).order_by('id')
+    ]
     return {
         'id': profile.instructor_id,
         'instructor_id': profile.instructor_id,
@@ -249,6 +258,7 @@ def serialize_admin_instructor(user):
         'is_approved': user.is_approved,
         'is_verified': user.is_verified,
         'is_active': user.is_active,
+        'assigned_courses': assigned_courses,
         'date_added': user.date_joined.isoformat() if user.date_joined else '',
     }
 

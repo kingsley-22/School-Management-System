@@ -237,7 +237,7 @@ def seed_tech_courses(apps, schema_editor):
                 level=item['level'],
                 hours=item['hours'],
                 total_lessons=max(1, item['hours'] // 2),
-                instructor_name=item['instructor_name'],
+                instructor_name='',
                 art_style=item['icon_class'],
                 description=item['description'],
                 is_active=True,

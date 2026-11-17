@@ -231,3 +231,42 @@ class AdminIntegrationAPITests(APITestCase):
             reverse('admin-course-detail', kwargs={'course_id': course_id})
         )
         self.assertEqual(del_resp.status_code, status.HTTP_200_OK)
+
+    def test_admin_assign_instructor_to_course(self):
+        self.client.force_authenticate(user=self.admin_user)
+
+        # Create instructor
+        create_resp = self.client.post(
+            reverse('admin-instructors'),
+            {
+                'first_name': 'Ada',
+                'last_name': 'Lovelace',
+                'email': 'ada.lovelace@ifexa.com',
+                'phone': '+2348099998888',
+                'department': 'Software Engineering',
+                'specialization': 'Full-Stack Web Development',
+                'username': 'ada.lovelace',
+                'password': 'AdaPassword123!',
+                'confirm_password': 'AdaPassword123!',
+            },
+            format='json',
+        )
+        self.assertEqual(create_resp.status_code, status.HTTP_201_CREATED)
+        instructor_user_id = create_resp.json()['instructor']['user_id']
+
+        # Assign instructor to course CSC-101
+        assign_resp = self.client.post(
+            reverse('admin-assign-instructor'),
+            {
+                'instructor_id': instructor_user_id,
+                'course_id': 'CSC-101',
+            },
+            format='json',
+        )
+        self.assertEqual(assign_resp.status_code, status.HTTP_200_OK)
+        data = assign_resp.json()
+        self.assertEqual(data['course']['instructor'], 'Ada Lovelace')
+        self.assertEqual(data['course']['instructor_id'], instructor_user_id)
+        self.assertEqual(len(data['instructor']['assigned_courses']), 1)
+        self.assertEqual(data['instructor']['assigned_courses'][0]['code'], 'CSC-101')
+

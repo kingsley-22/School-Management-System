@@ -523,7 +523,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Web Development',
         'level': 'Intermediate',
         'hours': 48,
-        'instructor_name': 'Dr. Kunle Adeyemi',
+        'instructor_name': '',
         'icon_class': 'fa-layer-group',
         'description': 'Build end-to-end modern web applications using HTML, CSS, JavaScript, React, and Django REST APIs.',
     },
@@ -534,7 +534,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Frontend Development',
         'level': 'Intermediate',
         'hours': 40,
-        'instructor_name': 'Adaobi Nnaji',
+        'instructor_name': '',
         'icon_class': 'fa-laptop-code',
         'description': 'Master component architecture, hooks, state management, SSR, and responsive frontend engineering.',
     },
@@ -545,7 +545,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Backend Development',
         'level': 'Intermediate',
         'hours': 44,
-        'instructor_name': 'Ibrahim Musa',
+        'instructor_name': '',
         'icon_class': 'fa-server',
         'description': 'Design scalable RESTful APIs, authentication systems, ORM queries, and production backend services.',
     },
@@ -556,7 +556,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Programming',
         'level': 'Beginner',
         'hours': 36,
-        'instructor_name': 'Chinedu Okafor',
+        'instructor_name': '',
         'icon_class': 'fa-code',
         'description': 'Deep dive into modern ES6+ JavaScript, asynchronous programming, DOM manipulation, and TypeScript types.',
     },
@@ -567,7 +567,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Product Design',
         'level': 'Beginner',
         'hours': 32,
-        'instructor_name': 'Zainab Bello',
+        'instructor_name': '',
         'icon_class': 'fa-pen-ruler',
         'description': 'Learn user research, wireframing, design systems, and interactive high-fidelity prototyping in Figma.',
     },
@@ -578,7 +578,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Data & AI',
         'level': 'Advanced',
         'hours': 52,
-        'instructor_name': 'Dr. Tunde Bakare',
+        'instructor_name': '',
         'icon_class': 'fa-chart-line',
         'description': 'Analyze complex datasets and train predictive machine learning models using NumPy, Pandas, and Scikit-Learn.',
     },
@@ -589,7 +589,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Data & AI',
         'level': 'Advanced',
         'hours': 56,
-        'instructor_name': 'Dr. Ngozi Eze',
+        'instructor_name': '',
         'icon_class': 'fa-brain',
         'description': 'Build neural networks, computer vision pipelines, and LLM-powered applications with PyTorch and TensorFlow.',
     },
@@ -600,7 +600,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Cybersecurity',
         'level': 'Intermediate',
         'hours': 45,
-        'instructor_name': 'Samuel Osei',
+        'instructor_name': '',
         'icon_class': 'fa-shield-halved',
         'description': 'Protect networks and web applications through vulnerability assessment, penetration testing, and security auditing.',
     },
@@ -611,7 +611,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Cloud & DevOps',
         'level': 'Intermediate',
         'hours': 42,
-        'instructor_name': 'Fatima Abdullahi',
+        'instructor_name': '',
         'icon_class': 'fa-cloud',
         'description': 'Architect, deploy, and manage resilient cloud infrastructure, serverless functions, and managed databases.',
     },
@@ -622,7 +622,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Cloud & DevOps',
         'level': 'Advanced',
         'hours': 46,
-        'instructor_name': 'Emeka Nwosu',
+        'instructor_name': '',
         'icon_class': 'fa-gears',
         'description': 'Automate software delivery pipelines, containerize microservices with Docker, and orchestrate clusters with Kubernetes.',
     },
@@ -633,7 +633,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Mobile Development',
         'level': 'Intermediate',
         'hours': 40,
-        'instructor_name': 'Kemi Adebayo',
+        'instructor_name': '',
         'icon_class': 'fa-mobile-screen-button',
         'description': 'Create fast, native-quality iOS and Android applications from a single codebase using Flutter and Dart.',
     },
@@ -644,7 +644,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Mobile Development',
         'level': 'Intermediate',
         'hours': 38,
-        'instructor_name': 'David Mensah',
+        'instructor_name': '',
         'icon_class': 'fa-mobile-screen',
         'description': 'Build cross-platform mobile apps with React Native, Expo, native device APIs, and smooth animations.',
     },
@@ -655,7 +655,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Backend Development',
         'level': 'Beginner',
         'hours': 30,
-        'instructor_name': 'Halima Suleiman',
+        'instructor_name': '',
         'icon_class': 'fa-database',
         'description': 'Master relational database design, normalization, indexing, transactions, and high-performance SQL queries.',
     },
@@ -666,7 +666,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Data & AI',
         'level': 'Beginner',
         'hours': 36,
-        'instructor_name': 'Oluwaseun Ajayi',
+        'instructor_name': '',
         'icon_class': 'fa-chart-pie',
         'description': 'Transform raw data into actionable business dashboards and reports using SQL, Python, and Power BI.',
     },
@@ -677,7 +677,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Software Engineering',
         'level': 'Advanced',
         'hours': 44,
-        'instructor_name': 'Victor Chukwu',
+        'instructor_name': '',
         'icon_class': 'fa-cubes',
         'description': 'Develop decentralized applications (dApps) and secure Solidity smart contracts on Ethereum-compatible networks.',
     },
@@ -688,7 +688,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Software Engineering',
         'level': 'Advanced',
         'hours': 48,
-        'instructor_name': 'Dr. Kunle Adeyemi',
+        'instructor_name': '',
         'icon_class': 'fa-sitemap',
         'description': 'Learn distributed systems, load balancing, caching strategies, clean architecture, and design patterns.',
     },
@@ -699,7 +699,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Backend Development',
         'level': 'Intermediate',
         'hours': 42,
-        'instructor_name': 'Chinedu Okafor',
+        'instructor_name': '',
         'icon_class': 'fa-network-wired',
         'description': 'Build event-driven backend services, WebSocket servers, and REST/GraphQL APIs with Node.js and Express.',
     },
@@ -710,7 +710,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Software Engineering',
         'level': 'Beginner',
         'hours': 28,
-        'instructor_name': 'Blessing Udoh',
+        'instructor_name': '',
         'icon_class': 'fa-vial-circle-check',
         'description': 'Write unit, integration, and end-to-end automated test suites using Pytest, Jest, Playwright, and Cypress.',
     },
@@ -721,7 +721,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Cloud & DevOps',
         'level': 'Beginner',
         'hours': 30,
-        'instructor_name': 'Ibrahim Musa',
+        'instructor_name': '',
         'icon_class': 'fa-terminal',
         'description': 'Configure Linux servers, permissions, networking, systemd services, and automate tasks with Bash scripts.',
     },
@@ -732,7 +732,7 @@ DEFAULT_TECH_COURSES = [
         'category': 'Product Design',
         'level': 'Beginner',
         'hours': 26,
-        'instructor_name': 'Zainab Bello',
+        'instructor_name': '',
         'icon_class': 'fa-diagram-project',
         'description': 'Lead software product discovery, roadmapping, user stories, sprint planning, and Agile Scrum execution.',
     },
@@ -1088,6 +1088,13 @@ def admin_instructors(request):
     serializer = AdminCreateInstructorSerializer(data=payload)
     if serializer.is_valid():
         instructor_user = serializer.save()
+        course_ref = payload.get('course_id') or payload.get('course')
+        if course_ref:
+            course = _resolve_course_reference(course_ref)
+            if course:
+                course.instructor = instructor_user
+                course.instructor_name = f"{instructor_user.first_name} {instructor_user.last_name}".strip() or instructor_user.email
+                course.save(update_fields=['instructor', 'instructor_name', 'updated_at'])
         return Response(
             {
                 'message': 'Instructor account created successfully.',
@@ -1097,6 +1104,51 @@ def admin_instructors(request):
         )
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAdmin])
+def admin_assign_instructor(request, instructor_identifier=None):
+    instructor_ref = (
+        instructor_identifier
+        or request.data.get('instructor_id')
+        or request.data.get('instructor')
+    )
+    course_ref = request.data.get('course_id') or request.data.get('course')
+
+    if not instructor_ref or not course_ref:
+        return Response(
+            {'error': 'Both instructor_id and course_id are required.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    instructor_user = _resolve_instructor_user(instructor_ref)
+    if not instructor_user:
+        return Response(
+            {'error': 'Invalid instructor ID. Instructor not found.'},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    course = _resolve_course_reference(course_ref)
+    if not course:
+        return Response(
+            {'error': 'Invalid course ID. Course not found.'},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    full_name = f"{instructor_user.first_name} {instructor_user.last_name}".strip() or instructor_user.email
+    course.instructor = instructor_user
+    course.instructor_name = full_name
+    course.save(update_fields=['instructor', 'instructor_name', 'updated_at'])
+
+    return Response(
+        {
+            'message': f"Instructor '{full_name}' assigned to '{course.title}' successfully.",
+            'course': serialize_admin_course(course),
+            'instructor': serialize_admin_instructor(instructor_user),
+        },
+        status=status.HTTP_200_OK,
+    )
 
 
 @api_view(['GET', 'PATCH', 'DELETE'])
@@ -1179,8 +1231,15 @@ def admin_courses(request):
     instructor_user = None
     if instructor_id:
         instructor_user = _resolve_instructor_user(instructor_id)
-        if instructor_user and not instructor_name:
-            instructor_name = f"{instructor_user.first_name} {instructor_user.last_name}".strip()
+        if instructor_user:
+            instructor_name = f"{instructor_user.first_name} {instructor_user.last_name}".strip() or instructor_user.email
+    elif instructor_name and instructor_name.lower() != 'unassigned':
+        resolved_by_name = _resolve_instructor_user(instructor_name)
+        if resolved_by_name:
+            instructor_user = resolved_by_name
+            instructor_name = f"{instructor_user.first_name} {instructor_user.last_name}".strip() or instructor_user.email
+    else:
+        instructor_name = ''
 
     course = Course.objects.create(
         title=title,
@@ -1216,10 +1275,31 @@ def admin_course_detail(request, course_id):
         for field in ('title', 'category', 'level', 'description', 'code'):
             if field in request.data:
                 setattr(course, field, (request.data.get(field) or '').strip())
-        if 'instructor' in request.data or 'instructor_name' in request.data:
-            course.instructor_name = (
+        if 'instructor_id' in request.data:
+            inst_ref = request.data.get('instructor_id')
+            if inst_ref:
+                inst_user = _resolve_instructor_user(inst_ref)
+                if not inst_user:
+                    return Response({'error': 'Instructor not found.'}, status=status.HTTP_404_NOT_FOUND)
+                course.instructor = inst_user
+                course.instructor_name = f"{inst_user.first_name} {inst_user.last_name}".strip() or inst_user.email
+            else:
+                course.instructor = None
+                course.instructor_name = ''
+        elif 'instructor' in request.data or 'instructor_name' in request.data:
+            raw_inst = (
                 request.data.get('instructor') or request.data.get('instructor_name') or ''
             ).strip()
+            if not raw_inst or raw_inst.lower() == 'unassigned':
+                course.instructor = None
+                course.instructor_name = ''
+            else:
+                inst_user = _resolve_instructor_user(raw_inst)
+                if inst_user:
+                    course.instructor = inst_user
+                    course.instructor_name = f"{inst_user.first_name} {inst_user.last_name}".strip() or inst_user.email
+                else:
+                    course.instructor_name = raw_inst
         if 'hours' in request.data:
             try:
                 course.hours = max(1, int(request.data.get('hours')))

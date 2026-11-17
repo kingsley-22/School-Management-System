@@ -5,6 +5,7 @@ from .api_views import (
     admin_announcement_detail,
     admin_announcements,
     admin_assign_course,
+    admin_assign_instructor,
     admin_course_detail,
     admin_courses,
     admin_dashboard,
@@ -59,6 +60,8 @@ urlpatterns = [
     # Admin instructor management
     path('admin/instructors/', admin_instructors, name='admin-instructors'),
     path('admin/instructors/<str:instructor_identifier>/', admin_instructor_detail, name='admin-instructor-detail'),
+    path('admin/instructors/<str:instructor_identifier>/assign-course/', admin_assign_instructor, name='admin-instructor-assign-course'),
+    path('admin/assign-instructor/', admin_assign_instructor, name='admin-assign-instructor'),
 
     # Admin course management
     path('admin/courses/', admin_courses, name='admin-courses'),
