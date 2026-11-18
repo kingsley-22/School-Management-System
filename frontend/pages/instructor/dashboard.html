@@ -98,7 +98,7 @@
 
                     <div>
                         <h1>Instructor Dashboard</h1>
-                        <p>Welcome back, JUNGLE 👋</p>
+                        <p>Welcome back, JUNGLE</p>
                     </div>
 
                 </div>
@@ -268,78 +268,41 @@
                 <!-- STATISTICS CARDS -->
                 <div class="stats-grid">
 
-                    <div class="stat-card">
+    <div class="stat-card">
+        <div class="stat-icon blue">
+            <i class="fa-solid fa-book"></i>
+        </div>
+        <div>
+            <p>Total Courses</p>
+            <h2 id="totalCoursesCount">6</h2>
+        </div>
+    </div>
 
-                        <div class="stat-icon blue">
-                            <i class="fa-solid fa-book"></i>
-                        </div>
+    <div class="stat-card">
+        <div class="stat-icon purple">
+            <i class="fa-solid fa-users"></i>
+        </div>
+        <div>
+            <p>Total Students</p>
+            <h2 id="totalStudentsCount">20</h2>
+        </div>
+    </div>
 
-                        <div>
-                            <p>Total Courses</p>
-                            <h2 id="totalCoursesCount">6</h2>
-                            <span class="increase">
-                                <i class="fa-solid fa-arrow-up"></i>
-                                12% this month
-                            </span>
-                        </div>
+   <div class="stat-card">
+    <div class="stat-icon orange">
+        <i class="fa-solid fa-file-circle-check"></i>
+    </div>
+    <div>
+        <p>Assignments</p>
+        <h2 id="totalAssignmentsCount">18</h2>
+    </div>
+</div>
 
-                    </div>
-
-
-                    <div class="stat-card">
-
-                        <div class="stat-icon purple">
-                            <i class="fa-solid fa-users"></i>
-                        </div>
-
-                        <div>
-                            <p>Total Students</p>
-                            <h2 id="totalStudentsCount">20</h2>
-                            <span class="increase">
-                                <i class="fa-solid fa-arrow-up"></i>
-                                8% this month
-                            </span>
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card">
-
-                        <div class="stat-icon orange">
-                            <i class="fa-solid fa-file-circle-check"></i>
-                        </div>
-
-                        <div>
-                            <p>Assignments</p>
-                            <h2 id="totalAssignmentsCount">18</h2>
-                            <span class="pending">3 pending review</span>
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card">
-
-                        <div class="stat-icon green">
-                            <i class="fa-solid fa-chart-line"></i>
-                        </div>
-
-                        <div>
-                            <p>Average Performance</p>
-                            <h2 id="averagePerformanceCount">82%</h2>
-                            <span class="increase">
-                                <i class="fa-solid fa-arrow-up"></i>
-                                5% improvement
-                            </span>
-                        </div>
-
-                    </div>
-
-                </div>
-                <!-- ========================================
+</div>
+                         
+                <!--
      QUICK ACTIONS
-======================================== -->
+-->
 
 <section class="quick-actions-section">
 
@@ -437,7 +400,7 @@
                                 <p>Latest activities from your courses</p>
                             </div>
 
-                            <a href="#">View All</a>
+                            <button class="view-all-btn" id="viewAllActivityBtn" type="button">View All</button>
                         </div>
 
 
@@ -495,66 +458,23 @@
                 
                     <div class="dashboard-card upcoming-card">
 
-                        <div class="card-header">
-                            <div>
-                                <h2>Upcoming Classes</h2>
-                                <p>Your next scheduled classes</p>
-                            </div>
-                        </div>
+    <div class="card-header">
+        <div>
+            <h2>Upcoming Classes</h2>
+            <p>Your next scheduled classes</p>
+        </div>
+        <button class="add-class-btn" id="addClassBtn" type="button">
+            <i class="fa-solid fa-plus"></i>
+            Add Class
+        </button>
+    </div>
 
+    <div class="class-list" id="upcomingClassesList">
+        <!-- Rendered by upcoming-classes.js -->
+    </div>
 
-                        <div class="class-list">
-
-                            <div class="class-item">
-
-                                <div class="class-time">
-                                    <strong>10:00</strong>
-                                    <span>AM</span>
-                                </div>
-
-                                <div class="class-info">
-                                    <h4>Web Development</h4>
-                                    <p>Room 204 • 35 Students</p>
-                                </div>
-
-                            </div>
-
-
-                            <div class="class-item">
-
-                                <div class="class-time">
-                                    <strong>1:00</strong>
-                                    <span>PM</span>
-                                </div>
-
-                                <div class="class-info">
-                                    <h4>Python Programming</h4>
-                                    <p>Room 108 • 28 Students</p>
-                                </div>
-
-                            </div>
-
-
-                            <div class="class-item">
-
-                                <div class="class-time">
-                                    <strong>3:30</strong>
-                                    <span>PM</span>
-                                </div>
-
-                                <div class="class-info">
-                                    <h4>Database Systems</h4>
-                                    <p>Online • 42 Students</p>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
+</div>
+                                
 
                 <section class="dashboard-card course-progress">
 
@@ -575,62 +495,17 @@
                         <div class="table-header">
                             <span>Course</span>
                             <span>Students</span>
-                            <span>Progress</span>
-                            <span>Performance</span>
+                            <span>Classes Held</span>
+                            <span>Classes Scheduled</span>
                         </div>
 
-
-                        <div class="table-row">
-
-                            <span class="course-name">
-                                Web Development
-                            </span>
-
-                            <span>35 Students</span>
-
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 75%;"></div>
-                            </div>
-
-                            <span class="performance good">85%</span>
-
-                        </div>
-
-
-                        <div class="table-row">
-
-                            <span class="course-name">
-                                Python Programming
-                            </span>
-
-                            <span>28 Students</span>
-
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 60%;"></div>
-                            </div>
-
-                            <span class="performance good">81%</span>
-
-                        </div>
-
-
-                        <div class="table-row">
-
-                            <span class="course-name">
-                                Database Systems
-                            </span>
-
-                            <span>42 Students</span>
-
-                            <div class="progress">
-                                <div class="progress-bar" style="width: 45%;"></div>
-                            </div>
-
-                            <span class="performance average">74%</span>
-
+                        <div id="courseOverviewRows">
+                            <!-- Rows rendered by /js/course-overview.js -->
                         </div>
 
                     </div>
+
+         
 
                 </section>
 
@@ -639,8 +514,172 @@
         </main>
 
     </div>
-    <script src="/js/activity-log.js"></script>
- <script src="/js/instructor-dashboard.js"></script>
 
+
+    <!-- ========================================
+     ADD CLASS MODAL
+========================================= -->
+<div class="class-modal" id="addClassModal">
+    <div class="class-modal-content">
+
+        <div class="class-modal-header">
+            <div>
+                <h2>Schedule a Class</h2>
+                <p>Add an upcoming class to your timetable</p>
+            </div>
+            <button class="class-modal-close" id="closeClassModal" type="button">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="addClassForm" class="class-modal-body">
+
+            <div class="class-form-group">
+                <label for="classCourseSelect">Course *</label>
+                <select id="classCourseSelect" required>
+                    <option value="">Select a course</option>
+                </select>
+            </div>
+
+            <div class="class-form-row">
+                <div class="class-form-group">
+                    <label for="classDateInput">Date *</label>
+                    <input type="date" id="classDateInput" required>
+                </div>
+                <div class="class-form-group">
+                    <label for="classTimeInput">Time *</label>
+                    <input type="time" id="classTimeInput" required>
+                </div>
+            </div>
+
+            <div class="class-modal-actions">
+                <button type="button" class="class-btn-cancel" id="cancelClassModal">
+                    Cancel
+                </button>
+                <button type="submit" class="class-btn-save">
+                    <i class="fa-solid fa-plus"></i>
+                    Add to Schedule
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- ========================================
+     DELETE CLASS CONFIRMATION MODAL
+========================================= -->
+<div class="class-delete-modal" id="deleteClassModal">
+    <div class="class-delete-content">
+
+        <div class="class-delete-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+
+        <h2>Remove this class?</h2>
+
+        <div class="class-delete-instruction">
+            <p>Remove this class from the schedule?</p>
+            <strong id="deleteClassName">this class</strong>
+            <span class="class-delete-warning">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                This will be removed from your upcoming classes.
+            </span>
+        </div>
+
+        <div class="class-delete-actions">
+            <button type="button" class="class-delete-cancel" id="cancelDeleteClass">
+                Keep Class
+            </button>
+            <button type="button" class="class-delete-confirm" id="confirmDeleteClass">
+                <i class="fa-solid fa-trash"></i>
+                Remove
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- ========================================
+     ALL ACTIVITIES MODAL
+========================================= -->
+<div class="all-modal" id="allActivityModal">
+    <div class="all-modal-content">
+        <div class="all-modal-header">
+            <div>
+                <h2>All Activities</h2>
+                <p>Complete history of your actions</p>
+            </div>
+            <button class="all-modal-close" id="closeAllActivity" type="button">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="all-modal-body">
+            <div class="activity-list" id="allActivityList"></div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ========================================
+     ALL SCHEDULED CLASSES MODAL
+========================================= -->
+<div class="all-modal" id="allClassesModal">
+    <div class="all-modal-content">
+        <div class="all-modal-header">
+            <div>
+                <h2>All Scheduled Classes</h2>
+                <p>Complete list of upcoming classes</p>
+            </div>
+            <button class="all-modal-close" id="closeAllClasses" type="button">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="all-modal-body">
+            <div class="class-list" id="allClassesList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================
+     DELETE ACTIVITY CONFIRMATION MODAL
+========================================= -->
+<div class="all-modal" id="deleteActivityModal">
+    <div class="delete-activity-content">
+
+        <div class="delete-activity-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+
+        <h2>Delete this activity?</h2>
+
+        <div class="delete-activity-box">
+            <p>Are you sure you want to delete this activity?</p>
+            <strong id="deleteActivityName">this activity</strong>
+            <span class="delete-activity-warning">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                This will remove it from your activity history.
+            </span>
+        </div>
+
+        <div class="delete-activity-actions">
+            <button type="button" class="delete-activity-cancel" id="cancelDeleteActivity">
+                Keep
+            </button>
+            <button type="button" class="delete-activity-confirm" id="confirmDeleteActivity">
+                <i class="fa-solid fa-trash"></i>
+                Delete
+            </button>
+        </div>
+
+    </div>
+</div>
+
+    <script src="/js/activity-log.js"></script>
+    <script src="/js/instructor-dashboard.js"></script>
+    <script src="/js/course-overview.js"></script>
+    <script src="/js/upcoming-classes.js"></script>
 </body>
 </html>

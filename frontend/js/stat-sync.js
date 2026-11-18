@@ -9,36 +9,49 @@
 // ========================================
 
 document.addEventListener("DOMContentLoaded", () => {
+    
 
-    // ========================================
-    // STUDENTS PAGE
-    // ========================================
+        // ---- STUDENTS ----
     const studentsTable = document.getElementById("studentsTable");
 
     if (studentsTable) {
         function syncStudents() {
             const rows = studentsTable.querySelectorAll("tr");
-            localStorage.setItem("totalStudents", String(rows.length));
 
-            // Average performance from each row's progress <small> (e.g. "80%")
+            // Count + average (existing behavior)
             let total = 0, count = 0;
+
+            // Full list for the dashboard's Course Overview
+            const allStudents = [];
+
             rows.forEach(row => {
+                const name = row.querySelector(".student-name strong")?.textContent.trim() || "";
+                const course = row.children[2]?.textContent.trim() || "";
                 const small = row.querySelector(".progress-container small");
-                if (!small) return;
-                const match = small.textContent.match(/(\d+)/);
-                if (!match) return;
-                total += parseInt(match[1], 10);
+                const progressText = small ? small.textContent : "0%";
+                const progress = parseInt(progressText, 10) || 0;
+
+                if (name && course) {
+                    allStudents.push({ name, course, progress });
+                }
+
+                total += progress;
                 count++;
             });
 
+            // Save counts
+            localStorage.setItem("totalStudents", String(rows.length));
+
             const avg = count > 0 ? Math.round(total / count) : 0;
             localStorage.setItem("averagePerformance", String(avg));
+
+            // Save full list for Course Overview
+            localStorage.setItem("allStudents", JSON.stringify(allStudents));
         }
 
         syncStudents();
         new MutationObserver(syncStudents).observe(studentsTable, {
-            childList: true,
-            subtree: true
+            childList: true, subtree: true
         });
         window.addEventListener("beforeunload", syncStudents);
     }

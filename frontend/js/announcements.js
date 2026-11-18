@@ -178,6 +178,14 @@ document.addEventListener("DOMContentLoaded", () => {
             persistSaved(saved);
         }
 
+         window.logActivity?.(
+            "edit",
+            "Announcement updated",
+            `"${oldTitle}" updated`,
+            "/instructor/announcements/"
+        );
+
+
         alert("Announcement updated successfully!");
     }
 
@@ -187,6 +195,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const saved = loadSaved();
         persistSaved(saved.filter(a => a.title !== title));
+
+
+          window.logActivity?.(
+            "delete",
+            "Announcement deleted",
+            `"${title}" was removed`,
+            "/instructor/announcements/"
+        );
+
 
         card.remove();
         updateStats();
@@ -293,13 +310,22 @@ document.addEventListener("DOMContentLoaded", () => {
             persistSaved(saved);
 
 
+            // window.logActivity?.(
+            //     "announcement",
+            //     "New announcement posted",
+            //     `"${record.title}" (${categoryLabelFor(record.category)})`,
+            //     "/instructor/announcements/"
+            // );
+            // window.logActivity?.("delete", "Announcement deleted", `"${title}" was removed`, "/instructor/announcements/");
+
             window.logActivity?.(
                 "announcement",
                 "New announcement posted",
                 `"${record.title}" (${categoryLabelFor(record.category)})`,
                 "/instructor/announcements/"
             );
-            window.logActivity?.("delete", "Announcement deleted", `"${title}" was removed`, "/instructor/announcements/");
+
+            
 
             const newCard = buildCard(record);
             announcementsGrid.prepend(newCard);

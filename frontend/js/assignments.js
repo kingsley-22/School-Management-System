@@ -141,6 +141,14 @@ document.addEventListener("DOMContentLoaded", () => {
             persistSaved(saved.filter(a => a.title !== name));
 
             row.remove();
+                        if (window.logActivity) {
+                window.logActivity(
+                    "delete",
+                    "Assignment deleted",
+                    `"${name}" was removed`,
+                    "/instructor/assignments/"
+                );
+            }
             alert("Assignment deleted successfully!");
         });
     }
@@ -192,11 +200,29 @@ document.addEventListener("DOMContentLoaded", () => {
             const saved = loadSaved();
             saved.push(record);
             persistSaved(saved);
+                        if (window.logActivity) {
+                window.logActivity(
+                    "edit",
+                    "Assignment updated",
+                    `"${oldTitle}" updated`,
+                    "/instructor/assignments/"
+                );
+            }
 
             const row = buildRow(record);
             tableBody.appendChild(row);
             attachRowHandlers(row);
 
+
+                        // Log activity for the dashboard
+            if (window.logActivity) {
+                window.logActivity(
+                    "assignment",
+                    "New assignment created",
+                    `"${title}" for ${courseLabel}`,
+                    "/instructor/assignments/"
+                );
+            }
             alert("Assignment created successfully!");
             createForm.reset();
             closeCreate();

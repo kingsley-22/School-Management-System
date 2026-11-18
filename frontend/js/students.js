@@ -212,6 +212,17 @@ document.addEventListener("DOMContentLoaded", () => {
             studentsTable.appendChild(row);
             attachViewButton(row);
 
+                        // Also write allStudents directly, so the dashboard
+            // sees the new student even if stat-sync hasn't run yet
+            const allSaved = JSON.parse(localStorage.getItem("allStudents") || "[]");
+            allSaved.push({
+                name: record.name,
+                course: record.course,
+                progress: record.progress || 0
+            });
+            localStorage.setItem("allStudents", JSON.stringify(allSaved));
+
+
             addStudentForm.reset();
             closeAddModal();
             alert(`${name} has been added successfully!`);
@@ -230,6 +241,18 @@ document.addEventListener("DOMContentLoaded", () => {
             const row = buildStudentRow(s);
             studentsTable.appendChild(row);
             attachViewButton(row);
+
+                        // Keep allStudents in sync for the dashboard
+            const allSaved = JSON.parse(localStorage.getItem("allStudents") || "[]");
+            const already = allSaved.some(x => x.name === s.name);
+            if (!already) {
+                allSaved.push({
+                    name: s.name,
+                    course: s.course,
+                    progress: s.progress || 0
+                });
+                localStorage.setItem("allStudents", JSON.stringify(allSaved));
+            }
         });
     }
 

@@ -15,8 +15,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include, re_path
+from django.views.static import serve
+from django.conf import settings
+import os
+
+# Paths to your frontend assets
+FRONTEND_DIR = settings.BASE_DIR.parent / 'frontend'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('instructor/', include('instructors.urls')),
+
+    # Serve frontend assets in development
+    re_path(r'^css/(?P<path>.*)$', serve, {'document_root': FRONTEND_DIR / 'css'}),
+    re_path(r'^js/(?P<path>.*)$', serve, {'document_root': FRONTEND_DIR / 'js'}),
+    re_path(r'^image/(?P<path>.*)$', serve, {'document_root': FRONTEND_DIR / 'image'}),
+    re_path(r'^images/(?P<path>.*)$', serve, {'document_root': FRONTEND_DIR / 'images'}),
 ]

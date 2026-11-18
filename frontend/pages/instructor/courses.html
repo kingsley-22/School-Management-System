@@ -598,6 +598,152 @@
         </section>
     </main>
 </div>
+
+
+<!--
+     CREATE COURSE MODAL
+-->
+<div class="course-modal" id="createCourseModal">
+    <div class="course-modal-content">
+
+        <div class="course-modal-header">
+            <div>
+                <h2>Create New Course</h2>
+                <p>Add a course to your teaching portfolio</p>
+            </div>
+            <button class="course-modal-close" id="closeCourseModal" type="button">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="createCourseForm" class="course-modal-body">
+
+            <div class="course-form-group">
+                <label for="courseTitleInput">Course Title *</label>
+                <input
+                    type="text"
+                    id="courseTitleInput"
+                    placeholder="e.g. Advanced JavaScript"
+                    required
+                >
+            </div>
+
+            <div class="course-form-group">
+                <label for="courseDescriptionInput">Description *</label>
+                <textarea
+                    id="courseDescriptionInput"
+                    rows="3"
+                    placeholder="What will students learn in this course?"
+                    required
+                ></textarea>
+            </div>
+
+            <div class="course-form-row">
+                <div class="course-form-group">
+                    <label for="courseCategoryInput">Category</label>
+                    <select id="courseCategoryInput">
+                        <option value="web">Web Development</option>
+                        <option value="python">Python / Backend</option>
+                        <option value="database">Database / Data</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="course-form-group">
+                    <label for="courseStatusInput">Status</label>
+                    <select id="courseStatusInput">
+                        <option value="Draft">Draft</option>
+                        <option value="Active">Active</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="course-form-group">
+                <label for="courseLessonsInput">Number of Lessons</label>
+                <input
+                    type="number"
+                    id="courseLessonsInput"
+                    min="0"
+                    value="0"
+                >
+            </div>
+
+            <div class="course-modal-actions">
+                <button type="button" class="course-btn-cancel" id="cancelCourseModal">
+                    Cancel
+                </button>
+                <button type="submit" class="course-btn-save">
+                    <i class="fa-solid fa-plus"></i>
+                    Create Course
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
+
+
+<!-- 
+     TOAST NOTIFICATION CONTAINER
+-->
+<div class="toast-container" id="toastContainer"></div>
+
+
+
+<!-- ========================================
+     DELETE CONFIRMATION MODAL
+========================================= -->
+<div class="delete-modal" id="deleteCourseModal">
+
+    <div class="delete-modal-content">
+
+        <div class="delete-modal-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+
+        <h2>Delete this course?</h2>
+        <p class="delete-modal-subtitle">
+            This action is <strong>permanent</strong>. Once deleted, the course
+            <strong>cannot be recovered</strong>.
+        </p>
+
+        <div class="delete-instruction-box">
+            <div class="delete-instruction-title">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                You are about to permanently delete:
+            </div>
+            <div class="delete-course-pill" id="deleteCourseName">
+                this course
+            </div>
+            <div class="delete-instruction-warning">
+                This course will not return after deletion. Once you confirm,
+                it is gone from your course list for good.
+            </div>
+        </div>
+
+        <div class="delete-modal-actions">
+            <button type="button" class="delete-btn-cancel" id="cancelDeleteCourse">
+                Keep Course
+            </button>
+            <button type="button" class="delete-btn-confirm" id="confirmDeleteCourse">
+                <i class="fa-solid fa-trash"></i>
+                Yes, Delete Permanently
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- 
+     SUCCESS MESSAGE CONTAINER (bottom)
+ -->
+<div class="success-toast-container" id="successToastContainer"></div>
+
+
 <!-- JavaScript -->
  <script src="/js/activity-log.js"></script>
 <script src="/js/courses.js"></script>

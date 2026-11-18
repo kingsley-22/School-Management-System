@@ -8,7 +8,7 @@
 
 (function () {
     const KEY = "activityLog";
-    const MAX = 20;
+    const MAX = 6;
 
     // Default destination for each activity type
     const TYPE_LINKS = {
