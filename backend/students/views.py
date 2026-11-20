@@ -549,6 +549,14 @@ class StudentAssignmentSubmitView(APIView):
             student=request.user,
             status=sub_status,
         )
+        if assignment.course and assignment.course.instructor_id:
+            student_name = f"{request.user.first_name} {request.user.last_name}".strip() or request.user.email
+            StudentNotification.objects.create(
+                user=assignment.course.instructor,
+                title=f"New Submission: {assignment.title}",
+                message=f"{student_name} submitted work for {assignment.title} ({assignment.course.title}).",
+                notification_type=StudentNotification.TypeChoices.ASSIGNMENT,
+            )
         return Response(
             {
                 "message": "Assignment submitted successfully.",
