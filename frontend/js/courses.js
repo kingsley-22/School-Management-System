@@ -1,373 +1,258 @@
 // ========================================
-// COURSES PAGE JAVASCRIPT
+// INSTRUCTOR COURSES PAGE JAVASCRIPT
+// Connected to /api/instructor/courses/
 // ========================================
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = window.InstructorAPI;
+    if (!api || !api.enforceInstructorAuth()) return;
 
-    // ==========================================
-    // STORAGE
-    // ==========================================
-    const CREATED_KEY = "createdCourses";
-    const DELETED_KEY = "deletedCourses";
-
-    function loadCreated() {
-        try { return JSON.parse(localStorage.getItem(CREATED_KEY) || "[]"); }
-        catch { return []; }
+    const menuToggle = document.querySelector(".menu-toggle");
+    const sidebar = document.querySelector(".sidebar");
+    if (menuToggle && sidebar) {
+        menuToggle.addEventListener("click", () => sidebar.classList.toggle("show"));
     }
-    function saveCreated(arr) {
-        localStorage.setItem(CREATED_KEY, JSON.stringify(arr));
-    }
-    function loadDeleted() {
-        try { return JSON.parse(localStorage.getItem(DELETED_KEY) || "[]"); }
-        catch { return []; }
-    }
-    function saveDeleted(arr) {
-        localStorage.setItem(DELETED_KEY, JSON.stringify(arr));
-    }
+    document.querySelectorAll(".sidebar .menu-item").forEach((link) => {
+        link.addEventListener("click", () => {
+            if (window.innerWidth <= 768) sidebar?.classList.remove("show");
+        });
+    });
 
+    const coursesGrid = document.getElementById("coursesGrid");
+    const courseSearch = document.getElementById("courseSearch");
+    const courseFilter = document.getElementById("courseFilter");
 
-    // ==========================================
-    // DOM REFERENCES (all at top, no TDZ issues)
-    // ==========================================
-    const coursesGrid      = document.getElementById("coursesGrid");
-    const courseSearch     = document.getElementById("courseSearch");
-    const courseFilter     = document.getElementById("courseFilter");
-    const createCourseBtn  = document.querySelector(".create-course-btn");
+    const createBtn = document.querySelector(".create-course-btn");
+    const createModal = document.getElementById("createCourseModal");
+    const closeCourseModal = document.getElementById("closeCourseModal");
+    const cancelCourseModal = document.getElementById("cancelCourseModal");
+    const createForm = document.getElementById("createCourseForm");
+    const titleInput = document.getElementById("courseTitleInput");
+    const descInput = document.getElementById("courseDescriptionInput");
+    const catInput = document.getElementById("courseCategoryInput");
+    const statusInput = document.getElementById("courseStatusInput");
+    const lessonsInput = document.getElementById("courseLessonsInput");
+    const modalHeading = createModal?.querySelector("h2, h3");
+    const modalSubmitBtn = createForm?.querySelector('button[type="submit"]');
 
-    const createModal      = document.getElementById("createCourseModal");
-    const closeModalBtn    = document.getElementById("closeCourseModal");
-    const cancelModalBtn   = document.getElementById("cancelCourseModal");
-    const createForm       = document.getElementById("createCourseForm");
+    const deleteModal = document.getElementById("deleteCourseModal");
+    const deleteCourseName = document.getElementById("deleteCourseName");
+    const cancelDeleteCourse = document.getElementById("cancelDeleteCourse");
+    const confirmDeleteCourse = document.getElementById("confirmDeleteCourse");
 
-    const deleteModal      = document.getElementById("deleteCourseModal");
-    const deleteNameEl     = document.getElementById("deleteCourseName");
-    const cancelDeleteBtn  = document.getElementById("cancelDeleteCourse");
-    const confirmDeleteBtn = document.getElementById("confirmDeleteCourse");
+    let allCourses = [];
+    let editingCourseId = null;
+    let deletingCourseId = null;
 
-    let pendingCard = null;
-
-
-        // ==========================================
-    // SUCCESS TOAST (bottom)
-    // ==========================================
-    function showSuccessToast(title, message, duration = 6000) {
-        const container = document.getElementById("successToastContainer");
-        if (!container) {
-            alert(`${title}\n\n${message}`);
-            return;
-        }
-
+    function showToast(message, isError = false) {
+        const container = document.getElementById(isError ? "toastContainer" : "successToastContainer") || document.body;
         const toast = document.createElement("div");
-        toast.className = "success-toast";
-        toast.innerHTML = `
-            <div class="success-toast-icon">
-                <i class="fa-solid fa-check"></i>
-            </div>
-            <div class="success-toast-body">
-                <h4>${title}</h4>
-                <p>${message}</p>
-            </div>
-            <button class="success-toast-close" type="button" aria-label="Close">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <div class="success-toast-progress" style="animation-duration: ${duration}ms;"></div>
+        toast.textContent = message;
+        toast.style.cssText = `
+            position:fixed;bottom:20px;right:20px;z-index:3000;padding:12px 18px;border-radius:10px;
+            color:#fff;font-size:13px;font-weight:600;box-shadow:0 10px 25px rgba(0,0,0,0.15);
+            background:${isError ? "#dc2626" : "#16a34a"};
         `;
-
         container.appendChild(toast);
-
-        // Trigger slide-up animation on the next frame
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => toast.classList.add("show"));
-        });
-
-        const dismiss = () => {
-            toast.classList.remove("show");
-            setTimeout(() => toast.remove(), 500);
-        };
-
-        const timer = setTimeout(dismiss, duration);
-
-        toast.querySelector(".success-toast-close").addEventListener("click", () => {
-            clearTimeout(timer);
-            dismiss();
-        });
+        setTimeout(() => toast.remove(), 3000);
     }
 
+    function categoryMeta(category) {
+        const c = (category || "").toLowerCase();
+        if (c.includes("web") || c.includes("front")) return { cls: "web", icon: "fa-code" };
+        if (c.includes("python") || c.includes("back") || c.includes("data")) return { cls: "python", icon: "fa-laptop-code" };
+        if (c.includes("data") || c.includes("sql") || c.includes("db")) return { cls: "database", icon: "fa-database" };
+        return { cls: "web", icon: "fa-book-open" };
+    }
 
-    // ==========================================
-    // DELETE FLOW
-    // ==========================================
-    function openDeleteModal(card) {
-        if (!deleteModal) {
-            console.error("[Delete] #deleteCourseModal missing from HTML");
+    function renderCourses(list) {
+        if (!coursesGrid) return;
+        if (!list.length) {
+            coursesGrid.innerHTML = `
+                <div style="grid-column:1/-1;background:#fff;border-radius:14px;padding:36px;text-align:center;color:#64748b;border:1px solid #e2e8f0;">
+                    <i class="fa-solid fa-book-open" style="font-size:28px;margin-bottom:10px;color:#94a3b8;"></i>
+                    <p style="margin:0;font-size:15px;font-weight:600;color:#334155;">No courses found</p>
+                    <p style="margin:6px 0 0;font-size:13px;">Create a new course or ask an Admin to assign one to you.</p>
+                </div>
+            `;
             return;
         }
 
-        const title = card.querySelector("h3")?.textContent.trim() || "this course";
-
-        if (deleteNameEl) deleteNameEl.textContent = title;
-
-        pendingCard = card;
-        deleteModal.classList.add("show");
-    }
-
-    function closeDeleteModal() {
-        if (deleteModal) deleteModal.classList.remove("show");
-        pendingCard = null;
-    }
-
-    function performDelete() {
-        if (!pendingCard) return;
-
-        const card = pendingCard;
-        const title = card.querySelector("h3")?.textContent.trim();
-        if (!title) { closeDeleteModal(); return; }
-
-        // 1. Remove from createdCourses (if it was user-created)
-        const created = loadCreated();
-        const remaining = created.filter(c => c.title !== title);
-        if (remaining.length !== created.length) {
-            saveCreated(remaining);
-        }
-
-        // 2. Mark as deleted (works for hardcoded + created)
-        const deleted = loadDeleted();
-        if (!deleted.includes(title)) {
-            deleted.push(title);
-            saveDeleted(deleted);
-        }
-
-        // 3. Fade out and remove from the page
-        card.style.transition = "opacity 0.3s ease, transform 0.3s ease";
-        card.style.opacity = "0";
-        card.style.transform = "scale(0.85)";
-        setTimeout(() => card.remove(), 300);
-
-        // 4. Log activity
-        if (window.logActivity) {
-            window.logActivity(
-                "delete",
-                "Course deleted",
-                `"${title}" was permanently removed`,
-                "/instructor/courses/"
-            );
-        }
-
-        closeDeleteModal();
-    }
-
-    if (cancelDeleteBtn)  cancelDeleteBtn.addEventListener("click", closeDeleteModal);
-    if (confirmDeleteBtn) confirmDeleteBtn.addEventListener("click", performDelete);
-
-    if (deleteModal) {
-        deleteModal.addEventListener("click", (e) => {
-            if (e.target === deleteModal) closeDeleteModal();
-        });
-    }
-
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && deleteModal?.classList.contains("show")) {
-            closeDeleteModal();
-        }
-    });
-
-
-    // ==========================================
-    // WIRE DELETE BUTTON ON A CARD
-    // ==========================================
-    function wireDeleteButton(card) {
-        const actions = card.querySelector(".course-actions");
-        if (!actions) return;
-
-        // Ensure a delete button exists
-        let btn = actions.querySelector(".delete-course");
-
-        // Remove any old listeners by replacing the node
-        if (btn) {
-            const clone = btn.cloneNode(true);
-            btn.replaceWith(clone);
-            btn = clone;
-        } else {
-            btn = document.createElement("button");
-            btn.type = "button";
-            btn.className = "delete-course";
-            btn.title = "Delete course";
-            btn.innerHTML = '<i class="fa-solid fa-trash"></i>';
-            actions.appendChild(btn);
-        }
-
-        btn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            openDeleteModal(card);
-        });
-    }
-
-
-    // ==========================================
-    // BUILD CARD (for user-created courses)
-    // ==========================================
-    function buildCard(item) {
-        const card = document.createElement("div");
-        card.className = "course-card";
-        card.innerHTML = `
-            <div class="course-image web">
-                <i class="fa-solid fa-book"></i>
-            </div>
-            <div class="course-card-content">
-                <div class="course-status">
-                    <span class="status ${item.status === "Active" ? "active-status" : "draft-status"}">${item.status || "Draft"}</span>
-                    <button class="course-menu"><i class="fa-solid fa-ellipsis"></i></button>
-                </div>
-                <h3>${item.title}</h3>
-                <p>${item.description}</p>
-                <div class="course-meta">
-                    <span><i class="fa-solid fa-users"></i> 0 Students</span>
-                    <span><i class="fa-solid fa-book-open"></i> ${item.lessons || 0} Lessons</span>
-                </div>
-                <div class="course-progress-info">
-                    <div><span>Course Progress</span><strong>0%</strong></div>
-                    <div class="progress">
-                        <div class="progress-bar" style="width: 0%;"></div>
+        coursesGrid.innerHTML = list
+            .map((course) => {
+                const meta = categoryMeta(course.category);
+                const isActive = course.status === "Active";
+                const progress = course.progress_percent ?? 0;
+                return `
+                    <div class="course-card" data-id="${course.id}" data-status="${isActive ? "active" : "draft"}">
+                        <div class="course-card-header">
+                            <div class="course-image ${meta.cls}">
+                                <i class="fa-solid ${meta.icon}"></i>
+                            </div>
+                            <span class="status ${isActive ? "active-status" : "draft-status"}">
+                                ${isActive ? "Active" : "Draft"}
+                            </span>
+                        </div>
+                        <div class="course-body">
+                            <h3>${api.escapeHtml(course.title)}</h3>
+                            <p>${api.escapeHtml(course.description || "No description provided.")}</p>
+                            <div class="course-meta">
+                                <span><i class="fa-solid fa-users"></i> ${course.students_count ?? 0} Students</span>
+                                <span><i class="fa-solid fa-book"></i> ${course.lessons_count ?? 0} Lessons</span>
+                            </div>
+                            <div class="course-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width:${progress}%"></div>
+                                </div>
+                                <span>${progress}%</span>
+                            </div>
+                        </div>
+                        <div class="course-actions">
+                            <button type="button" class="view-course" data-id="${course.id}">View Course</button>
+                            <button type="button" class="edit-course" data-id="${course.id}">Edit</button>
+                            <button type="button" class="delete-course" data-id="${course.id}" data-title="${api.escapeHtml(course.title)}" style="background:#fee2e2;color:#dc2626;border:none;border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:600;">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="course-actions">
-                    <button class="view-course">View Course</button>
-                    <button class="edit-course"><i class="fa-solid fa-pen"></i> Edit</button>
-                    <button class="delete-course" title="Delete course"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            </div>
-        `;
-        return card;
+                `;
+            })
+            .join("");
+
+        coursesGrid.querySelectorAll(".view-course").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const course = allCourses.find((c) => String(c.id) === String(btn.dataset.id));
+                if (!course) return;
+                alert(
+                    `${course.title} (${course.code || "N/A"})\n` +
+                    `Status: ${course.status}\n` +
+                    `Category: ${course.category || "General"}\n` +
+                    `Lessons: ${course.lessons_count ?? 0}\n` +
+                    `Enrolled Students: ${course.students_count ?? 0}\n` +
+                    `Average Progress: ${course.progress_percent ?? 0}%\n\n` +
+                    `${course.description || ""}`
+                );
+            });
+        });
+
+        coursesGrid.querySelectorAll(".edit-course").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const course = allCourses.find((c) => String(c.id) === String(btn.dataset.id));
+                if (!course) return;
+                editingCourseId = course.id;
+                if (titleInput) titleInput.value = course.title || "";
+                if (descInput) descInput.value = course.description || "";
+                if (catInput) {
+                    const matched = Array.from(catInput.options).some((o) => o.value === course.category);
+                    catInput.value = matched ? course.category : "other";
+                }
+                if (statusInput) statusInput.value = course.status === "Active" ? "Active" : "Draft";
+                if (lessonsInput) lessonsInput.value = String(course.lessons_count ?? 0);
+                if (modalHeading) modalHeading.textContent = "Edit Course";
+                if (modalSubmitBtn) modalSubmitBtn.textContent = "Save Changes";
+                createModal?.classList.add("show");
+            });
+        });
+
+        coursesGrid.querySelectorAll(".delete-course").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                deletingCourseId = btn.dataset.id;
+                if (deleteCourseName) deleteCourseName.textContent = btn.dataset.title || "this course";
+                deleteModal?.classList.add("show");
+            });
+        });
     }
 
+    function applyFilters() {
+        const q = (courseSearch?.value || "").trim().toLowerCase();
+        const filter = (courseFilter?.value || "all").toLowerCase();
+        const filtered = allCourses.filter((c) => {
+            const matchesSearch =
+                !q ||
+                (c.title || "").toLowerCase().includes(q) ||
+                (c.description || "").toLowerCase().includes(q) ||
+                (c.code || "").toLowerCase().includes(q);
+            const matchesStatus = filter === "all" || (c.status || "").toLowerCase() === filter;
+            return matchesSearch && matchesStatus;
+        });
+        renderCourses(filtered);
+    }
 
-    // ==========================================
-    // BOOT
-    // ==========================================
-
-    // 1. Remove previously-deleted cards
-    const hidden = loadDeleted();
-    document.querySelectorAll(".course-card").forEach(card => {
-        const title = card.querySelector("h3")?.textContent.trim();
-        if (title && hidden.includes(title)) {
-            card.remove();
-            return;
+    async function loadCourses() {
+        try {
+            const data = await api.request("/instructor/courses/");
+            allCourses = data.results || [];
+            applyFilters();
+        } catch (err) {
+            showToast(err.message || "Failed to load courses.", true);
         }
-        wireDeleteButton(card);
+    }
+
+    createBtn?.addEventListener("click", () => {
+        editingCourseId = null;
+        createForm?.reset();
+        if (modalHeading) modalHeading.textContent = "Create New Course";
+        if (modalSubmitBtn) modalSubmitBtn.textContent = "Create Course";
+        createModal?.classList.add("show");
     });
 
-    // 2. Restore created courses (skipping any that were deleted)
-    if (coursesGrid) {
-        loadCreated().forEach(item => {
-            if (hidden.includes(item.title)) return;
+    closeCourseModal?.addEventListener("click", () => createModal?.classList.remove("show"));
+    cancelCourseModal?.addEventListener("click", () => createModal?.classList.remove("show"));
+    cancelDeleteCourse?.addEventListener("click", () => {
+        deletingCourseId = null;
+        deleteModal?.classList.remove("show");
+    });
 
-            const exists = Array.from(coursesGrid.querySelectorAll(".course-card h3"))
-                .some(h => h.textContent.trim() === item.title);
-            if (exists) return;
-
-            const card = buildCard(item);
-            coursesGrid.appendChild(card);
-            wireDeleteButton(card);
-        });
-    }
-
-
-    // ==========================================
-    // SEARCH + FILTER
-    // ==========================================
-    if (courseSearch) {
-        courseSearch.addEventListener("input", () => {
-            const s = courseSearch.value.toLowerCase().trim();
-            document.querySelectorAll(".course-card").forEach(card => {
-                const t = card.querySelector("h3")?.textContent.toLowerCase() || "";
-                const d = card.querySelector("p")?.textContent.toLowerCase() || "";
-                card.style.display = (t.includes(s) || d.includes(s)) ? "" : "none";
-            });
-        });
-    }
-
-    if (courseFilter) {
-        courseFilter.addEventListener("change", () => {
-            const f = courseFilter.value;
-            document.querySelectorAll(".course-card").forEach(card => {
-                const st = card.querySelector(".status")?.textContent.toLowerCase().trim() || "";
-                card.style.display = (f === "all" || st === f) ? "" : "none";
-            });
-        });
-    }
-
-
-    // ==========================================
-    // CREATE FLOW
-    // ==========================================
-    function openCreateModal() {
-        if (!createModal) return;
-        if (createForm) createForm.reset();
-        createModal.classList.add("show");
-    }
-    function closeCreateModal() {
-        if (createModal) createModal.classList.remove("show");
-    }
-
-    if (createCourseBtn) createCourseBtn.addEventListener("click", openCreateModal);
-    if (closeModalBtn)   closeModalBtn.addEventListener("click", closeCreateModal);
-    if (cancelModalBtn)  cancelModalBtn.addEventListener("click", closeCreateModal);
-
-    if (createModal) {
-        createModal.addEventListener("click", (e) => {
-            if (e.target === createModal) closeCreateModal();
-        });
-    }
-
-    if (createForm) {
-        createForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-
-            const title = document.getElementById("courseTitleInput").value.trim();
-            const description = document.getElementById("courseDescriptionInput").value.trim();
-            const category = document.getElementById("courseCategoryInput").value;
-            const status = document.getElementById("courseStatusInput").value;
-            const lessons = parseInt(document.getElementById("courseLessonsInput").value, 10) || 0;
-
-            if (!title || !description) {
-                alert("Please fill in the title and description.");
-                return;
+    createForm?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const payload = {
+            title: (titleInput?.value || "").trim(),
+            description: (descInput?.value || "").trim(),
+            category: catInput?.value || "other",
+            status: statusInput?.value || "Active",
+            lessons: parseInt(lessonsInput?.value || "0", 10) || 0,
+        };
+        if (!payload.title) {
+            showToast("Course title is required.", true);
+            return;
+        }
+        try {
+            if (editingCourseId) {
+                await api.request(`/instructor/courses/${editingCourseId}/`, {
+                    method: "PATCH",
+                    body: JSON.stringify(payload),
+                });
+                showToast("Course updated successfully.");
+            } else {
+                await api.request("/instructor/courses/", {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                });
+                showToast("Course created successfully.");
             }
+            createModal?.classList.remove("show");
+            editingCourseId = null;
+            await loadCourses();
+        } catch (err) {
+            showToast(err.message || "Failed to save course.", true);
+        }
+    });
 
-            const record = { title, description, category, status, lessons };
+    confirmDeleteCourse?.addEventListener("click", async () => {
+        if (!deletingCourseId) return;
+        try {
+            await api.request(`/instructor/courses/${deletingCourseId}/`, { method: "DELETE" });
+            deleteModal?.classList.remove("show");
+            deletingCourseId = null;
+            showToast("Course deleted successfully.");
+            await loadCourses();
+        } catch (err) {
+            showToast(err.message || "Failed to delete course.", true);
+        }
+    });
 
-            // Save
-            const created = loadCreated();
-            created.push(record);
-            saveCreated(created);
+    courseSearch?.addEventListener("input", applyFilters);
+    courseFilter?.addEventListener("change", applyFilters);
 
-            // If this title was previously deleted, un-mark it
-            const deleted = loadDeleted();
-            const filtered = deleted.filter(t => t !== title);
-            if (filtered.length !== deleted.length) {
-                saveDeleted(filtered);
-            }
-
-            // Add card
-            const card = buildCard(record);
-            if (coursesGrid) coursesGrid.appendChild(card);
-            wireDeleteButton(card);
-
-            // Log
-            if (window.logActivity) {
-                window.logActivity(
-                    "course",
-                    "New course created",
-                    `"${title}" (${lessons} lessons)`,
-                    "/instructor/courses/"
-                );
-            }
-
-            closeCreateModal();
-            showSuccessToast( "Course Created Successfully!",
-                `"${title}" has been added to your course list.`,
-                6000);
-        });
-    }
-
+    await loadCourses();
 });

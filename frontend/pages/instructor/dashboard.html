@@ -1,685 +1,377 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Dashboard | School Management System</title>
-
+    <title>Instructor Dashboard | IFEXA Academy</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Shared Student Dashboard Design System + Instructor Extension -->
+    <link rel="stylesheet" href="/css/dashboard.css">
     <link rel="stylesheet" href="/css/instructor-dashboard.css">
-
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"> 
 </head>
 
 <body>
 
-    <div class="dashboard">
+    <div class="dashboard-layout">
 
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- SIDEBAR (IDENTICAL STRUCTURE & LOGO TO STUDENT DASHBOARD) -->
+        <aside class="sidebar" id="sidebar">
 
             <button type="button" class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
             <div class="logo">
-                <i class="fa-solid fa-graduation-cap"></i>
-                <img src="/image/ifexa_id-removebg-preview (1).png" alt="School Logo">
+                <a class="brand" href="/instructor/">
+                    <img src="/images/Top_Left-removebg-preview.png" alt="IFEXA Academy Logo">
+                </a>
             </div>
 
-            <nav class="sidebar-menu">
+            <div class="logo-badge">
+                <small>Learn. Grow. Succeed.</small>
+            </div>
 
-                <a href="/instructor/" class="menu-item active">
-                    <i class="fa-solid fa-chart-line"></i>
+            <p class="nav-label">WORKSPACE</p>
+
+            <nav class="sidebar-nav" aria-label="Main navigation">
+                <a href="/instructor/" class="nav-link active">
+                    <i class="fa-solid fa-house"></i>
                     <span>Dashboard</span>
                 </a>
-
-                <a href="/instructor/courses/" class="menu-item">
+                <a href="/instructor/courses/" class="nav-link">
                     <i class="fa-solid fa-book-open"></i>
                     <span>My Courses</span>
                 </a>
-
-                <a href="/instructor/students/" class="menu-item">
+                <a href="/instructor/students/" class="nav-link">
                     <i class="fa-solid fa-users"></i>
                     <span>Students</span>
                 </a>
- 
-                <a href="/instructor/assignments/" class="menu-item">
-                    <i class="fa-solid fa-file-lines"></i>
+                <a href="/instructor/assignments/" class="nav-link">
+                    <i class="fa-solid fa-clipboard-list"></i>
                     <span>Assignments</span>
                 </a>
-
-                <!-- <a href="#" class="menu-item">
-                    <i class="fa-solid fa-calendar-days"></i>
-                    <span>Schedule</span>
-                </a>
-
-                <a href="#" class="menu-item">
-                    <i class="fa-solid fa-chart-column"></i>
-                    <span>Performance</span>
-                </a> -->
-
-                <a href="/instructor/announcements/" class="menu-item">
-                    <i class="fa-solid fa-bullhorn"></i>
+                <a href="/instructor/announcements/" class="nav-link">
+                    <i class="fa-solid fa-bell"></i>
                     <span>Announcements</span>
                 </a>
-
             </nav>
 
-            <div class="sidebar-bottom">
-
-                <a href="#" class="menu-item">
-                    <i class="fa-solid fa-gear"></i>
-                    <span>Settings</span>
-                </a>
-
-                <a href="#" class="menu-item logout">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Logout</span>
+            <div class="sidebar-help">
+                <span class="help-icon"><i class="fa-regular fa-circle-question"></i></span>
+                <strong>Need help?</strong>
+                <p>Manage your teaching workspace with ease.</p>
+                <a href="mailto:ifexatechnologies@gmail.com">
+                    Contact support <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </a>
             </div>
 
-        </aside>
+            <div class="Sidebar_down">
+                <a href="#logout" class="nav-link logout-link">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Log out</span>
+                </a>
+            </div>
 
+            <div class="sidebar-footer">© 2026 Ifexa Academy</div>
+
+        </aside>
 
         <!-- MAIN CONTENT -->
         <main class="main-content">
 
-            <!-- TOP NAVBAR -->
+            <!-- FIXED TOPBAR (IDENTICAL TO STUDENT DASHBOARD) -->
             <header class="topbar">
 
-                <div class="topbar-left">
+                <button type="button" class="hamburger" id="hamburger" aria-label="Open navigation menu"
+                    aria-expanded="false" aria-controls="sidebar">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
 
-                    <button class="menu-toggle">
-                        <i class="fa-solid fa-bars"></i>
-                    </button>
+                <label class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="search" id="dashboardSearch" placeholder="Search courses, students, or assignments..."
+                        aria-label="Search workspace">
+                </label>
 
-                    <div>
-                        <h1>Instructor Dashboard</h1>
-                        <p>Welcome back, JUNGLE</p>
+                <div class="topbar-user">
+
+                    <div class="notification-container">
+                        <button type="button" class="notification-button" id="notificationBtn"
+                            aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="notification-dot" style="display:none;"></span>
+                        </button>
+
+                        <div class="notification-panel" id="notificationPanel">
+                            <div class="notification-header">
+                                <div>
+                                    <h3>Notifications</h3>
+                                    <span>0 unread notifications</span>
+                                </div>
+                                <button type="button" id="markAllRead">Mark all read</button>
+                            </div>
+                            <div class="notification-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="profile-container">
+                        <button type="button" class="topbar-profile-trigger" id="profileBtn"
+                            aria-label="Instructor profile">
+                            <span class="topbar-avatar-initials profile-avatar">IN</span>
+                            <div class="topbar-user-info">
+                                <strong id="topbarInstructorName">Loading...</strong>
+                                <small id="topbarInstructorRole">Instructor</small>
+                            </div>
+                        </button>
+
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <div class="profile-dropdown-header">
+                                <div class="topbar-avatar-initials profile-avatar">IN</div>
+                                <div class="profile-header-text">
+                                    <h4>Instructor</h4>
+                                    <span>Instructor</span>
+                                </div>
+                            </div>
+                            <a href="#" class="profile-dropdown-item"><i class="fa-regular fa-user"></i> My Profile</a>
+                            <a href="#" class="profile-dropdown-item"><i class="fa-solid fa-gear"></i> Settings</a>
+                            <a href="#" class="profile-dropdown-item logout-profile"><i
+                                    class="fa-solid fa-right-from-bracket"></i> Log out</a>
+                        </div>
                     </div>
 
                 </div>
-
-                <div class="topbar-right">
-
-<!-- NOTIFICATIONS -->
-<div class="notification-wrapper">
-
-    <button class="notification-btn" id="notificationBtn">
-        <i class="fa-regular fa-bell"></i>
-        <span class="notification-dot"></span>
-    </button>
-
-    <div class="notification-panel" id="notificationPanel">
-
-        <div class="notification-header">
-            <div>
-                <h3>Notifications</h3>
-                <span>4 new notifications</span>
-            </div>
-
-            <button id="markAllRead">
-                Mark all as read
-            </button>
-        </div>
-
-
-        <div class="notification-list">
-
-            <!-- Notification 1 -->
-            <div class="notification-item unread">
-
-                <div class="notification-icon blue">
-                    <i class="fa-solid fa-file-arrow-up"></i>
-                </div>
-
-                <div class="notification-content">
-                    <h4>New Assignment Submitted</h4>
-                    <p>A student submitted a Web Development assignment.</p>
-                    <span>10 minutes ago</span>
-                </div>
-
-            </div>
-
-
-            <!-- Notification 2 -->
-            <div class="notification-item unread">
-
-                <div class="notification-icon green">
-                    <i class="fa-solid fa-user-plus"></i>
-                </div>
-
-                <div class="notification-content">
-                    <h4>New Student Enrolled</h4>
-                    <p>A new student joined your Python course.</p>
-                    <span>1 hour ago</span>
-                </div>
-
-            </div>
-
-
-            <!-- Notification 3 -->
-            <div class="notification-item unread">
-
-                <div class="notification-icon orange">
-                    <i class="fa-solid fa-file-circle-check"></i>
-                </div>
-
-                <div class="notification-content">
-                    <h4>Assignment Needs Review</h4>
-                    <p>3 assignments are waiting for your review.</p>
-                    <span>2 hours ago</span>
-                </div>
-
-            </div>
-
-
-            <!-- Notification 4 -->
-            <div class="notification-item">
-
-                <div class="notification-icon purple">
-                    <i class="fa-solid fa-bullhorn"></i>
-                </div>
-
-                <div class="notification-content">
-                    <h4>New Announcement</h4>
-                    <p>A new school announcement has been posted.</p>
-                    <span>Yesterday</span>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- PROFILE -->
-<div class="profile-wrapper">
-
-    <button class="profile" id="profileBtn">
-
-        <div class="profile-avatar">JM</div>
-
-        <div class="profile-info">
-            <h4>JUNGLE MAN</h4>
-            <span>Instructor</span>
-        </div>
-
-        <i class="fa-solid fa-chevron-down profile-arrow"></i>
-
-    </button>
-
-
-    <div class="profile-dropdown" id="profileDropdown">
-
-        <div class="profile-dropdown-header">
-
-            <div class="profile-avatar large">
-                JM
-            </div>
-
-            <div>
-                <h4>JUNGLE MAN</h4>
-                <span>Instructor</span>
-            </div>
-
-        </div>
-
-
-        <div class="profile-dropdown-menu">
-
-            <a href="#">
-                <i class="fa-solid fa-user"></i>
-                <span>My Profile</span>
-            </a>
-
-            <a href="#">
-                <i class="fa-solid fa-gear"></i>
-                <span>Settings</span>
-            </a>
-
-            <a href="#" class="logout-profile">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                <span>Logout</span>
-            </a>
-
-        </div>
-
-    </div>
-
-</div>
-
-</div>
-
-
-
             </header>
 
+            <!-- DASHBOARD GRID (MATCHES STUDENT DASHBOARD VISUAL SYSTEM) -->
+            <div class="dashboard-grid">
 
-            <!-- DASHBOARD CONTENT -->
-            <section class="content">
+                <!-- CENTER COLUMN -->
+                <section class="dashboard-center">
 
+                    <!-- WELCOME BANNER -->
+                    <section class="welcome-banner" id="dashboard">
+                        <p>Welcome back,</p>
+                        <h1 id="welcomeInstructorName">Loading profile...</h1>
+                        <p>Manage your assigned courses, track student progress, and grade submissions in one workspace.
+                        </p>
+                        <a href="/instructor/courses/" class="primary-button">
+                            View My Courses
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </section>
 
-                <!-- STATISTICS CARDS -->
-                <div class="stats-grid">
+                    <!-- STATISTICS (STUDENT PASTEL CARDS) -->
+                    <section class="stats-grid">
+                        <article class="stat-card blue-card">
+                            <i class="fa-solid fa-book-open stat-icon"></i>
+                            <p>Assigned Courses</p>
+                            <h2 id="totalCoursesCount">0</h2>
+                            <a href="/instructor/courses/">View all →</a>
+                        </article>
 
-    <div class="stat-card">
-        <div class="stat-icon blue">
-            <i class="fa-solid fa-book"></i>
-        </div>
-        <div>
-            <p>Total Courses</p>
-            <h2 id="totalCoursesCount">6</h2>
-        </div>
-    </div>
+                        <article class="stat-card green-card">
+                            <i class="fa-solid fa-users stat-icon"></i>
+                            <p>Total Students</p>
+                            <h2 id="totalStudentsCount">0</h2>
+                            <a href="/instructor/students/">View all →</a>
+                        </article>
 
-    <div class="stat-card">
-        <div class="stat-icon purple">
-            <i class="fa-solid fa-users"></i>
-        </div>
-        <div>
-            <p>Total Students</p>
-            <h2 id="totalStudentsCount">20</h2>
-        </div>
-    </div>
+                        <article class="stat-card purple-card">
+                            <i class="fa-solid fa-clipboard-list stat-icon"></i>
+                            <p>Assignments</p>
+                            <h2 id="totalAssignmentsCount">0</h2>
+                            <a href="/instructor/assignments/">Manage →</a>
+                        </article>
 
-   <div class="stat-card">
-    <div class="stat-icon orange">
-        <i class="fa-solid fa-file-circle-check"></i>
-    </div>
-    <div>
-        <p>Assignments</p>
-        <h2 id="totalAssignmentsCount">18</h2>
-    </div>
-</div>
-
-</div>
-                         
-                <!--
-     QUICK ACTIONS
--->
-
-<section class="quick-actions-section">
-
-    <div class="quick-actions-header">
-        <div>
-            <h2>Quick Actions</h2>
-            <p>Quickly manage your teaching activities</p>
-        </div>
-    </div>
-
-    <div class="quick-actions-grid">
-
-        <!-- ADD STUDENT -->
-        <button class="quick-action-card" id="addStudentAction">
-
-            <div class="quick-action-icon blue">
-                <i class="fa-solid fa-user-plus"></i>
-            </div>
-
-            <div class="quick-action-content">
-                <h3>Add Student</h3>
-                <p>Register a new student</p>
-            </div>
-
-            <i class="fa-solid fa-arrow-right quick-action-arrow"></i>
-
-        </button>
-
-
-        <!-- CREATE COURSE -->
-        <button class="quick-action-card" id="createCourseAction">
-
-            <div class="quick-action-icon purple">
-                <i class="fa-solid fa-book-open"></i>
-            </div>
-
-            <div class="quick-action-content">
-                <h3>Create Course</h3>
-                <p>Create a new course</p>
-            </div>
-
-            <i class="fa-solid fa-arrow-right quick-action-arrow"></i>
-
-        </button>
-
-
-        <!-- CREATE ASSIGNMENT -->
-        <button class="quick-action-card" id="createAssignmentAction">
-
-            <div class="quick-action-icon orange">
-                <i class="fa-solid fa-file-circle-plus"></i>
-            </div>
-
-            <div class="quick-action-content">
-                <h3>Create Assignment</h3>
-                <p>Give students new work</p>
-            </div>
-
-            <i class="fa-solid fa-arrow-right quick-action-arrow"></i>
-
-        </button>
-
-
-        <!-- POST ANNOUNCEMENT -->
-        <button class="quick-action-card" id="postAnnouncementAction">
-
-            <div class="quick-action-icon green">
-                <i class="fa-solid fa-bullhorn"></i>
-            </div>
-
-            <div class="quick-action-content">
-                <h3>Post Announcement</h3>
-                <p>Share news with students</p>
-            </div>
-
-            <i class="fa-solid fa-arrow-right quick-action-arrow"></i>
-
-        </button>
-
-    </div>
-
-</section>
-
-
-                
-                <div class="dashboard-grid">
-
-
-                   
-                    <div class="dashboard-card">
-
-                        <div class="card-header">
-                            <div>
-                                <h2>Recent Activity</h2>
-                                <p>Latest activities from your courses</p>
+                        <article class="stat-card orange-card">
+                            <i class="fa-solid fa-chart-line stat-icon"></i>
+                            <p>Avg. Student Progress</p>
+                            <h2 id="avgPerformanceStat">0%</h2>
+                            <div class="progress-track">
+                                <span id="avgPerformanceFill" style="width: 0%"></span>
                             </div>
+                        </article>
+                    </section>
 
-                            <button class="view-all-btn" id="viewAllActivityBtn" type="button">View All</button>
+                    <!-- QUICK ACTIONS -->
+                    <section class="panel">
+                        <div class="panel-heading">
+                            <h2>Quick Actions</h2>
                         </div>
-
-
-                        <div class="activity-list" id="activityList">
-
-                            <div class="activity-item">
-
-                                <div class="activity-icon">
-                                    <i class="fa-solid fa-file-arrow-up"></i>
-                                </div>
-
-                                <div class="activity-info">
-                                    <h4>New assignment submitted</h4>
-                                    <p>JUNGLE MAN submitted Web Development Assignment</p>
-                                    <span>10 minutes ago</span>
-                                </div>
-
-                            </div>
-
-
-                            <div class="activity-item">
-
-                                <div class="activity-icon">
-                                    <i class="fa-solid fa-user-plus"></i>
-                                </div>
-
-                                <div class="activity-info">
-                                    <h4>New student enrolled</h4>
-                                    <p>JUNGLE MAN joined your Python Programming course</p>
-                                    <span>1 hour ago</span>
-                                </div>
-
-                            </div>
-
-
-                            <div class="activity-item">
-
-                                <div class="activity-icon">
-                                    <i class="fa-solid fa-circle-check"></i>
-                                </div>
-
-                                <div class="activity-info">
-                                    <h4>Assignment graded</h4>
-                                    <p>You graded 12 student assignments</p>
-                                    <span>3 hours ago</span>
-                                </div>
-
-                            </div>
-
+                        <div class="instructor-quick-grid">
+                            <button type="button" class="instructor-quick-btn" id="addStudentAction">
+                                <i class="fa-solid fa-user-plus"></i>
+                                <span>Enroll Student</span>
+                            </button>
+                            <button type="button" class="instructor-quick-btn" id="createCourseAction">
+                                <i class="fa-solid fa-book-medical"></i>
+                                <span>Create Course</span>
+                            </button>
+                            <button type="button" class="instructor-quick-btn" id="createAssignmentAction">
+                                <i class="fa-solid fa-file-circle-plus"></i>
+                                <span>New Assignment</span>
+                            </button>
+                            <button type="button" class="instructor-quick-btn" id="postAnnouncementAction">
+                                <i class="fa-solid fa-bullhorn"></i>
+                                <span>Announcement</span>
+                            </button>
                         </div>
+                    </section>
 
-                    </div>
-
-
-                
-                    <div class="dashboard-card upcoming-card">
-
-    <div class="card-header">
-        <div>
-            <h2>Upcoming Classes</h2>
-            <p>Your next scheduled classes</p>
-        </div>
-        <button class="add-class-btn" id="addClassBtn" type="button">
-            <i class="fa-solid fa-plus"></i>
-            Add Class
-        </button>
-    </div>
-
-    <div class="class-list" id="upcomingClassesList">
-        <!-- Rendered by upcoming-classes.js -->
-    </div>
-
-</div>
-                                
-
-                <section class="dashboard-card course-progress">
-
-                    <div class="card-header">
-
-                        <div>
+                    <!-- COURSE OVERVIEW -->
+                    <section class="panel">
+                        <div class="panel-heading card-header">
                             <h2>Course Overview</h2>
-                            <p>Monitor your active courses</p>
+                            <a href="/instructor/courses/">View Courses →</a>
                         </div>
-
-                        <a href="#">View Courses</a>
-
-                    </div>
-
-
-                    <div class="course-table">
-
-                        <div class="table-header">
-                            <span>Course</span>
-                            <span>Students</span>
-                            <span>Classes Held</span>
-                            <span>Classes Scheduled</span>
+                        <div class="overview-table-wrap">
+                            <div class="overview-table-head">
+                                <span>Course</span>
+                                <span>Students</span>
+                                <span>Classes Held</span>
+                                <span>Scheduled</span>
+                            </div>
+                            <div id="courseOverviewRows">
+                                <p class="dashboard-loading">Loading courses...</p>
+                            </div>
                         </div>
-
-                        <div id="courseOverviewRows">
-                            <!-- Rows rendered by /js/course-overview.js -->
-                        </div>
-
-                    </div>
-
-         
+                    </section>
 
                 </section>
 
-            </section>
+                <!-- RIGHT COLUMN -->
+                <aside class="dashboard-right">
+
+                    <!-- UPCOMING CLASSES -->
+                    <section class="panel">
+                        <div class="panel-heading">
+                            <h2>Upcoming Classes</h2>
+                            <button type="button" class="primary-button" id="addClassBtn"
+                                style="padding:7px 12px;font-size:12px;">
+                                <i class="fa-solid fa-plus"></i> Add Class
+                            </button>
+                        </div>
+                        <div id="upcomingClassesList">
+                            <p class="dashboard-loading">Loading schedule...</p>
+                        </div>
+                    </section>
+
+                    <!-- RECENT ACTIVITY -->
+                    <section class="panel">
+                        <div class="panel-heading">
+                            <h2>Recent Activity</h2>
+                            <a href="#" id="viewAllActivityBtn">View All →</a>
+                        </div>
+                        <div id="activityList">
+                            <p class="dashboard-loading">Loading activity...</p>
+                        </div>
+                    </section>
+
+                </aside>
+
+            </div>
 
         </main>
 
     </div>
 
-
-    <!-- ========================================
-     ADD CLASS MODAL
-========================================= -->
-<div class="class-modal" id="addClassModal">
-    <div class="class-modal-content">
-
-        <div class="class-modal-header">
-            <div>
-                <h2>Schedule a Class</h2>
-                <p>Add an upcoming class to your timetable</p>
+    <!-- ADD CLASS MODAL -->
+    <div class="academy-modal" id="addClassModal">
+        <div class="academy-modal-box">
+            <div class="academy-modal-header">
+                <h3>Schedule Upcoming Class</h3>
+                <button type="button" class="academy-modal-close" id="closeClassModal"><i
+                        class="fa-solid fa-xmark"></i></button>
             </div>
-            <button class="class-modal-close" id="closeClassModal" type="button">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-
-        <form id="addClassForm" class="class-modal-body">
-
-            <div class="class-form-group">
-                <label for="classCourseSelect">Course *</label>
-                <select id="classCourseSelect" required>
-                    <option value="">Select a course</option>
-                </select>
-            </div>
-
-            <div class="class-form-row">
-                <div class="class-form-group">
-                    <label for="classDateInput">Date *</label>
+            <form id="addClassForm">
+                <div class="academy-form-group">
+                    <label for="classCourseSelect">Course</label>
+                    <select id="classCourseSelect" required>
+                        <option value="">Select a course</option>
+                    </select>
+                </div>
+                <div class="academy-form-group">
+                    <label for="classDateInput">Date</label>
                     <input type="date" id="classDateInput" required>
                 </div>
-                <div class="class-form-group">
-                    <label for="classTimeInput">Time *</label>
+                <div class="academy-form-group">
+                    <label for="classTimeInput">Time</label>
                     <input type="time" id="classTimeInput" required>
                 </div>
+                <div class="academy-modal-actions">
+                    <button type="button" class="btn-secondary" id="cancelClassModal">Cancel</button>
+                    <button type="submit" class="primary-button">Schedule Class</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DELETE CLASS MODAL -->
+    <div class="academy-modal" id="deleteClassModal">
+        <div class="academy-modal-box">
+            <div class="academy-modal-header">
+                <h3>Remove Scheduled Class</h3>
             </div>
-
-            <div class="class-modal-actions">
-                <button type="button" class="class-btn-cancel" id="cancelClassModal">
-                    Cancel
-                </button>
-                <button type="submit" class="class-btn-save">
-                    <i class="fa-solid fa-plus"></i>
-                    Add to Schedule
-                </button>
+            <p style="color:var(--muted);font-size:13px;">Are you sure you want to remove <strong
+                    id="deleteClassName">this class</strong>?</p>
+            <div class="academy-modal-actions">
+                <button type="button" class="btn-secondary" id="cancelDeleteClass">Cancel</button>
+                <button type="button" class="btn-danger" id="confirmDeleteClass">Delete</button>
             </div>
-
-        </form>
-
+        </div>
     </div>
-</div>
 
-<!-- ========================================
-     DELETE CLASS CONFIRMATION MODAL
-========================================= -->
-<div class="class-delete-modal" id="deleteClassModal">
-    <div class="class-delete-content">
-
-        <div class="class-delete-icon">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-        </div>
-
-        <h2>Remove this class?</h2>
-
-        <div class="class-delete-instruction">
-            <p>Remove this class from the schedule?</p>
-            <strong id="deleteClassName">this class</strong>
-            <span class="class-delete-warning">
-                <i class="fa-solid fa-circle-exclamation"></i>
-                This will be removed from your upcoming classes.
-            </span>
-        </div>
-
-        <div class="class-delete-actions">
-            <button type="button" class="class-delete-cancel" id="cancelDeleteClass">
-                Keep Class
-            </button>
-            <button type="button" class="class-delete-confirm" id="confirmDeleteClass">
-                <i class="fa-solid fa-trash"></i>
-                Remove
-            </button>
-        </div>
-
-    </div>
-</div>
-
-
-<!-- ========================================
-     ALL ACTIVITIES MODAL
-========================================= -->
-<div class="all-modal" id="allActivityModal">
-    <div class="all-modal-content">
-        <div class="all-modal-header">
-            <div>
-                <h2>All Activities</h2>
-                <p>Complete history of your actions</p>
+    <!-- ALL ACTIVITIES MODAL -->
+    <div class="academy-modal" id="allActivityModal">
+        <div class="academy-modal-box" style="max-width:560px;">
+            <div class="academy-modal-header">
+                <h3>All Recent Activities</h3>
+                <button type="button" class="academy-modal-close" id="closeAllActivity"><i
+                        class="fa-solid fa-xmark"></i></button>
             </div>
-            <button class="all-modal-close" id="closeAllActivity" type="button">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        <div class="all-modal-body">
-            <div class="activity-list" id="allActivityList"></div>
+            <div id="allActivityList"></div>
         </div>
     </div>
-</div>
 
-
-<!-- ========================================
-     ALL SCHEDULED CLASSES MODAL
-========================================= -->
-<div class="all-modal" id="allClassesModal">
-    <div class="all-modal-content">
-        <div class="all-modal-header">
-            <div>
-                <h2>All Scheduled Classes</h2>
-                <p>Complete list of upcoming classes</p>
+    <!-- ALL SCHEDULED CLASSES MODAL -->
+    <div class="academy-modal" id="allClassesModal">
+        <div class="academy-modal-box" style="max-width:560px;">
+            <div class="academy-modal-header">
+                <h3>All Scheduled Classes</h3>
+                <button type="button" class="academy-modal-close" id="closeAllClasses"><i
+                        class="fa-solid fa-xmark"></i></button>
             </div>
-            <button class="all-modal-close" id="closeAllClasses" type="button">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        <div class="all-modal-body">
-            <div class="class-list" id="allClassesList"></div>
+            <div id="allClassesList"></div>
         </div>
     </div>
-</div>
 
-<!-- ========================================
-     DELETE ACTIVITY CONFIRMATION MODAL
-========================================= -->
-<div class="all-modal" id="deleteActivityModal">
-    <div class="delete-activity-content">
-
-        <div class="delete-activity-icon">
-            <i class="fa-solid fa-triangle-exclamation"></i>
+    <!-- DELETE ACTIVITY MODAL -->
+    <div class="academy-modal" id="deleteActivityModal">
+        <div class="academy-modal-box">
+            <div class="academy-modal-header">
+                <h3>Delete Activity</h3>
+            </div>
+            <p style="color:var(--muted);font-size:13px;">Remove <strong id="deleteActivityName">this activity</strong>
+                from your log?</p>
+            <div class="academy-modal-actions">
+                <button type="button" class="btn-secondary" id="cancelDeleteActivity">Cancel</button>
+                <button type="button" class="btn-danger" id="confirmDeleteActivity">Delete</button>
+            </div>
         </div>
-
-        <h2>Delete this activity?</h2>
-
-        <div class="delete-activity-box">
-            <p>Are you sure you want to delete this activity?</p>
-            <strong id="deleteActivityName">this activity</strong>
-            <span class="delete-activity-warning">
-                <i class="fa-solid fa-circle-exclamation"></i>
-                This will remove it from your activity history.
-            </span>
-        </div>
-
-        <div class="delete-activity-actions">
-            <button type="button" class="delete-activity-cancel" id="cancelDeleteActivity">
-                Keep
-            </button>
-            <button type="button" class="delete-activity-confirm" id="confirmDeleteActivity">
-                <i class="fa-solid fa-trash"></i>
-                Delete
-            </button>
-        </div>
-
     </div>
-</div>
 
     <script src="/js/activity-log.js"></script>
     <script src="/js/instructor-dashboard.js"></script>
     <script src="/js/course-overview.js"></script>
     <script src="/js/upcoming-classes.js"></script>
 </body>
+
 </html>

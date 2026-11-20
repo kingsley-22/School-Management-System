@@ -1,370 +1,182 @@
 // ========================================
-// UPCOMING CLASSES
+// UPCOMING CLASSES (DASHBOARD)
+// Powered by /api/instructor/classes/ & /api/instructor/courses/
 // ========================================
 
-(function () {
+document.addEventListener("DOMContentLoaded", () => {
+    const api = window.InstructorAPI;
+    if (!api) return;
 
-    const STORAGE_KEY = "upcomingClasses";
-    const MAX_VISIBLE = 6;
+    const listEl = document.getElementById("upcomingClassesList");
+    const addClassBtn = document.getElementById("addClassBtn");
+    const addClassModal = document.getElementById("addClassModal");
+    const closeClassModal = document.getElementById("closeClassModal");
+    const cancelClassModal = document.getElementById("cancelClassModal");
+    const addClassForm = document.getElementById("addClassForm");
+    const courseSelect = document.getElementById("classCourseSelect");
+    const dateInput = document.getElementById("classDateInput");
+    const timeInput = document.getElementById("classTimeInput");
 
-    function loadClasses() {
-        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
-        catch { return []; }
-    }
-    function saveClasses(arr) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-    }
+    const allClassesModal = document.getElementById("allClassesModal");
+    const closeAllClasses = document.getElementById("closeAllClasses");
+    const allClassesList = document.getElementById("allClassesList");
 
-    function getAllCourses() {
-        const hardcoded = [
-            "Web Development",
-            "Python Programming",
-            "Database Systems",
-            "JavaScript Fundamentals",
-            "Backend Development",
-            "Cybersecurity Basics"
-        ];
+    const deleteClassModal = document.getElementById("deleteClassModal");
+    const deleteClassName = document.getElementById("deleteClassName");
+    const cancelDeleteClass = document.getElementById("cancelDeleteClass");
+    const confirmDeleteClass = document.getElementById("confirmDeleteClass");
 
-        let deleted = [];
-        let created = [];
-        try { deleted = JSON.parse(localStorage.getItem("deletedCourses") || "[]"); } catch (e) {}
-        try { created = JSON.parse(localStorage.getItem("createdCourses") || "[]"); } catch (e) {}
-
-        const visibleHardcoded = hardcoded.filter(c => !deleted.includes(c));
-        const createdTitles = created
-            .filter(c => !deleted.includes(c.title))
-            .map(c => c.title);
-
-        return [...visibleHardcoded, ...createdTitles];
-    }
-
-    function formatDayDate(isoDate) {
-        const d = new Date(isoDate + "T00:00:00");
-        if (isNaN(d)) return isoDate;
-        return d.toLocaleDateString("en-GB", {
-            weekday: "long",
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-        });
-    }
-
-    function formatTime(time) {
-        const parts = time.split(":");
-        let hours = parseInt(parts[0], 10);
-        const mins = (parts[1] || "00").padStart(2, "0");
-        const period = hours >= 12 ? "PM" : "AM";
-        hours = hours % 12 || 12;
-        return { display: hours + ":" + mins, period };
-    }
-
-    function generateId() {
-        return "cls_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
-    }
-
-    // ---- DOM refs ----
-    const list           = document.getElementById("upcomingClassesList");
-    const modal          = document.getElementById("addClassModal");
-    const form           = document.getElementById("addClassForm");
-    const closeBtn       = document.getElementById("closeClassModal");
-    const cancelBtn      = document.getElementById("cancelClassModal");
-    const courseSelect   = document.getElementById("classCourseSelect");
-    const dateInput      = document.getElementById("classDateInput");
-    const timeInput      = document.getElementById("classTimeInput");
-    const addBtn         = document.getElementById("addClassBtn");
-
-    const deleteModal    = document.getElementById("deleteClassModal");
-    const deleteNameEl   = document.getElementById("deleteClassName");
-    const cancelDeleteBtn = document.getElementById("cancelDeleteClass");
-    const confirmDeleteBtn = document.getElementById("confirmDeleteClass");
-
+    let classesCache = [];
+    let coursesCache = [];
     let pendingDeleteId = null;
 
-    if (!list) {
-        console.warn("[UpcomingClasses] #upcomingClassesList not found in HTML");
-        return;
-    }
-
-    // ---- RENDER ----
-    function render() {
-        const classes = loadClasses();
-
-        if (classes.length === 0) {
-            list.innerHTML =
-                '<div class="class-empty">' +
-                    '<i class="fa-regular fa-calendar"></i>' +
-                    '<p>No upcoming classes scheduled.</p>' +
-                    '<button type="button" class="class-empty-btn" id="emptyAddClassBtn">' +
-                        '<i class="fa-solid fa-plus"></i> Schedule your first class' +
-                    '</button>' +
-                '</div>';
-            const emptyBtn = document.getElementById("emptyAddClassBtn");
-            if (emptyBtn) emptyBtn.addEventListener("click", openModal);
+    function populateCourseDropdown(courses) {
+        coursesCache = courses || [];
+        if (!courseSelect) return;
+        if (!coursesCache.length) {
+            courseSelect.innerHTML = `<option value="">No assigned courses available</option>`;
             return;
         }
-
-        const now = new Date();
-        const visible = [...classes]
-            .sort(function (a, b) {
-                return new Date(a.date + "T" + a.time) - new Date(b.date + "T" + b.time);
-            })
-            .slice(0, MAX_VISIBLE);
-
-        let html = "";
-        visible.forEach(function (c) {
-            const t = formatTime(c.time);
-            const dayDate = formatDayDate(c.date);
-            const isPast = new Date(c.date + "T" + c.time) < now;
-
-            html +=
-                '<div class="class-item ' + (isPast ? "past" : "") + '" data-id="' + c.id + '">' +
-                    '<div class="class-time">' +
-                        '<strong>' + t.display + '</strong>' +
-                        '<span>' + t.period + '</span>' +
-                    '</div>' +
-                    '<div class="class-info">' +
-                        '<h4>' + c.course + '</h4>' +
-                        '<p>' + dayDate + '</p>' +
-                    '</div>' +
-                    '<button class="class-delete" data-id="' + c.id + '" type="button" title="Remove">' +
-                        '<i class="fa-solid fa-xmark"></i>' +
-                    '</button>' +
-                '</div>';
-        });
-
-               if (classes.length > MAX_VISIBLE) {
-            html += '<button type="button" class="class-more" id="viewAllClassesBtn">+' +
-                    (classes.length - MAX_VISIBLE) + ' more scheduled</button>';
-        }
-
-        list.innerHTML = html;
-
-                const viewAllBtn = document.getElementById("viewAllClassesBtn");
-        if (viewAllBtn) {
-            viewAllBtn.addEventListener("click", openAllClassesModal);
-        }
-
-        list.querySelectorAll(".class-delete").forEach(function (btn) {
-            btn.addEventListener("click", function (e) {
-                e.stopPropagation();
-                openDeleteModal(btn.dataset.id);
-            });
-        });
+        courseSelect.innerHTML = `<option value="">Select a course</option>` + coursesCache
+            .map((c) => `<option value="${c.id}">${api.escapeHtml(c.title)}</option>`)
+            .join("");
     }
 
-    // ---- DELETE MODAL ----
-    function openDeleteModal(id) {
-        if (!deleteModal) {
-            console.error("[UpcomingClasses] #deleteClassModal missing");
-            return;
-        }
-        const cls = loadClasses().find(function (c) { return c.id === id; });
-        if (!cls) return;
-
-        const t = formatTime(cls.time);
-        const dayDate = formatDayDate(cls.date);
-
-        if (deleteNameEl) {
-            deleteNameEl.textContent = cls.course + " — " + dayDate + " at " + t.display + " " + t.period;
-        }
-
-        pendingDeleteId = id;
-        deleteModal.classList.add("show");
-    }
-
-    function closeDeleteModal() {
-        if (deleteModal) deleteModal.classList.remove("show");
-        pendingDeleteId = null;
-    }
-
-    function confirmDelete() {
-        if (!pendingDeleteId) return;
-
-        const classes = loadClasses();
-        const removed = classes.find(function (c) { return c.id === pendingDeleteId; });
-        if (!removed) { closeDeleteModal(); return; }
-
-        saveClasses(classes.filter(function (c) { return c.id !== pendingDeleteId; }));
-
-        if (window.logActivity) {
-            const t = formatTime(removed.time);
-            window.logActivity(
-                "delete",
-                "Class removed from schedule",
-                removed.course + " on " + formatDayDate(removed.date) + " at " + t.display + " " + t.period,
-                "/instructor/"
-            );
-        }
-
-        closeDeleteModal();
-        render();
-    }
-
-        // ---- ALL CLASSES MODAL ----
-    const allClassesModal     = document.getElementById("allClassesModal");
-    const allClassesList      = document.getElementById("allClassesList");
-    const closeAllClassesBtn  = document.getElementById("closeAllClasses");
-
-    function renderAllClasses() {
-        if (!allClassesList) return;
-
-        const classes = loadClasses();
-
-        if (classes.length === 0) {
-            allClassesList.innerHTML =
-                '<div class="class-empty"><p>No classes scheduled.</p></div>';
-            return;
-        }
-
-        const now = new Date();
-        const sorted = [...classes].sort(function (a, b) {
-            return new Date(a.date + "T" + a.time) - new Date(b.date + "T" + b.time);
-        });
-
-        allClassesList.innerHTML = sorted.map(function (c) {
-            const t = formatTime(c.time);
-            const dayDate = formatDayDate(c.date);
-            const isPast = new Date(c.date + "T" + c.time) < now;
-            return `
-                <div class="class-item ${isPast ? "past" : ""}" data-id="${c.id}">
-                    <div class="class-time">
-                        <strong>${t.display}</strong>
-                        <span>${t.period}</span>
-                    </div>
-                    <div class="class-info">
-                        <h4>${c.course}</h4>
-                        <p>${dayDate}</p>
-                    </div>
-                    <button class="class-delete" data-id="${c.id}" type="button" title="Remove">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+    function buildClassItemHtml(item) {
+        const pastStyle = item.is_past ? "opacity:0.6;" : "";
+        return `
+            <div class="class-item ${item.is_past ? "past" : ""}" data-id="${item.id}" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #f1f5f9;gap:10px;${pastStyle}">
+                <div>
+                    <strong style="display:block;font-size:14px;color:#0f172a;">${api.escapeHtml(item.course || item.subject)}</strong>
+                    <span style="font-size:12px;color:#64748b;">
+                        <i class="fa-regular fa-calendar"></i> ${api.escapeHtml(item.date)} &nbsp;
+                        <i class="fa-regular fa-clock"></i> ${api.escapeHtml(item.time || item.start_time)}
+                        ${item.is_past ? " • Held" : " • Upcoming"}
+                    </span>
                 </div>
-            `;
-        }).join("");
+                <button type="button" class="delete-class-btn" data-id="${item.id}" data-name="${api.escapeHtml(item.course || item.subject)}" title="Remove class" style="border:none;background:transparent;color:#ef4444;cursor:pointer;padding:6px;">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        `;
+    }
 
-        allClassesList.querySelectorAll(".class-delete").forEach(function (btn) {
-            btn.addEventListener("click", function (e) {
-                e.stopPropagation();
-                openDeleteModal(btn.dataset.id);
+    function wireDeleteButtons(container) {
+        if (!container) return;
+        container.querySelectorAll(".delete-class-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                pendingDeleteId = btn.dataset.id;
+                if (deleteClassName) deleteClassName.textContent = btn.dataset.name || "this class";
+                deleteClassModal?.classList.add("show");
             });
         });
     }
 
-    function openAllClassesModal() {
-        renderAllClasses();
-        if (allClassesModal) allClassesModal.classList.add("show");
-    }
+    function renderClasses(items) {
+        classesCache = items || [];
+        if (!listEl) return;
 
-    if (closeAllClassesBtn) {
-        closeAllClassesBtn.addEventListener("click", function () {
-            if (allClassesModal) allClassesModal.classList.remove("show");
-        });
-    }
-
-    if (allClassesModal) {
-        allClassesModal.addEventListener("click", function (e) {
-            if (e.target === allClassesModal) allClassesModal.classList.remove("show");
-        });
-    }
-
-    if (cancelDeleteBtn) cancelDeleteBtn.addEventListener("click", closeDeleteModal);
-    if (confirmDeleteBtn) confirmDeleteBtn.addEventListener("click", confirmDelete);
-    if (deleteModal) {
-        deleteModal.addEventListener("click", function (e) {
-            if (e.target === deleteModal) closeDeleteModal();
-        });
-    }
-
-    // ---- ADD MODAL ----
-    function openModal() {
-        if (!modal) {
-            console.error("[UpcomingClasses] #addClassModal missing");
+        if (!classesCache.length) {
+            listEl.innerHTML = `<div style="padding:18px;text-align:center;color:#64748b;font-size:13px;">No classes scheduled yet.</div>`;
             return;
         }
 
-        if (courseSelect) {
-            const courses = getAllCourses();
-            let options = '<option value="">Select a course</option>';
-            courses.forEach(function (c) {
-                options += '<option value="' + c + '">' + c + '</option>';
-            });
-            courseSelect.innerHTML = options;
+        const MAX_VISIBLE = 6;
+        const visible = classesCache.slice(0, MAX_VISIBLE);
+        let html = visible.map(buildClassItemHtml).join("");
+
+        if (classesCache.length > MAX_VISIBLE) {
+            html += `
+                <button type="button" id="showMoreClassesBtn" style="width:100%;margin-top:8px;padding:8px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:8px;color:#2563eb;font-weight:600;cursor:pointer;">
+                    +${classesCache.length - MAX_VISIBLE} more scheduled
+                </button>
+            `;
         }
+        listEl.innerHTML = html;
+        wireDeleteButtons(listEl);
 
-        if (dateInput && !dateInput.value) {
-            dateInput.value = new Date().toISOString().slice(0, 10);
-        }
-
-        modal.classList.add("show");
-    }
-
-    function closeModal() {
-        if (modal) modal.classList.remove("show");
-        if (form) form.reset();
-    }
-
-    if (addBtn) addBtn.addEventListener("click", openModal);
-    if (closeBtn) closeBtn.addEventListener("click", closeModal);
-    if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
-    if (modal) {
-        modal.addEventListener("click", function (e) {
-            if (e.target === modal) closeModal();
+        document.getElementById("showMoreClassesBtn")?.addEventListener("click", () => {
+            if (allClassesList) {
+                allClassesList.innerHTML = classesCache.map(buildClassItemHtml).join("");
+                wireDeleteButtons(allClassesList);
+            }
+            allClassesModal?.classList.add("show");
         });
     }
 
-    document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape") {
-            if (deleteModal && deleteModal.classList.contains("show")) closeDeleteModal();
-            else if (modal && modal.classList.contains("show")) closeModal();
+    async function refreshClasses() {
+        try {
+            const res = await api.request("/instructor/classes/");
+            renderClasses(res.results || []);
+            if (allClassesModal?.classList.contains("show") && allClassesList) {
+                allClassesList.innerHTML = classesCache.map(buildClassItemHtml).join("");
+                wireDeleteButtons(allClassesList);
+            }
+        } catch (err) {
+            console.error("Failed to load classes:", err);
+        }
+    }
+
+    addClassBtn?.addEventListener("click", () => {
+        addClassForm?.reset();
+        addClassModal?.classList.add("show");
+    });
+    closeClassModal?.addEventListener("click", () => addClassModal?.classList.remove("show"));
+    cancelClassModal?.addEventListener("click", () => addClassModal?.classList.remove("show"));
+    closeAllClasses?.addEventListener("click", () => allClassesModal?.classList.remove("show"));
+
+    cancelDeleteClass?.addEventListener("click", () => {
+        pendingDeleteId = null;
+        deleteClassModal?.classList.remove("show");
+    });
+
+    confirmDeleteClass?.addEventListener("click", async () => {
+        if (!pendingDeleteId) return;
+        try {
+            await api.request(`/instructor/classes/${pendingDeleteId}/`, { method: "DELETE" });
+            pendingDeleteId = null;
+            deleteClassModal?.classList.remove("show");
+            await refreshClasses();
+            if (typeof window.reloadInstructorDashboard === "function") {
+                await window.reloadInstructorDashboard();
+            }
+        } catch (err) {
+            alert(err.message || "Failed to delete class.");
         }
     });
 
-    // ---- SUBMIT ----
-    if (form) {
-        form.addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            const course = courseSelect.value;
-            const date = dateInput.value;
-            const time = timeInput.value;
-
-            if (!course || !date || !time) {
-                alert("Please fill in all fields.");
-                return;
+    addClassForm?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const course_id = courseSelect?.value;
+        const date = dateInput?.value;
+        const time = timeInput?.value;
+        if (!course_id || !date || !time) {
+            alert("Please select a course, date, and time.");
+            return;
+        }
+        try {
+            await api.request("/instructor/classes/", {
+                method: "POST",
+                body: JSON.stringify({ course_id, date, time }),
+            });
+            addClassModal?.classList.remove("show");
+            addClassForm.reset();
+            await refreshClasses();
+            if (typeof window.reloadInstructorDashboard === "function") {
+                await window.reloadInstructorDashboard();
             }
+        } catch (err) {
+            alert(err.message || "Failed to schedule class.");
+        }
+    });
 
-            const record = {
-                id: generateId(),
-                course: course,
-                date: date,
-                time: time,
-                createdAt: Date.now()
-            };
-
-            const classes = loadClasses();
-            classes.push(record);
-            saveClasses(classes);
-
-            if (window.logActivity) {
-                const t = formatTime(time);
-                window.logActivity(
-                    "schedule",
-                    "New class scheduled",
-                    course + " on " + formatDayDate(date) + " at " + t.display + " " + t.period,
-                    "/instructor/"
-                );
-            }
-
-            render();
-            closeModal();
-        });
+    if (window.__instructorDashboardData) {
+        populateCourseDropdown(window.__instructorDashboardData.course_overview || []);
+        renderClasses(window.__instructorDashboardData.upcoming_classes || []);
     }
 
-    // ---- BOOT ----
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", render);
-    } else {
-        render();
-    }
-
-})();
+    window.addEventListener("instructor:dashboardLoaded", (event) => {
+        populateCourseDropdown(event.detail?.course_overview || []);
+        renderClasses(event.detail?.upcoming_classes || []);
+    });
+});

@@ -812,9 +812,9 @@ async function addInstructor(event) {
         : ($("instructorName")?.value.trim().split(/\s+/).slice(1).join(" ") || "");
     const email = $("instructorEmail").value.trim().toLowerCase();
     const phone = $("instructorPhone").value.trim();
-    const department = $("instructorDepartment").value.trim();
+    const department = $("instructorDepartment") ? $("instructorDepartment").value.trim() : "";
     const specialization = $("instructorSpecialization").value.trim();
-    const username = $("instructorUsername").value.trim();
+    const username = $("instructorUsername") ? $("instructorUsername").value.trim() : "";
     const password = $("instructorPassword")?.value || "";
     const confirmPassword = $("instructorConfirmPassword")?.value || "";
     const courseId = $("instructorCourseSelect")?.value || "";
@@ -824,9 +824,7 @@ async function addInstructor(event) {
         !lastName ||
         !email ||
         !phone ||
-        !department ||
         !specialization ||
-        !username ||
         !password ||
         !confirmPassword
     ) {

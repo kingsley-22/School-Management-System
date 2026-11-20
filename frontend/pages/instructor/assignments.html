@@ -1,913 +1,227 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Assignments | School Management System</title>
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-    <!-- Assignments CSS -->
-    <link rel="stylesheet" href="/css/assignments.css">
+    <title>Assignments | Instructor | IFEXA Academy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/instructor-dashboard.css">
 </head>
-
 <body>
 
-    <div class="dashboard">
+<div class="dashboard-layout">
 
-        <!-- ================================
-             SIDEBAR
-        ================================= -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-        <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
+        <button type="button" class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
 
-            <button type="button" class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">
-                <i class="fa-solid fa-xmark"></i>
+        <div class="logo">
+            <a class="brand" href="/instructor/">
+                <img src="/images/Top_Left-removebg-preview.png" alt="IFEXA Academy Logo">
+            </a>
+        </div>
+
+        <div class="logo-badge"><small>Learn. Grow. Succeed.</small></div>
+        <p class="nav-label">WORKSPACE</p>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <a href="/instructor/" class="nav-link"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+            <a href="/instructor/courses/" class="nav-link"><i class="fa-solid fa-book-open"></i><span>My Courses</span></a>
+            <a href="/instructor/students/" class="nav-link"><i class="fa-solid fa-users"></i><span>Students</span></a>
+            <a href="/instructor/assignments/" class="nav-link active"><i class="fa-solid fa-clipboard-list"></i><span>Assignments</span></a>
+            <a href="/instructor/announcements/" class="nav-link"><i class="fa-solid fa-bell"></i><span>Announcements</span></a>
+        </nav>
+
+        <div class="sidebar-help">
+            <span class="help-icon"><i class="fa-regular fa-circle-question"></i></span>
+            <strong>Need help?</strong>
+            <p>Manage your teaching workspace with ease.</p>
+            <a href="mailto:ifexatechnologies@gmail.com">Contact support <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+        </div>
+
+        <div class="Sidebar_down">
+            <a href="#logout" class="nav-link logout-link"><i class="fa-solid fa-right-from-bracket"></i><span>Log out</span></a>
+        </div>
+        <div class="sidebar-footer">© 2026 Ifexa Academy</div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <button type="button" class="hamburger" id="hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar">
+                <i class="fa-solid fa-bars"></i>
             </button>
 
-            <div class="logo">
-                <i class="fa-solid fa-graduation-cap"></i>
-                <img src="/image/ifexa_id-removebg-preview (1).png" alt="School Logo">
-            </div>
+            <label class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="search" id="assignmentSearch" placeholder="Search assignments by title, ID, or course..." aria-label="Search assignments">
+            </label>
 
-            <nav class="sidebar-menu">
-
-                <a href="/instructor/" class="menu-item">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <span>Dashboard</span>
-                </a>
-
-                <a href="/instructor/courses/" class="menu-item">
-                    <i class="fa-solid fa-book-open"></i>
-                    <span>My Courses</span>
-                </a>
-
-                <a href="/instructor/students/" class="menu-item">
-                    <i class="fa-solid fa-users"></i>
-                    <span>Students</span>
-                </a>
-
-                <a href="/instructor/assignments/" class="menu-item active">
-                    <i class="fa-solid fa-file-lines"></i>
-                    <span>Assignments</span>
-                </a>
-
-                <!-- <a href="#" class="menu-item">
-                    <i class="fa-solid fa-calendar-days"></i>
-                    <span>Schedule</span>
-                </a>
-
-                <a href="#" class="menu-item">
-                    <i class="fa-solid fa-chart-column"></i>
-                    <span>Performance</span>
-                </a> -->
-
-                <a href="/instructor/announcements/" class="menu-item">
-                    <i class="fa-solid fa-bullhorn"></i>
-                    <span>Announcements</span>
-                </a>
-
-            </nav>
-
-            <div class="sidebar-bottom">
-
-                <a href="#" class="menu-item">
-                    <i class="fa-solid fa-gear"></i>
-                    <span>Settings</span>
-                </a>
-
-                <a href="#" class="menu-item logout">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Logout</span>
-                </a>
-
-            </div>
-
-        </aside>
-
-
-        <!-- ================================
-             MAIN CONTENT
-        ================================= -->
-
-        <main class="main-content">
-
-
-            <!-- TOPBAR -->
-
-            <header class="topbar">
-
-                <div class="topbar-left">
-
-                    <button class="menu-toggle">
-                        <i class="fa-solid fa-bars"></i>
-                    </button>
-
-                    <div>
-                        <h1>Assignments</h1>
-                        <p>Manage assignments and track student submissions.</p>
-                    </div>
-
-                </div>
-
-
-                <div class="topbar-right">
-
-                    <button class="notification-btn">
-                        <i class="fa-regular fa-bell"></i>
-                        <span class="notification-dot"></span>
-                    </button>
-
-                    <div class="profile">
-
-                        <div class="profile-avatar">
-                            JM
-                        </div>
-
-                        <div class="profile-info">
-                            <h4>JUNGLE MAN</h4>
-                            <span>Instructor</span>
-                        </div>
-
-                        <i class="fa-solid fa-chevron-down"></i>
-
-                    </div>
-
-                </div>
-
-            </header>
-
-
-            <!-- ================================
-                 PAGE HEADER
-            ================================= -->
-
-            <section class="page-header">
-
-                <div>
-                    <h2>Assignments</h2>
-                    <p>Manage assignments and track student submissions.</p>
-                </div>
-
-                <button class="create-assignment-btn">
-                    <i class="fa-solid fa-plus"></i>
-                    Create Assignment
+            <div class="topbar-user">
+                <button type="button" class="notification-button" aria-label="Notifications">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="notification-dot" style="display:none;"></span>
                 </button>
+                <div class="topbar-profile-trigger profile">
+                    <span class="topbar-avatar-initials profile-avatar">IN</span>
+                    <div class="topbar-user-info">
+                        <strong id="topbarInstructorName">Loading...</strong>
+                        <small id="topbarInstructorRole">Instructor</small>
+                    </div>
+                </div>
+            </div>
+        </header>
 
+        <div class="instructor-page-body">
+
+            <section class="stats-grid assignment-stats">
+                <article class="stat-card blue-card">
+                    <i class="fa-solid fa-clipboard-list stat-icon"></i>
+                    <p>Total Assignments</p>
+                    <h2>0</h2>
+                </article>
+                <article class="stat-card green-card">
+                    <i class="fa-solid fa-clock stat-icon"></i>
+                    <p>Active Assignments</p>
+                    <h2>0</h2>
+                </article>
+                <article class="stat-card purple-card">
+                    <i class="fa-solid fa-circle-check stat-icon"></i>
+                    <p>Completed</p>
+                    <h2>0</h2>
+                </article>
+                <article class="stat-card orange-card">
+                    <i class="fa-solid fa-file-arrow-up stat-icon"></i>
+                    <p>Total Submissions</p>
+                    <h2>0</h2>
+                </article>
             </section>
 
-
-            <!-- ================================
-                 STATISTICS
-            ================================= -->
-
-            <section class="assignment-stats">
-
-                <div class="stat-card">
-
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-file-lines"></i>
-                    </div>
-
+            <section class="panel">
+                <div class="page-toolbar" style="margin-bottom:16px;">
                     <div>
-                        <p>Total Assignments</p>
-                        <h2>24</h2>
+                        <h2 style="font-size:17px;font-weight:800;color:var(--text);">Course Assignments</h2>
+                        <p style="font-size:12.5px;color:var(--muted);">Create assignments, review student submissions, and record grades.</p>
                     </div>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-clock"></i>
-                    </div>
-
-                    <div>
-                        <p>Active Assignments</p>
-                        <h2>8</h2>
-                    </div>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-check-circle"></i>
-                    </div>
-
-                    <div>
-                        <p>Completed</p>
-                        <h2>12</h2>
-                    </div>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <div class="stat-icon">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
-
-                    <div>
-                        <p>Total Submissions</p>
-                        <h2>18</h2>
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- ================================
-                 ASSIGNMENTS
-            ================================= -->
-
-            <section class="assignments-section">
-
-                <div class="section-header">
-
-                    <div>
-                        <h2>All Assignments</h2>
-                        <p>View and manage assignments for your courses.</p>
-                    </div>
-
-
-                    <div class="assignment-actions">
-
-                        <input
-                            type="text"
-                            id="assignmentSearch"
-                            placeholder="Search assignments..."
-                        >
-
-
-                        <select id="assignmentFilter">
-
-                            <option value="all">
-                                All Courses
-                            </option>
-
-                            <option value="web-development">
-                                Web Development
-                            </option>
-
-                            <option value="python">
-                                Python
-                            </option>
-
-                            <option value="ui-ux">
-                                UI/UX Design
-                            </option>
-
+                    <div class="toolbar-filters" style="justify-content:flex-end;">
+                        <select id="assignmentFilter" class="toolbar-select" aria-label="Filter assignments by course">
+                            <option value="all">All Courses</option>
                         </select>
-
+                        <button type="button" class="primary-button create-assignment-btn">
+                            <i class="fa-solid fa-plus"></i> Create Assignment
+                        </button>
                     </div>
-
                 </div>
-
-
-                <!-- TABLE -->
 
                 <div class="table-container">
-
-                    <table>
-
+                    <table class="academy-table" id="assignmentsTable">
                         <thead>
-
                             <tr>
                                 <th>Assignment</th>
                                 <th>Course</th>
                                 <th>Due Date</th>
                                 <th>Submissions</th>
                                 <th>Status</th>
-                                <th>Action</th>
+                                <th>Actions</th>
                             </tr>
-
                         </thead>
-
-
-                        <tbody id="assignmentsTable">
-
-
-                            <!-- ASSIGNMENT 1 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <div class="assignment-name">
-
-                                        <div class="assignment-icon">
-                                            <i class="fa-solid fa-code"></i>
-                                        </div>
-
-                                        <div>
-                                            <strong>
-                                                Build a Portfolio Website
-                                            </strong>
-
-                                            <small>
-                                                Assignment ID: AS001
-                                            </small>
-                                        </div>
-
-                                    </div>
-
-                                </td>
-
-
-                                <td>
-                                    Web Development
-                                </td>
-
-
-                                <td>
-                                    25 Sept 2026
-                                </td>
-
-
-                                <td>
-                                    <strong>32 / 40</strong>
-                                </td>
-
-
-                                <td>
-                                    <span class="status active-status">
-                                        Active
-                                    </span>
-                                </td>
-
-
-                                <td>
-
-                                    <div class="action-buttons">
-
-                                        <button class="view-btn">
-                                            <i class="fa-solid fa-eye"></i>
-                                            View
-                                        </button>
-
-                                        <button class="edit-btn">
-                                            <i class="fa-solid fa-pen"></i>
-                                            Edit
-                                        </button>
-
-                                        <button class="delete-btn">
-                                            <i class="fa-solid fa-trash"></i>
-                                            Delete
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-                            <!-- ASSIGNMENT 2 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <div class="assignment-name">
-
-                                        <div class="assignment-icon">
-                                            <i class="fa-solid fa-laptop-code"></i>
-                                        </div>
-
-                                        <div>
-                                            <strong>
-                                                Python Calculator
-                                            </strong>
-
-                                            <small>
-                                                Assignment ID: AS002
-                                            </small>
-                                        </div>
-
-                                    </div>
-
-                                </td>
-
-
-                                <td>
-                                    Python
-                                </td>
-
-
-                                <td>
-                                    28 Sept 2026
-                                </td>
-
-
-                                <td>
-                                    <strong>20 / 35</strong>
-                                </td>
-
-
-                                <td>
-                                    <span class="status active-status">
-                                        Active
-                                    </span>
-                                </td>
-
-
-                                <td>
-
-                                    <div class="action-buttons">
-
-                                        <button class="view-btn">
-                                            <i class="fa-solid fa-eye"></i>
-                                            View
-                                        </button>
-
-                                        <button class="edit-btn">
-                                            <i class="fa-solid fa-pen"></i>
-                                            Edit
-                                        </button>
-
-                                        <button class="delete-btn">
-                                            <i class="fa-solid fa-trash"></i>
-                                            Delete
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-                            <!-- ASSIGNMENT 3 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <div class="assignment-name">
-
-                                        <div class="assignment-icon">
-                                            <i class="fa-solid fa-pen-ruler"></i>
-                                        </div>
-
-                                        <div>
-                                            <strong>
-                                                Mobile App Wireframe
-                                            </strong>
-
-                                            <small>
-                                                Assignment ID: AS003
-                                            </small>
-                                        </div>
-
-                                    </div>
-
-                                </td>
-
-
-                                <td>
-                                    UI/UX Design
-                                </td>
-
-
-                                <td>
-                                    15 Sept 2026
-                                </td>
-
-
-                                <td>
-                                    <strong>30 / 30</strong>
-                                </td>
-
-
-                                <td>
-                                    <span class="status completed-status">
-                                        Completed
-                                    </span>
-                                </td>
-
-
-                                <td>
-
-                                    <div class="action-buttons">
-
-                                        <button class="view-btn">
-                                            <i class="fa-solid fa-eye"></i>
-                                            View
-                                        </button>
-
-                                        <button class="edit-btn">
-                                            <i class="fa-solid fa-pen"></i>
-                                            Edit
-                                        </button>
-
-                                        <button class="delete-btn">
-                                            <i class="fa-solid fa-trash"></i>
-                                            Delete
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-                            <!-- ASSIGNMENT 4 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <div class="assignment-name">
-
-                                        <div class="assignment-icon">
-                                            <i class="fa-solid fa-globe"></i>
-                                        </div>
-
-                                        <div>
-                                            <strong>
-                                                Responsive Website Design
-                                            </strong>
-
-                                            <small>
-                                                Assignment ID: AS004
-                                            </small>
-                                        </div>
-
-                                    </div>
-
-                                </td>
-
-
-                                <td>
-                                    Web Development
-                                </td>
-
-
-                                <td>
-                                    30 Sept 2026
-                                </td>
-
-
-                                <td>
-                                    <strong>15 / 40</strong>
-                                </td>
-
-
-                                <td>
-                                    <span class="status active-status">
-                                        Active
-                                    </span>
-                                </td>
-
-
-                                <td>
-
-                                    <div class="action-buttons">
-
-                                        <button class="view-btn">
-                                            <i class="fa-solid fa-eye"></i>
-                                            View
-                                        </button>
-
-                                        <button class="edit-btn">
-                                            <i class="fa-solid fa-pen"></i>
-                                            Edit
-                                        </button>
-
-                                        <button class="delete-btn">
-                                            <i class="fa-solid fa-trash"></i>
-                                            Delete
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
+                        <tbody>
+                            <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted);">Loading assignments...</td></tr>
                         </tbody>
-
                     </table>
-
                 </div>
-
             </section>
 
-        </main>
-
-    </div>
-
-
-    <!-- ================================
-         CREATE ASSIGNMENT MODAL
-    ================================= -->
-
-    <div class="modal" id="assignmentModal">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <div>
-                    <h2>Create Assignment</h2>
-                    <p>Create a new assignment for your students.</p>
-                </div>
-
-                <button class="close-modal" id="closeModal">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-
-            </div>
-
-
-            <form id="assignmentForm">
-
-                <div class="form-group">
-
-                    <label for="assignmentTitle">
-                        Assignment Title
-                    </label>
-
-                    <input
-                        type="text"
-                        id="assignmentTitle"
-                        placeholder="Enter assignment title"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="assignmentCourse">
-                        Course
-                    </label>
-
-                    <select id="assignmentCourse" required>
-
-                        <option value="">
-                            Select Course
-                        </option>
-
-                        <option value="web-development">
-                            Web Development
-                        </option>
-
-                        <option value="python">
-                            Python
-                        </option>
-
-                        <option value="ui-ux">
-                            UI/UX Design
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="assignmentDescription">
-                        Description
-                    </label>
-
-                    <textarea
-                        id="assignmentDescription"
-                        rows="4"
-                        placeholder="Describe the assignment..."
-                        required
-                    ></textarea>
-
-                </div>
-
-
-                <div class="form-row">
-
-                    <div class="form-group">
-
-                        <label for="assignmentDueDate">
-                            Due Date
-                        </label>
-
-                        <input
-                            type="date"
-                            id="assignmentDueDate"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="assignmentScore">
-                            Maximum Score
-                        </label>
-
-                        <input
-                            type="number"
-                            id="assignmentScore"
-                            placeholder="100"
-                            min="1"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-
-                <div class="form-actions">
-
-                    <button
-                        type="button"
-                        class="cancel-btn"
-                        id="cancelModal"
-                    >
-                        Cancel
-                    </button>
-
-                    <button
-                        type="submit"
-                        class="submit-assignment-btn"
-                    >
-                        <i class="fa-solid fa-plus"></i>
-                        Create Assignment
-                    </button>
-
-                </div>
-
-            </form>
-
         </div>
+    </main>
+</div>
 
-    </div>
-
-
-    <!-- ================================
-         EDIT ASSIGNMENT MODAL
-    ================================= -->
-
-    <div class="modal" id="editAssignmentModal">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <div>
-                    <h2>Edit Assignment</h2>
-                    <p>Update assignment information.</p>
-                </div>
-
-                <button class="close-modal" id="closeEditModal">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-
-            </div>
-
-
-            <form id="editAssignmentForm">
-
-                <div class="form-group">
-
-                    <label for="editAssignmentTitle">
-                        Assignment Title
-                    </label>
-
-                    <input
-                        type="text"
-                        id="editAssignmentTitle"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="editAssignmentCourse">
-                        Course
-                    </label>
-
-                    <select id="editAssignmentCourse" required>
-
-                        <option value="">
-                            Select Course
-                        </option>
-
-                        <option value="web-development">
-                            Web Development
-                        </option>
-
-                        <option value="python">
-                            Python
-                        </option>
-
-                        <option value="ui-ux">
-                            UI/UX Design
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="editAssignmentDescription">
-                        Description
-                    </label>
-
-                    <textarea
-                        id="editAssignmentDescription"
-                        rows="4"
-                        required
-                    ></textarea>
-
-                </div>
-
-
-                <div class="form-row">
-
-                    <div class="form-group">
-
-                        <label for="editAssignmentDueDate">
-                            Due Date
-                        </label>
-
-                        <input
-                            type="date"
-                            id="editAssignmentDueDate"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="editAssignmentScore">
-                            Maximum Score
-                        </label>
-
-                        <input
-                            type="number"
-                            id="editAssignmentScore"
-                            min="1"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-
-                <div class="form-actions">
-
-                    <button
-                        type="button"
-                        class="cancel-btn"
-                        id="cancelEditModal"
-                    >
-                        Cancel
-                    </button>
-
-                    <button
-                        type="submit"
-                        class="submit-assignment-btn"
-                    >
-                        <i class="fa-solid fa-save"></i>
-                        Save Changes
-                    </button>
-
-                </div>
-
-            </form>
-
+<!-- CREATE ASSIGNMENT MODAL -->
+<div class="academy-modal" id="assignmentModal">
+    <div class="academy-modal-box">
+        <div class="academy-modal-header">
+            <h3>Create Assignment</h3>
+            <button type="button" class="academy-modal-close" id="closeModal"><i class="fa-solid fa-xmark"></i></button>
         </div>
-
+        <form id="assignmentForm">
+            <div class="academy-form-group">
+                <label for="assignmentTitle">Assignment Title</label>
+                <input type="text" id="assignmentTitle" placeholder="e.g. Build a REST API" required>
+            </div>
+            <div class="academy-form-group">
+                <label for="assignmentCourse">Course</label>
+                <select id="assignmentCourse" required>
+                    <option value="">Select Course</option>
+                </select>
+            </div>
+            <div class="academy-form-group">
+                <label for="assignmentDescription">Instructions</label>
+                <textarea id="assignmentDescription" placeholder="Provide assignment details and submission criteria..." required></textarea>
+            </div>
+            <div class="academy-form-group">
+                <label for="assignmentDueDate">Due Date</label>
+                <input type="date" id="assignmentDueDate" required>
+            </div>
+            <div class="academy-form-group">
+                <label for="assignmentScore">Max Score</label>
+                <input type="number" id="assignmentScore" min="1" value="100" required>
+            </div>
+            <div class="academy-modal-actions">
+                <button type="button" class="btn-secondary" id="cancelModal">Cancel</button>
+                <button type="submit" class="primary-button">Create Assignment</button>
+            </div>
+        </form>
     </div>
+</div>
 
+<!-- EDIT ASSIGNMENT MODAL -->
+<div class="academy-modal" id="editAssignmentModal">
+    <div class="academy-modal-box">
+        <div class="academy-modal-header">
+            <h3>Edit Assignment</h3>
+            <button type="button" class="academy-modal-close" id="closeEditModal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="editAssignmentForm">
+            <div class="academy-form-group">
+                <label for="editAssignmentTitle">Assignment Title</label>
+                <input type="text" id="editAssignmentTitle" required>
+            </div>
+            <div class="academy-form-group">
+                <label for="editAssignmentCourse">Course</label>
+                <select id="editAssignmentCourse" required>
+                    <option value="">Select Course</option>
+                </select>
+            </div>
+            <div class="academy-form-group">
+                <label for="editAssignmentDescription">Instructions</label>
+                <textarea id="editAssignmentDescription" required></textarea>
+            </div>
+            <div class="academy-form-group">
+                <label for="editAssignmentDueDate">Due Date</label>
+                <input type="date" id="editAssignmentDueDate" required>
+            </div>
+            <div class="academy-form-group">
+                <label for="editAssignmentScore">Max Score</label>
+                <input type="number" id="editAssignmentScore" min="1" required>
+            </div>
+            <div class="academy-modal-actions">
+                <button type="button" class="btn-secondary" id="cancelEditModal">Cancel</button>
+                <button type="submit" class="primary-button">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-    <!-- JAVASCRIPT -->
-    <script src="/js/activity-log.js"></script>
-    <script src="/js/assignments.js"></script>
-    <script src="/js/instructor-shell.js"></script>
-    <script src="/js/stat-sync.js"></script>
-
+<script src="/js/activity-log.js"></script>
+<script src="/js/assignments.js"></script>
+<script src="/js/instructor-shell.js"></script>
+<script src="/js/stat-sync.js"></script>
 </body>
-
 </html>

@@ -1,966 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Students | Instructor Dashboard</title>
-
-    <!-- Students CSS -->
-    <link rel="stylesheet" href="/css/students.css">
-
-    <!-- Font Awesome -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    >
+    <title>Students | Instructor | IFEXA Academy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/instructor-dashboard.css">
 </head>
-
 <body>
 
-    <!-- ========================================
-         SIDEBAR
-    ========================================= -->
+<div class="dashboard-layout">
 
-    <aside class="sidebar">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+    <aside class="sidebar" id="sidebar">
         <button type="button" class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">
             <i class="fa-solid fa-xmark"></i>
         </button>
 
         <div class="logo">
-            <i class="fa-solid fa-graduation-cap"></i>
-            <img src="/image/ifexa_id-removebg-preview (1).png" alt="School Logo">
+            <a class="brand" href="/instructor/">
+                <img src="/images/Top_Left-removebg-preview.png" alt="IFEXA Academy Logo">
+            </a>
         </div>
 
+        <div class="logo-badge"><small>Learn. Grow. Succeed.</small></div>
+        <p class="nav-label">WORKSPACE</p>
 
-        <nav class="sidebar-menu">
-
-            <a href="/instructor/" class="menu-item">
-                <i class="fa-solid fa-chart-line"></i>
-                <span>Dashboard</span>
-            </a>
-
-            <a href="/instructor/courses/" class="menu-item">
-                <i class="fa-solid fa-book-open"></i>
-                <span>My Courses</span>
-            </a>
-
-            <a href="/instructor/students/" class="menu-item active">
-                <i class="fa-solid fa-users"></i>
-                <span>Students</span>
-            </a>
-
-            <a href="/instructor/assignments/" class="menu-item">
-                <i class="fa-solid fa-file-lines"></i>
-                <span>Assignments</span>
-            </a>
-
-            <!-- <a href="#" class="menu-item">
-                <i class="fa-solid fa-calendar-days"></i>
-                <span>Schedule</span>
-            </a>
-
-            <a href="#" class="menu-item">
-                <i class="fa-solid fa-chart-column"></i>
-                <span>Performance</span>
-            </a> -->
-
-            <a href="/instructor/announcements/" class="menu-item">
-                <i class="fa-solid fa-bullhorn"></i>
-                <span>Announcements</span>
-            </a>
-
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <a href="/instructor/" class="nav-link"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+            <a href="/instructor/courses/" class="nav-link"><i class="fa-solid fa-book-open"></i><span>My Courses</span></a>
+            <a href="/instructor/students/" class="nav-link active"><i class="fa-solid fa-users"></i><span>Students</span></a>
+            <a href="/instructor/assignments/" class="nav-link"><i class="fa-solid fa-clipboard-list"></i><span>Assignments</span></a>
+            <a href="/instructor/announcements/" class="nav-link"><i class="fa-solid fa-bell"></i><span>Announcements</span></a>
         </nav>
 
-
-        <div class="sidebar-bottom">
-
-            <a href="#" class="menu-item">
-                <i class="fa-solid fa-gear"></i>
-                <span>Settings</span>
-            </a>
-
-            <a href="#" class="menu-item logout">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                <span>Logout</span>
-            </a>
-
+        <div class="sidebar-help">
+            <span class="help-icon"><i class="fa-regular fa-circle-question"></i></span>
+            <strong>Need help?</strong>
+            <p>Manage your teaching workspace with ease.</p>
+            <a href="mailto:ifexatechnologies@gmail.com">Contact support <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
         </div>
 
+        <div class="Sidebar_down">
+            <a href="#logout" class="nav-link logout-link"><i class="fa-solid fa-right-from-bracket"></i><span>Log out</span></a>
+        </div>
+        <div class="sidebar-footer">© 2026 Ifexa Academy</div>
     </aside>
-
-
-    <!-- ========================================
-         MAIN CONTENT
-    ========================================= -->
 
     <main class="main-content">
 
-
-        <!-- ========================================
-             TOPBAR
-        ========================================= -->
-
         <header class="topbar">
+            <button type="button" class="hamburger" id="hamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar">
+                <i class="fa-solid fa-bars"></i>
+            </button>
 
-            <div class="topbar-left">
+            <label class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="search" id="studentSearch" placeholder="Search students by name, email, or ID..." aria-label="Search students">
+            </label>
 
-                <button class="menu-toggle" type="button">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-
-                <div>
-                    <h1>Students</h1>
-                    <p>Manage and monitor your students</p>
-                </div>
-
-            </div>
-
-
-            <div class="topbar-right">
-
-                <button class="notification-btn" type="button">
+            <div class="topbar-user">
+                <button type="button" class="notification-button" aria-label="Notifications">
                     <i class="fa-regular fa-bell"></i>
-                    <span class="notification-dot"></span>
+                    <span class="notification-dot" style="display:none;"></span>
                 </button>
-
-
-                <div class="profile">
-
-                    <div class="profile-avatar">
-                        JM
+                <div class="topbar-profile-trigger profile">
+                    <span class="topbar-avatar-initials profile-avatar">IN</span>
+                    <div class="topbar-user-info">
+                        <strong id="topbarInstructorName">Loading...</strong>
+                        <small id="topbarInstructorRole">Instructor</small>
                     </div>
-
-                    <div class="profile-info">
-                        <h4>JUNGLE MAN</h4>
-                        <span>Instructor</span>
-                    </div>
-
-                    <i class="fa-solid fa-chevron-down"></i>
-
                 </div>
-
             </div>
-
         </header>
 
+        <div class="instructor-page-body">
 
-        <!-- ========================================
-             STUDENT STATISTICS
-        ========================================= -->
-
-        <section class="student-stats">
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    <i class="fa-solid fa-user-graduate"></i>
-                </div>
-
-                <div>
+            <section class="stats-grid student-stats">
+                <article class="stat-card blue-card">
+                    <i class="fa-solid fa-users stat-icon"></i>
                     <p>Total Students</p>
-                    <h2>120</h2>
-                </div>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-
-                <div>
+                    <h2>0</h2>
+                </article>
+                <article class="stat-card green-card">
+                    <i class="fa-solid fa-user-check stat-icon"></i>
                     <p>Active Students</p>
-                    <h2>98</h2>
-                </div>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    <i class="fa-solid fa-book-open"></i>
-                </div>
-
-                <div>
-                    <p>Students in Courses</p>
-                    <h2>105</h2>
-                </div>
-
-            </div>
-
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    <i class="fa-solid fa-trophy"></i>
-                </div>
-
-                <div>
+                    <h2>0</h2>
+                </article>
+                <article class="stat-card purple-card">
+                    <i class="fa-solid fa-book-open-reader stat-icon"></i>
+                    <p>Course Enrollments</p>
+                    <h2>0</h2>
+                </article>
+                <article class="stat-card orange-card">
+                    <i class="fa-solid fa-trophy stat-icon"></i>
                     <p>Top Performers</p>
-                    <h2>15</h2>
-                </div>
+                    <h2>0</h2>
+                </article>
+            </section>
 
-            </div>
-
-        </section>
-
-
-        <!-- ========================================
-             STUDENTS SECTION
-        ========================================= -->
-
-        <section class="students-section">
-
-            <div class="section-header">
-
-                <div class="section-title">
-
-                    <h2>All Students</h2>
-
-                    <p>
-                        View and manage students enrolled in your courses.
-                    </p>
-
-                </div>
-
-
-                <div class="student-actions">
-
-                    <!-- ADD STUDENT -->
-
-                    <button
-                        class="add-student-btn"
-                        id="addStudentBtn"
-                        type="button"
-                    >
-                        <i class="fa-solid fa-plus"></i>
-                        Add Student
-                    </button>
-
-
-                    <!-- SEARCH -->
-
-                    <div class="search-box">
-
-                        <i class="fa-solid fa-magnifying-glass"></i>
-
-                        <input
-                            type="text"
-                            id="studentSearch"
-                            placeholder="Search students..."
-                        >
-
+            <section class="panel">
+                <div class="page-toolbar" style="margin-bottom:16px;">
+                    <div>
+                        <h2 style="font-size:17px;font-weight:800;color:var(--text);">Enrolled Students</h2>
+                        <p style="font-size:12.5px;color:var(--muted);">Students currently enrolled in your assigned courses.</p>
                     </div>
-
-
-                    <!-- COURSE FILTER -->
-
-                    <select id="courseFilter">
-
-                        <option value="all">
-                            All Courses
-                        </option>
-
-                        <option value="web">
-                            Web Development
-                        </option>
-
-                        <option value="python">
-                            Python
-                        </option>
-
-                        <option value="design">
-                            UI/UX Design
-                        </option>
-
-                        <option value="forex">
-                            Forex Trading
-                        </option>
-
-                    </select>
-
+                    <div class="toolbar-filters" style="justify-content:flex-end;">
+                        <select id="courseFilter" class="toolbar-select" aria-label="Filter by course">
+                            <option value="all">All Courses</option>
+                        </select>
+                        <button type="button" class="primary-button" id="addStudentBtn">
+                            <i class="fa-solid fa-user-plus"></i> Add Student
+                        </button>
+                    </div>
                 </div>
 
-            </div>
-
-
-            <!-- ========================================
-                 STUDENTS TABLE
-            ========================================= -->
-
-            <div class="table-container">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Student</th>
-
-                            <th>Email</th>
-
-                            <th>Course</th>
-
-                            <th>Progress</th>
-
-                            <th>Status</th>
-
-                            <th>Action</th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody id="studentsTable">
-
-
-                        <!-- STUDENT 1 -->
-
-                        <tr>
-
-                            <td>
-
-                                <div class="student-name">
-
-                                    <div class="student-avatar">
-                                        ME
-                                    </div>
-
-                                    <div>
-                                        <strong>
-                                            Moses Emenike
-                                        </strong>
-
-                                        <small>
-                                            ID: ST001
-                                        </small>
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-
-                            <td>
-                                moses@example.com
-                            </td>
-
-
-                            <td>
-                                Web Development
-                            </td>
-
-
-                            <td>
-
-                                <div class="progress-container">
-
-                                    <div class="progress-bar">
-                                        <span style="width: 80%;"></span>
-                                    </div>
-
-                                    <small>
-                                        80%
-                                    </small>
-
-                                </div>
-
-                            </td>
-
-
-                            <td>
-
-                                <span class="status active-status">
-                                    Active
-                                </span>
-
-                            </td>
-
-
-                            <td>
-
-                                <button
-                                    class="view-btn"
-                                    type="button"
-                                >
-                                    View
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-
-                        <!-- STUDENT 2 -->
-
-                        <tr>
-
-                            <td>
-
-                                <div class="student-name">
-
-                                    <div class="student-avatar">
-                                        NI
-                                    </div>
-
-                                    <div>
-                                        <strong>
-                                            Nwachukwu Ikechukwu
-                                        </strong>
-
-                                        <small>
-                                            ID: ST002
-                                        </small>
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-
-                            <td>
-                                ikechukwu@example.com
-                            </td>
-
-
-                            <td>
-                                Python
-                            </td>
-
-
-                            <td>
-
-                                <div class="progress-container">
-
-                                    <div class="progress-bar">
-                                        <span style="width: 65%;"></span>
-                                    </div>
-
-                                    <small>
-                                        65%
-                                    </small>
-
-                                </div>
-
-                            </td>
-
-
-                            <td>
-
-                                <span class="status active-status">
-                                    Active
-                                </span>
-
-                            </td>
-
-
-                            <td>
-
-                                <button
-                                    class="view-btn"
-                                    type="button"
-                                >
-                                    View
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-
-                        <!-- STUDENT 3 -->
-
-                        <tr>
-
-                            <td>
-
-                                <div class="student-name">
-
-                                    <div class="student-avatar">
-                                        UG
-                                    </div>
-
-                                    <div>
-
-                                        <strong>
-                                            Ugonna
-                                        </strong>
-
-                                        <small>
-                                            ID: ST003
-                                        </small>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-
-                            <td>
-                                ugonna@example.com
-                            </td>
-
-
-                            <td>
-                                UI/UX Design
-                            </td>
-
-
-                            <td>
-
-                                <div class="progress-container">
-
-                                    <div class="progress-bar">
-                                        <span style="width: 45%;"></span>
-                                    </div>
-
-                                    <small>
-                                        45%
-                                    </small>
-
-                                </div>
-
-                            </td>
-
-
-                            <td>
-
-                                <span class="status inactive-status">
-                                    Inactive
-                                </span>
-
-                            </td>
-
-
-                            <td>
-
-                                <button
-                                    class="view-btn"
-                                    type="button"
-                                >
-                                    View
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-
-                        <!-- STUDENT 4 -->
-
-                        <tr>
-
-                            <td>
-
-                                <div class="student-name">
-
-                                    <div class="student-avatar">
-                                        EZ
-                                    </div>
-
-                                    <div>
-
-                                        <strong>
-                                            Ezemma
-                                        </strong>
-
-                                        <small>
-                                            ID: ST004
-                                        </small>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-
-                            <td>
-                                ezemma@example.com
-                            </td>
-
-
-                            <td>
-                                Web Development
-                            </td>
-
-
-                            <td>
-
-                                <div class="progress-container">
-
-                                    <div class="progress-bar">
-                                        <span style="width: 92%;"></span>
-                                    </div>
-
-                                    <small>
-                                        92%
-                                    </small>
-
-                                </div>
-
-                            </td>
-
-
-                            <td>
-
-                                <span class="status active-status">
-                                    Active
-                                </span>
-
-                            </td>
-
-
-                            <td>
-
-                                <button
-                                    class="view-btn"
-                                    type="button"
-                                >
-                                    View
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </section>
-
+                <div class="table-container">
+                    <table class="academy-table" id="studentsTable">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Email</th>
+                                <th>Course</th>
+                                <th>Progress</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted);">Loading students...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
     </main>
+</div>
 
-
-    <!-- ========================================
-         VIEW STUDENT MODAL
-    ========================================= -->
-
-    <div
-        class="student-modal"
-        id="studentModal"
-    >
-
-        <div class="student-modal-content">
-
-            <button
-                class="close-modal"
-                id="closeStudentModal"
-                type="button"
-            >
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-
-            <div class="modal-student-header">
-
-                <div
-                    class="modal-student-avatar"
-                    id="modalStudentAvatar"
-                >
-                    ME
-                </div>
-
-
-                <div>
-
-                    <h2 id="modalStudentName">
-                        Moses Emenike
-                    </h2>
-
-                    <p id="modalStudentId">
-                        ID: ST001
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="student-details">
-
-                <div class="detail-item">
-
-                    <i class="fa-solid fa-envelope"></i>
-
-                    <div>
-
-                        <span>Email</span>
-
-                        <strong id="modalStudentEmail">
-                            moses@example.com
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <i class="fa-solid fa-book-open"></i>
-
-                    <div>
-
-                        <span>Course</span>
-
-                        <strong id="modalStudentCourse">
-                            Web Development
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <i class="fa-solid fa-chart-line"></i>
-
-                    <div>
-
-                        <span>Progress</span>
-
-                        <strong id="modalStudentProgress">
-                            80%
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <i class="fa-solid fa-circle-check"></i>
-
-                    <div>
-
-                        <span>Status</span>
-
-                        <strong id="modalStudentStatus">
-                            Active
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="modal-actions">
-
-                <button
-                    class="modal-close-btn"
-                    id="modalCloseButton"
-                    type="button"
-                >
-                    Close
-                </button>
-
-            </div>
-
+<!-- VIEW STUDENT MODAL -->
+<div class="academy-modal" id="studentModal">
+    <div class="academy-modal-box">
+        <div class="academy-modal-header">
+            <h3>Student Details</h3>
+            <button type="button" class="academy-modal-close" id="closeStudentModal"><i class="fa-solid fa-xmark"></i></button>
         </div>
-
-    </div>
-
-
-    <!-- ========================================
-         ADD STUDENT MODAL
-    ========================================= -->
-
-    <div
-        class="student-modal"
-        id="addStudentModal"
-    >
-
-        <div class="student-modal-content">
-
-            <button
-                class="close-modal"
-                id="closeAddStudentModal"
-                type="button"
-            >
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-
-            <div class="modal-student-header">
-
-                <div class="modal-student-avatar">
-                    <i class="fa-solid fa-user-plus"></i>
-                </div>
-
-
-                <div>
-
-                    <h2>
-                        Add New Student
-                    </h2>
-
-                    <p>
-                        Enter the student's information
-                    </p>
-
-                </div>
-
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <div class="student-avatar" id="modalStudentAvatar" style="width:48px;height:48px;font-size:16px;">ST</div>
+            <div>
+                <h4 id="modalStudentName" style="font-size:16px;color:var(--text);">Student Name</h4>
+                <span id="modalStudentId" style="font-size:12px;color:var(--muted);">ID: —</span>
             </div>
-
-
-            <form id="addStudentForm">
-
-
-                <!-- NAME -->
-
-                <div class="form-group">
-
-                    <label for="studentNameInput">
-                        Full Name
-                    </label>
-
-                    <input
-                        type="text"
-                        id="studentNameInput"
-                        placeholder="Enter student name"
-                        required
-                    >
-
-                </div>
-
-
-                <!-- EMAIL -->
-
-                <div class="form-group">
-
-                    <label for="studentEmailInput">
-                        Email
-                    </label>
-
-                    <input
-                        type="email"
-                        id="studentEmailInput"
-                        placeholder="Enter student email"
-                        required
-                    >
-
-                </div>
-
-
-                <!-- COURSE -->
-
-                <div class="form-group">
-
-                    <label for="studentCourseInput">
-                        Course
-                    </label>
-
-                    <select
-                        id="studentCourseInput"
-                        required
-                    >
-
-                        <option value="">
-                            Select Course
-                        </option>
-
-                        <option value="Web Development">
-                            Web Development
-                        </option>
-
-                        <option value="Python">
-                            Python
-                        </option>
-
-                        <option value="UI/UX Design">
-                            UI/UX Design
-                        </option>
-
-
-                        <option value="Forex Trading">
-                            Forex Trading
-                        </option>
-
-                        <option value="Database Systems">Database Systems</option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- STATUS -->
-
-                <div class="form-group">
-
-                    <label for="studentStatusInput">
-                        Status
-                    </label>
-
-                    <select
-                        id="studentStatusInput"
-                    >
-
-                        <option value="Active">
-                            Active
-                        </option>
-
-                        <option value="Inactive">
-                            Inactive
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- BUTTONS -->
-
-                <div class="modal-actions">
-
-                    <button
-                        type="button"
-                        class="modal-cancel-btn"
-                        id="cancelAddStudent"
-                    >
-                        Cancel
-                    </button>
-
-
-                    <button
-                        type="submit"
-                        class="modal-save-btn"
-                    >
-                        <i class="fa-solid fa-plus"></i>
-                        Add Student
-                    </button>
-
-                </div>
-
-            </form>
-
         </div>
-
+        <div style="display:grid;gap:10px;font-size:13px;">
+            <div><strong>Email:</strong> <span id="modalStudentEmail">—</span></div>
+            <div><strong>Course:</strong> <span id="modalStudentCourse">—</span></div>
+            <div><strong>Progress:</strong> <span id="modalStudentProgress">—</span></div>
+            <div><strong>Status:</strong> <span id="modalStudentStatus">—</span></div>
+        </div>
+        <div class="academy-modal-actions">
+            <button type="button" class="primary-button" id="modalCloseButton">Close</button>
+        </div>
     </div>
+</div>
 
+<!-- ADD STUDENT MODAL -->
+<div class="academy-modal" id="addStudentModal">
+    <div class="academy-modal-box">
+        <div class="academy-modal-header">
+            <h3>Enroll Student</h3>
+            <button type="button" class="academy-modal-close" id="closeAddStudentModal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form id="addStudentForm">
+            <div class="academy-form-group">
+                <label for="studentNameInput">Full Name</label>
+                <input type="text" id="studentNameInput" placeholder="e.g. Ada Lovelace" required>
+            </div>
+            <div class="academy-form-group">
+                <label for="studentEmailInput">Email Address</label>
+                <input type="email" id="studentEmailInput" placeholder="student@example.com" required>
+            </div>
+            <div class="academy-form-group">
+                <label for="studentCourseInput">Course</label>
+                <select id="studentCourseInput" required>
+                    <option value="">Select Course</option>
+                </select>
+            </div>
+            <div class="academy-form-group">
+                <label for="studentStatusInput">Status</label>
+                <select id="studentStatusInput">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="academy-modal-actions">
+                <button type="button" class="btn-secondary" id="cancelAddStudent">Cancel</button>
+                <button type="submit" class="primary-button">Enroll Student</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-    <!-- JAVASCRIPT -->
-    <script src="/js/activity-log.js"></script>
-    <script src="/js/students.js"></script>
-    <script src="/js/instructor-shell.js"></script>
-    <script src="/js/stat-sync.js"></script>
-
+<script src="/js/activity-log.js"></script>
+<script src="/js/students.js"></script>
+<script src="/js/instructor-shell.js"></script>
+<script src="/js/stat-sync.js"></script>
 </body>
-
 </html>

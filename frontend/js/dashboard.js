@@ -407,10 +407,6 @@ function renderCourses(courses) {
                         <span><i style="width: ${progress}%"></i></span>
                         <small>${progress}%</small>
                     </div>
-
-                    <a href="#courses" class="course-button">
-                        Continue Learning →
-                    </a>
                 </article>
             `;
         })
@@ -473,27 +469,114 @@ function renderAssignments(assignments) {
         })
         .join("");
 
+    function ensureGithubSubmitModal() {
+        let modal = document.getElementById("studentGithubSubmitModal");
+        if (modal) return modal;
+
+        modal = document.createElement("div");
+        modal.id = "studentGithubSubmitModal";
+        modal.style.cssText = `
+            position:fixed;inset:0;background:rgba(13,27,56,0.55);backdrop-filter:blur(2px);
+            display:none;align-items:center;justify-content:center;z-index:2500;padding:16px;
+        `;
+        modal.innerHTML = `
+            <div style="background:#fff;border-radius:16px;width:100%;max-width:460px;padding:22px;box-shadow:0 20px 50px rgba(13,27,56,0.25);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <h3 id="ghSubmitTitle" style="margin:0;font-size:17px;font-weight:800;color:#0f1d36;">Submit Assignment</h3>
+                    <button type="button" id="closeGhSubmitModal" aria-label="Close" style="width:32px;height:32px;border-radius:8px;border:1px solid #e7edf5;background:#f4f7fc;color:#0f1d36;cursor:pointer;">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <p style="margin:0 0 14px;font-size:13.5px;color:#475874;">Paste your GitHub repository link for this assignment.</p>
+                <form id="studentGithubSubmitForm">
+                    <div style="margin-bottom:12px;">
+                        <label for="ghRepoUrlInput" style="display:block;font-size:13px;font-weight:600;color:#0f1d36;margin-bottom:6px;">
+                            GitHub Repository Link
+                        </label>
+                        <input
+                            type="url"
+                            id="ghRepoUrlInput"
+                            placeholder="https://github.com/username/repository"
+                            required
+                            style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;color:#0f1d36;box-sizing:border-box;">
+                        <small id="ghRepoUrlError" style="display:block;margin-top:5px;color:#dc2626;font-size:12.5px;"></small>
+                    </div>
+                    <div style="margin-bottom:14px;">
+                        <label for="ghNotesInput" style="display:block;font-size:13px;font-weight:600;color:#0f1d36;margin-bottom:6px;">
+                            Notes (Optional)
+                        </label>
+                        <textarea
+                            id="ghNotesInput"
+                            rows="3"
+                            placeholder="Optional notes for your instructor..."
+                            style="width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:10px;font-size:14px;color:#0f1d36;box-sizing:border-box;resize:vertical;"></textarea>
+                    </div>
+                    <div style="display:flex;justify-content:flex-end;gap:10px;">
+                        <button type="button" id="cancelGhSubmitModal" style="padding:9px 15px;border-radius:10px;border:1px solid #e7edf5;background:#f4f7fc;color:#0f1d36;font-size:13.5px;font-weight:600;cursor:pointer;">Cancel</button>
+                        <button type="submit" id="confirmGhSubmitBtn" style="padding:9px 16px;border-radius:10px;border:none;background:#1769f5;color:#fff;font-size:13.5px;font-weight:600;cursor:pointer;">Submit GitHub Repo</button>
+                    </div>
+                </form>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        const closeModal = () => { modal.style.display = "none"; };
+        modal.querySelector("#closeGhSubmitModal").addEventListener("click", closeModal);
+        modal.querySelector("#cancelGhSubmitModal").addEventListener("click", closeModal);
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) closeModal();
+        });
+        return modal;
+    }
+
     container.querySelectorAll('.assignment-item[data-status="pending"]').forEach((itemEl) => {
-        itemEl.addEventListener("click", async () => {
+        itemEl.addEventListener("click", () => {
             const assignmentId = itemEl.getAttribute("data-assignment-id");
             const assignmentTitle = itemEl.querySelector("strong")?.textContent || "Assignment";
-            const input = prompt(
-                `Submit "${assignmentTitle}":\nEnter your submission text or project link:`
-            );
-            if (!input || !input.trim()) return;
+            const modal = ensureGithubSubmitModal();
+            const titleEl = modal.querySelector("#ghSubmitTitle");
+            const form = modal.querySelector("#studentGithubSubmitForm");
+            const urlInput = modal.querySelector("#ghRepoUrlInput");
+            const notesInput = modal.querySelector("#ghNotesInput");
+            const errorEl = modal.querySelector("#ghRepoUrlError");
+            const submitBtn = modal.querySelector("#confirmGhSubmitBtn");
 
-            const trimmed = input.trim();
-            const isUrl = /^https?:\/\//i.test(trimmed);
+            titleEl.textContent = `Submit: ${assignmentTitle}`;
+            urlInput.value = "";
+            notesInput.value = "";
+            errorEl.textContent = "";
+            modal.style.display = "flex";
+            urlInput.focus();
 
-            try {
-                await StudentDashboardAPI.submitAssignment(assignmentId, {
-                    submission_text: trimmed,
-                    submission_url: isUrl ? trimmed : "",
-                });
-                await loadStudentDashboard();
-            } catch (error) {
-                alert(error.message || "Could not submit assignment.");
-            }
+            form.onsubmit = async (event) => {
+                event.preventDefault();
+                const repoUrl = urlInput.value.trim();
+                const notes = notesInput.value.trim();
+                const isGithubRepo = /^https?:\/\/(www\.)?github\.com\/[^/\s]+\/[^/\s]+/i.test(repoUrl);
+
+                if (!isGithubRepo) {
+                    errorEl.textContent = "Please enter a valid GitHub repository URL (e.g. https://github.com/username/repo).";
+                    return;
+                }
+
+                errorEl.textContent = "";
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Submitting...";
+
+                try {
+                    await StudentDashboardAPI.submitAssignment(assignmentId, {
+                        submission_url: repoUrl,
+                        submission_text: notes || repoUrl,
+                    });
+                    modal.style.display = "none";
+                    await loadStudentDashboard();
+                } catch (error) {
+                    errorEl.textContent = error.message || "Could not submit assignment.";
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "Submit GitHub Repo";
+                }
+            };
         });
     });
 }

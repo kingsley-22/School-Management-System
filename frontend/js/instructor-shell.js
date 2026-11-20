@@ -1,424 +1,396 @@
 // ========================================
-// INSTRUCTOR SHELL — shared across pages
-// Handles: notification panel, profile
-// dropdown, settings, logout, mobile sidebar.
-// Includes its own CSS so it works on every
-// page regardless of the page stylesheet.
+// INSTRUCTOR SHELL (SHARED ACROSS SUBPAGES)
+// Handles auth guard, profile, notifications, settings modal, logout, mobile sidebar
 // ========================================
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = window.InstructorAPI;
+    if (!api || !api.enforceInstructorAuth()) return;
 
     // ========================================
-    // INJECT REQUIRED CSS
+    // INJECT SHELL STYLES (PRESERVES EXISTING UI)
     // ========================================
     if (!document.getElementById("instructor-shell-styles")) {
         const style = document.createElement("style");
         style.id = "instructor-shell-styles";
         style.textContent = `
-            .notification-wrapper,
-            .profile-wrapper {
-                position: relative;
-            }
-
+            .notification-wrapper { position: relative; }
             .notification-panel {
-                position: absolute;
-                top: calc(100% + 12px);
-                right: 0;
-                width: 380px;
-                background: #ffffff;
-                border: 1px solid #e2e8f0;
-                border-radius: 14px;
-                box-shadow: 0 15px 35px rgba(15, 23, 42, 0.15);
-                overflow: hidden;
-                z-index: 3000;
-                opacity: 0;
-                visibility: hidden;
-                transform: translateY(-10px);
-                transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+                position: absolute; top: 52px; right: 0; width: 320px; max-width: calc(100vw - 24px);
+                background: #ffffff; border: 1px solid #e5e7eb; border-radius: 14px;
+                box-shadow: 0 14px 36px rgba(15, 23, 42, 0.14); z-index: 1500;
+                display: none; overflow: hidden;
             }
-
-            .notification-panel.show {
-                opacity: 1;
-                visibility: visible;
-                transform: translateY(0);
-            }
-
+            .notification-panel.show { display: block; }
             .notification-header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 18px;
-                border-bottom: 1px solid #e2e8f0;
+                display: flex; justify-content: space-between; align-items: center;
+                padding: 14px 16px; border-bottom: 1px solid #f1f5f9;
             }
-
-            .notification-header h3 {
-                margin: 0 0 4px;
-                font-size: 17px;
-                color: #1e293b;
-            }
-
-            .notification-header span {
-                font-size: 12px;
-                color: #64748b;
-            }
-
+            .notification-header h3 { font-size: 14px; margin: 0; color: #0f172a; }
+            .notification-header span { font-size: 12px; color: #64748b; }
             .notification-header button {
-                border: none;
-                background: transparent;
-                color: #2563eb;
-                font-size: 12px;
-                font-weight: 600;
-                cursor: pointer;
+                border: none; background: transparent; color: #2563eb;
+                font-size: 12px; font-weight: 600; cursor: pointer;
             }
-
-            .notification-list {
-                max-height: 420px;
-                overflow-y: auto;
-            }
-
+            .notification-list { max-height: 300px; overflow-y: auto; }
             .notification-item {
-                display: flex;
-                gap: 12px;
-                padding: 16px 18px;
-                border-bottom: 1px solid #f1f5f9;
-                background: #ffffff;
-                transition: background 0.2s ease;
+                display: flex; gap: 10px; padding: 12px 16px; border-bottom: 1px solid #f8fafc;
+                cursor: pointer; transition: background 0.15s ease;
             }
-
-            .notification-item.unread {
-                background: #eff6ff;
+            .notification-item.unread { background: #eff6ff; }
+            .notification-item:hover { background: #f8fafc; }
+            .notif-icon {
+                width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+                display: flex; align-items: center; justify-content: center;
+                background: #dbeafe; color: #1d4ed8; font-size: 14px;
             }
-
-            .notification-icon {
-                width: 40px;
-                height: 40px;
-                min-width: 40px;
-                border-radius: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 15px;
-            }
-
-            .notification-icon.blue   { background: #dbeafe; color: #2563eb; }
-            .notification-icon.green  { background: #dcfce7; color: #16a34a; }
-            .notification-icon.orange { background: #ffedd5; color: #ea580c; }
-            .notification-icon.purple { background: #ede9fe; color: #7c3aed; }
-
-            .notification-content { flex: 1; }
-
-            .notification-content h4 {
-                margin: 0 0 4px;
-                font-size: 13px;
-                color: #1e293b;
-            }
-
-            .notification-content p {
-                margin: 0 0 5px;
-                font-size: 12px;
-                line-height: 1.5;
-                color: #64748b;
-            }
-
-            .notification-content span {
-                font-size: 11px;
-                color: #94a3b8;
-            }
-
+            .notif-content p { margin: 0 0 3px; font-size: 13px; color: #1e293b; line-height: 1.35; }
+            .notif-content span { font-size: 11px; color: #64748b; }
+            .profile-wrapper { position: relative; }
             .profile-dropdown {
-                position: absolute;
-                top: calc(100% + 12px);
-                right: 0;
-                width: 260px;
-                background: #ffffff;
-                border: 1px solid #e2e8f0;
-                border-radius: 14px;
-                box-shadow: 0 15px 35px rgba(15, 23, 42, 0.15);
-                overflow: hidden;
-                z-index: 3000;
-                opacity: 0;
-                visibility: hidden;
-                transform: translateY(-10px);
-                transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+                position: absolute; top: 54px; right: 0; width: 220px;
+                background: #ffffff; border: 1px solid #e5e7eb; border-radius: 14px;
+                box-shadow: 0 14px 36px rgba(15, 23, 42, 0.14); z-index: 1500;
+                display: none; overflow: hidden;
             }
-
-            .profile-wrapper.open .profile-dropdown {
-                opacity: 1;
-                visibility: visible;
-                transform: translateY(0);
-            }
-
+            .profile-dropdown.show { display: block; }
             .profile-dropdown-header {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                padding: 18px;
-                border-bottom: 1px solid #e2e8f0;
+                display: flex; align-items: center; gap: 10px;
+                padding: 14px; border-bottom: 1px solid #f1f5f9;
             }
-
-            .profile-dropdown-header h4 {
-                margin: 0 0 4px;
-                font-size: 14px;
-                color: #1e293b;
+            .profile-dropdown-header h4 { margin: 0; font-size: 14px; color: #0f172a; }
+            .profile-dropdown-header span { font-size: 12px; color: #64748b; }
+            .profile-dropdown-item {
+                display: flex; align-items: center; gap: 10px; width: 100%;
+                padding: 11px 14px; border: none; background: transparent;
+                color: #334155; font-size: 13px; text-decoration: none; cursor: pointer;
+                text-align: left;
             }
-
-            .profile-dropdown-header span {
-                font-size: 12px;
-                color: #64748b;
+            .profile-dropdown-item:hover { background: #f8fafc; }
+            .profile-dropdown-item.logout-item { color: #dc2626; border-top: 1px solid #f1f5f9; }
+            .inst-profile-modal {
+                position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5);
+                display: none; align-items: center; justify-content: center; z-index: 2500; padding: 16px;
             }
-
-            .profile-avatar.large {
-                width: 42px;
-                height: 42px;
-                min-width: 42px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 50%;
-                background: #2563eb;
-                color: #ffffff;
-                font-size: 13px;
-                font-weight: 700;
+            .inst-profile-modal.show { display: flex; }
+            .inst-profile-modal-box {
+                background: #fff; border-radius: 14px; width: 100%; max-width: 440px;
+                padding: 22px; box-shadow: 0 20px 50px rgba(15, 23, 42, 0.2);
             }
-
-            .profile-dropdown-menu { padding: 8px; }
-
-            .profile-dropdown-menu a {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                padding: 11px 12px;
-                border-radius: 8px;
-                text-decoration: none;
-                color: #475569;
-                font-size: 13px;
-                transition: background 0.2s ease, color 0.2s ease;
+            .inst-profile-modal-box h3 { margin: 0 0 14px; font-size: 17px; color: #0f172a; }
+            .inst-profile-field { margin-bottom: 12px; }
+            .inst-profile-field label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; }
+            .inst-profile-field input {
+                width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; border-radius: 8px;
+                font-size: 13px; box-sizing: border-box;
             }
-
-            .profile-dropdown-menu a:hover {
-                background: #eff6ff;
-                color: #2563eb;
+            .inst-profile-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+            .inst-profile-actions button {
+                padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
             }
-
-            .profile-dropdown-menu a i { width: 18px; text-align: center; font-size: 14px; }
-
-            .profile-dropdown-menu .logout-profile {
-                color: #dc2626;
-                border-top: 1px solid #f1f5f9;
-                margin-top: 5px;
-                padding-top: 14px;
-            }
-
-            .profile-dropdown-menu .logout-profile:hover {
-                background: #fef2f2;
-                color: #dc2626;
-            }
-
-            @media (max-width: 768px) {
-                .notification-panel {
-                    position: fixed;
-                    top: 70px;
-                    right: 15px;
-                    left: 15px;
-                    width: auto;
-                }
-                .profile-dropdown {
-                    position: fixed;
-                    top: 70px;
-                    right: 15px;
-                    width: 250px;
-                }
-            }
+            .inst-btn-cancel { background: #f1f5f9; border: 1px solid #e2e8f0; color: #334155; }
+            .inst-btn-save { background: #2563eb; border: none; color: #fff; }
         `;
         document.head.appendChild(style);
     }
 
     // ========================================
-    // NOTIFICATION PANEL
+    // PROFILE MODAL (SHARED FOR PROFILE / SETTINGS)
     // ========================================
-    const bellBtn = document.querySelector(".notification-btn");
+    let currentProfile = null;
 
-    if (bellBtn && !document.getElementById("notificationPanel")) {
-
-        const wrapper = document.createElement("div");
-        wrapper.className = "notification-wrapper";
-        bellBtn.parentNode.insertBefore(wrapper, bellBtn);
-        wrapper.appendChild(bellBtn);
-
-        wrapper.insertAdjacentHTML("beforeend", `
-            <div class="notification-panel" id="notificationPanel">
-                <div class="notification-header">
-                    <div>
-                        <h3>Notifications</h3>
-                        <span>3 new notifications</span>
-                    </div>
-                    <button id="markAllRead">Mark all as read</button>
+    function openProfileModal() {
+        let modal = document.getElementById("instructorProfileModal");
+        if (!modal) {
+            modal = document.createElement("div");
+            modal.id = "instructorProfileModal";
+            modal.className = "inst-profile-modal";
+            modal.innerHTML = `
+                <div class="inst-profile-modal-box">
+                    <h3>Instructor Profile & Settings</h3>
+                    <form id="instructorProfileForm">
+                        <div class="inst-profile-field">
+                            <label for="instFirstName">First Name</label>
+                            <input type="text" id="instFirstName" required>
+                        </div>
+                        <div class="inst-profile-field">
+                            <label for="instLastName">Last Name</label>
+                            <input type="text" id="instLastName" required>
+                        </div>
+                        <div class="inst-profile-field">
+                            <label for="instPhone">Phone</label>
+                            <input type="text" id="instPhone" placeholder="Optional">
+                        </div>
+                        <div class="inst-profile-field">
+                            <label for="instDepartment">Department</label>
+                            <input type="text" id="instDepartment" placeholder="e.g. Computer Science">
+                        </div>
+                        <div class="inst-profile-field">
+                            <label for="instSpecialization">Specialization</label>
+                            <input type="text" id="instSpecialization" placeholder="e.g. Backend Engineering">
+                        </div>
+                        <div class="inst-profile-actions">
+                            <button type="button" class="inst-btn-cancel" id="closeInstProfileModal">Cancel</button>
+                            <button type="submit" class="inst-btn-save">Save Changes</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="notification-list">
-                    <div class="notification-item unread">
-                        <div class="notification-icon blue"><i class="fa-solid fa-file-arrow-up"></i></div>
-                        <div class="notification-content">
-                            <h4>New Assignment Submitted</h4>
-                            <p>A student submitted a Web Development assignment.</p>
-                            <span>10 minutes ago</span>
-                        </div>
-                    </div>
-                    <div class="notification-item unread">
-                        <div class="notification-icon green"><i class="fa-solid fa-user-plus"></i></div>
-                        <div class="notification-content">
-                            <h4>New Student Enrolled</h4>
-                            <p>A new student joined your Python course.</p>
-                            <span>1 hour ago</span>
-                        </div>
-                    </div>
-                    <div class="notification-item unread">
-                        <div class="notification-icon orange"><i class="fa-solid fa-file-circle-check"></i></div>
-                        <div class="notification-content">
-                            <h4>Assignment Needs Review</h4>
-                            <p>3 assignments are waiting for your review.</p>
-                            <span>2 hours ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `);
+            `;
+            document.body.appendChild(modal);
 
-        const panel = document.getElementById("notificationPanel");
-        const markAll = document.getElementById("markAllRead");
-        const dot = document.querySelector(".notification-dot");
-
-        bellBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            panel.classList.toggle("show");
-        });
-
-        panel.addEventListener("click", (e) => e.stopPropagation());
-
-        document.addEventListener("click", () => {
-            panel.classList.remove("show");
-        });
-
-        if (markAll) {
-            markAll.addEventListener("click", () => {
-                document.querySelectorAll(".notification-item.unread")
-                    .forEach(n => n.classList.remove("unread"));
-                if (dot) dot.style.display = "none";
-                const count = document.querySelector(".notification-header span");
-                if (count) count.textContent = "No new notifications";
+            modal.querySelector("#closeInstProfileModal").addEventListener("click", () => {
+                modal.classList.remove("show");
+            });
+            modal.addEventListener("click", (e) => {
+                if (e.target === modal) modal.classList.remove("show");
+            });
+            modal.querySelector("#instructorProfileForm").addEventListener("submit", async (e) => {
+                e.preventDefault();
+                try {
+                    const updated = await api.request("/instructor/profile/", {
+                        method: "PATCH",
+                        body: JSON.stringify({
+                            first_name: modal.querySelector("#instFirstName").value.trim(),
+                            last_name: modal.querySelector("#instLastName").value.trim(),
+                            phone: modal.querySelector("#instPhone").value.trim(),
+                            department: modal.querySelector("#instDepartment").value.trim(),
+                            specialization: modal.querySelector("#instSpecialization").value.trim(),
+                        }),
+                    });
+                    currentProfile = updated.instructor || updated;
+                    api.hydrateTopbarProfile(currentProfile);
+                    modal.classList.remove("show");
+                } catch (err) {
+                    alert(err.message || "Failed to update profile.");
+                }
             });
         }
+
+        if (currentProfile) {
+            modal.querySelector("#instFirstName").value = currentProfile.first_name || "";
+            modal.querySelector("#instLastName").value = currentProfile.last_name || "";
+            modal.querySelector("#instPhone").value = currentProfile.phone || "";
+            modal.querySelector("#instDepartment").value = currentProfile.department || "";
+            modal.querySelector("#instSpecialization").value = currentProfile.specialization || "";
+        }
+        modal.classList.add("show");
+    }
+
+    // ========================================
+    // NOTIFICATIONS DROPDOWN (LIVE API)
+    // ========================================
+    const notifBtn = document.querySelector(".notification-button, .notification-btn");
+    let notifPanel = document.getElementById("notificationPanel");
+
+    if (notifBtn && !notifPanel) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "notification-wrapper";
+        notifBtn.parentNode.insertBefore(wrapper, notifBtn);
+        wrapper.appendChild(notifBtn);
+
+        notifPanel = document.createElement("div");
+        notifPanel.className = "notification-panel";
+        notifPanel.id = "notificationPanel";
+        notifPanel.innerHTML = `
+            <div class="notification-header">
+                <div>
+                    <h3>Notifications</h3>
+                    <span id="shellNotifCount">0 new notifications</span>
+                </div>
+                <button type="button" id="markAllRead">Mark all read</button>
+            </div>
+            <div class="notification-list" id="shellNotifList"></div>
+        `;
+        wrapper.appendChild(notifPanel);
+
+        notifBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            notifPanel.classList.toggle("show");
+            document.getElementById("profileDropdown")?.classList.remove("show");
+        });
+        notifPanel.addEventListener("click", (e) => e.stopPropagation());
+    }
+
+    async function loadNotifications() {
+        if (!notifPanel) return;
+        try {
+            const data = await api.request("/instructor/notifications/");
+            const listEl = notifPanel.querySelector(".notification-list");
+            const countEl = notifPanel.querySelector("#shellNotifCount") || notifPanel.querySelector(".notification-header span");
+            const dot = document.querySelector(".notification-dot");
+
+            const unread = data.unread_count || 0;
+            if (countEl) countEl.textContent = `${unread} unread notification${unread === 1 ? "" : "s"}`;
+            if (dot) dot.style.display = unread > 0 ? "block" : "none";
+
+            const items = data.results || [];
+            if (!listEl) return;
+            if (!items.length) {
+                listEl.innerHTML = `<div style="padding:18px;text-align:center;color:#64748b;font-size:13px;">No notifications yet.</div>`;
+                return;
+            }
+
+            listEl.innerHTML = items
+                .map(
+                    (n) => `
+                <div class="notification-item ${n.is_read ? "" : "unread"}" data-id="${n.id}">
+                    <div class="notif-icon"><i class="fa-solid fa-bell"></i></div>
+                    <div class="notif-content">
+                        <p><strong>${api.escapeHtml(n.title)}</strong><br>${api.escapeHtml(n.message)}</p>
+                        <span>${api.formatRelativeTime(n.created_at)}</span>
+                    </div>
+                </div>
+            `
+                )
+                .join("");
+
+            listEl.querySelectorAll(".notification-item.unread").forEach((el) => {
+                el.addEventListener("click", async () => {
+                    const id = el.dataset.id;
+                    try {
+                        await api.request(`/instructor/notifications/${id}/read/`, { method: "POST" });
+                        el.classList.remove("unread");
+                        loadNotifications();
+                    } catch {
+                        // ignore
+                    }
+                });
+            });
+        } catch {
+            // ignore if notifications fail transiently
+        }
+    }
+
+    const markAllReadBtn = document.getElementById("markAllRead");
+    if (markAllReadBtn) {
+        markAllReadBtn.addEventListener("click", async () => {
+            try {
+                await api.request("/instructor/notifications/mark-all-read/", { method: "POST" });
+                loadNotifications();
+            } catch {
+                // ignore
+            }
+        });
     }
 
     // ========================================
     // PROFILE DROPDOWN
     // ========================================
-    const profileBtn = document.querySelector(".profile");
+    const profileEl = document.querySelector(".topbar-profile-trigger, .profile");
+    let profileDropdown = document.getElementById("profileDropdown");
 
-    if (profileBtn && !document.getElementById("profileDropdown")) {
-
+    if (profileEl && !profileDropdown) {
         const wrapper = document.createElement("div");
         wrapper.className = "profile-wrapper";
-        profileBtn.parentNode.insertBefore(wrapper, profileBtn);
-        wrapper.appendChild(profileBtn);
+        profileEl.parentNode.insertBefore(wrapper, profileEl);
+        wrapper.appendChild(profileEl);
 
-        wrapper.insertAdjacentHTML("beforeend", `
-            <div class="profile-dropdown" id="profileDropdown">
-                <div class="profile-dropdown-header">
-                    <div class="profile-avatar large">JM</div>
-                    <div>
-                        <h4>JUNGLE MAN</h4>
-                        <span>Instructor</span>
-                    </div>
-                </div>
-                <div class="profile-dropdown-menu">
-                    <a href="#"><i class="fa-solid fa-user"></i><span>My Profile</span></a>
-                    <a href="#"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
-                    <a href="#" class="logout-profile"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+        profileDropdown = document.createElement("div");
+        profileDropdown.className = "profile-dropdown";
+        profileDropdown.id = "profileDropdown";
+        profileDropdown.innerHTML = `
+            <div class="profile-dropdown-header">
+                <div class="profile-avatar">IN</div>
+                <div class="profile-header-text">
+                    <h4>Instructor</h4>
+                    <span>Instructor</span>
                 </div>
             </div>
-        `);
+            <button type="button" class="profile-dropdown-item" data-action="profile">
+                <i class="fa-regular fa-user"></i> My Profile
+            </button>
+            <button type="button" class="profile-dropdown-item" data-action="settings">
+                <i class="fa-solid fa-gear"></i> Settings
+            </button>
+            <button type="button" class="profile-dropdown-item logout-item" data-action="logout">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        `;
+        wrapper.appendChild(profileDropdown);
 
-        const dropdownWrapper = wrapper;
-        const dropdown = document.getElementById("profileDropdown");
-
-        profileBtn.addEventListener("click", (e) => {
+        profileEl.style.cursor = "pointer";
+        profileEl.addEventListener("click", (e) => {
             e.stopPropagation();
-            dropdownWrapper.classList.toggle("open");
+            profileDropdown.classList.toggle("show");
+            notifPanel?.classList.remove("show");
         });
+        profileDropdown.addEventListener("click", (e) => e.stopPropagation());
 
-        dropdown.addEventListener("click", (e) => e.stopPropagation());
-
-        document.addEventListener("click", () => {
-            dropdownWrapper.classList.remove("open");
-        });
-
-        dropdown.querySelectorAll(".profile-dropdown-menu a").forEach(link => {
-            link.addEventListener("click", (e) => {
-                const text = link.textContent.trim();
-                if (text === "My Profile") {
-                    e.preventDefault();
-                    alert("Profile page coming soon.");
-                }
-                if (text === "Settings") {
-                    e.preventDefault();
-                    alert("Settings page coming soon.");
-                }
-                if (text === "Logout") {
-                    e.preventDefault();
-                    if (confirm("Are you sure you want to logout?")) {
-                        alert("Logout will be connected to Django authentication.");
-                    }
-                }
+        profileDropdown.querySelectorAll("[data-action='profile'], [data-action='settings']").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                profileDropdown.classList.remove("show");
+                openProfileModal();
             });
         });
+        profileDropdown.querySelector("[data-action='logout']")?.addEventListener("click", () => {
+            api.logout();
+        });
     }
+
+    document.addEventListener("click", () => {
+        notifPanel?.classList.remove("show");
+        profileDropdown?.classList.remove("show");
+    });
 
     // ========================================
     // SIDEBAR: SETTINGS + LOGOUT
     // ========================================
-    document.querySelectorAll(".sidebar-bottom .menu-item").forEach(item => {
-        const text = item.textContent.trim();
-        if (text === "Settings") {
+    document.querySelectorAll(".Sidebar_down a, .sidebar-bottom .menu-item").forEach((item) => {
+        const text = (item.textContent || "").trim().toLowerCase();
+        if (text.includes("setting")) {
             item.addEventListener("click", (e) => {
                 e.preventDefault();
-                alert("Settings page coming soon.");
+                openProfileModal();
             });
-        }
-        if (text === "Logout") {
+        } else if (text.includes("logout") || text.includes("log out") || item.classList.contains("logout") || item.classList.contains("logout-link")) {
             item.addEventListener("click", (e) => {
                 e.preventDefault();
-                if (confirm("Are you sure you want to logout?")) {
-                    alert("Logout will be connected to Django authentication.");
-                }
+                api.logout();
             });
         }
     });
 
     // ========================================
-    // MOBILE SIDEBAR TOGGLE
+    // MOBILE SIDEBAR (MATCHES STUDENT DASHBOARD)
     // ========================================
-    const menuToggle = document.querySelector(".menu-toggle");
-    const sidebar = document.querySelector(".sidebar");
+    const menuToggle = document.getElementById("hamburger") || document.querySelector(".menu-toggle");
+    const sidebar = document.getElementById("sidebar") || document.querySelector(".sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
     const sidebarClose = document.getElementById("sidebarClose");
 
-    function closeInstructorSidebar() {
+    function setSidebarOpen(isOpen) {
         if (!sidebar) return;
-        sidebar.classList.remove("show");
-        sidebar.classList.remove("active");
-        document.body.classList.remove("menu-open");
-        const icon = menuToggle?.querySelector("i");
-        if (icon) icon.className = "fa-solid fa-bars";
+        sidebar.classList.toggle("active", isOpen);
+        sidebar.classList.toggle("open", isOpen);
+        sidebar.classList.toggle("show", isOpen);
+        if (overlay) {
+            overlay.classList.toggle("active", isOpen);
+            overlay.classList.toggle("show", isOpen);
+        }
+        menuToggle?.setAttribute("aria-expanded", String(isOpen));
+        document.body.classList.toggle("menu-open", isOpen);
     }
 
     if (menuToggle && sidebar) {
-        menuToggle.addEventListener("click", () => {
-            const isOpen = sidebar.classList.contains("show") || sidebar.classList.contains("active");
-            const icon = menuToggle.querySelector("i");
-            if (icon) icon.className = isOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars";
+        menuToggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const isOpen = !(sidebar.classList.contains("active") || sidebar.classList.contains("open"));
+            setSidebarOpen(isOpen);
         });
     }
 
-    if (sidebarClose) {
-        sidebarClose.addEventListener("click", closeInstructorSidebar);
+    sidebarClose?.addEventListener("click", () => setSidebarOpen(false));
+    overlay?.addEventListener("click", () => setSidebarOpen(false));
+
+    // ========================================
+    // HYDRATE PROFILE & NOTIFICATIONS FROM API
+    // ========================================
+    try {
+        const profData = await api.request("/instructor/profile/");
+        currentProfile = profData.instructor || profData;
+        api.hydrateTopbarProfile(currentProfile);
+    } catch {
+        // handled by auth guard if 401
     }
+    loadNotifications();
 });

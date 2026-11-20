@@ -7444,3 +7444,194 @@ body {
     .hamburger, .mobileMenu { display: none !important; }
 }
 
+
+
+/* =========================================================
+   ENHANCED READABILITY & FONT SIZE SCALE
+========================================================= */
+:root {
+    --text: #0f1d36;
+    --muted: #475874;
+}
+
+body {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text);
+}
+
+.sidebar .nav-label {
+    font-size: 11.5px;
+    color: #b7c8e6;
+}
+
+.sidebar .nav-link,
+.Sidebar_down a {
+    font-size: 14.5px;
+    font-weight: 500;
+    color: #e2eaf8;
+}
+
+.sidebar .logo-badge small {
+    font-size: 11px;
+    color: #dce6f7;
+}
+
+.sidebar-help strong {
+    font-size: 15px;
+}
+
+.sidebar-help p {
+    font-size: 12.5px;
+    color: #c9daf5;
+}
+
+.sidebar-help a {
+    font-size: 13px;
+}
+
+.sidebar-footer {
+    font-size: 12px;
+    color: #b7c8e6;
+}
+
+.search-box input {
+    font-size: 14.5px;
+    color: var(--text);
+}
+
+.search-box input::placeholder {
+    color: #64748b;
+}
+
+.topbar-user-info strong {
+    font-size: 14.5px;
+    color: var(--text);
+}
+
+.topbar-user-info small {
+    font-size: 12.5px;
+    color: var(--muted);
+}
+
+.welcome-banner > p:first-child {
+    font-size: 14.5px;
+    color: #e2ecff;
+}
+
+.welcome-banner h1 {
+    font-size: clamp(24px, 2.5vw, 30px);
+}
+
+.welcome-banner h1 + p {
+    font-size: 14px;
+    color: #dbe7fc;
+}
+
+.primary-button {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.stat-card p {
+    font-size: 14px;
+    font-weight: 600;
+    color: #334563;
+}
+
+.stat-card h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.stat-card a {
+    font-size: 13.5px;
+    font-weight: 600;
+}
+
+.panel-heading h2 {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.panel-heading a {
+    font-size: 13.5px;
+    font-weight: 600;
+}
+
+.course-card h3,
+.panel h3 {
+    font-size: 16px;
+    color: var(--text);
+}
+
+.course-card p,
+.panel p,
+.panel li,
+.skill-list,
+.deadline-item,
+.assignment-item,
+.announcement-item,
+.payment-summary {
+    font-size: 14px;
+}
+
+.course-card small,
+.panel small,
+.panel span {
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   ADMIN SIDE-NAV LINK LIST STYLING FOR STUDENT & INSTRUCTOR
+   Matched to frontend/css/admin.css (.side-nav)
+========================================================= */
+.sidebar .sidebar-nav {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+    margin-bottom: 18px;
+}
+
+.sidebar .sidebar-nav .nav-link,
+.sidebar .Sidebar_down a {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    gap: 14px !important;
+    min-height: 43px !important;
+    padding: 0 13px !important;
+    border-radius: 9px;
+    color: #c0cce0;
+    font-size: 13.5px;
+    font-weight: 500;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+.sidebar .sidebar-nav .nav-link:hover,
+.sidebar .Sidebar_down a:hover {
+    background: var(--sidebar-light);
+    color: #fff;
+}
+
+.sidebar .sidebar-nav .nav-link.active {
+    background: linear-gradient(110deg, #3280ff, #1761ed);
+    box-shadow: 0 5px 14px rgba(23, 105, 245, 0.2);
+    color: #fff;
+}
+
+.sidebar .sidebar-nav .nav-link i,
+.sidebar .Sidebar_down a i {
+    width: 19px;
+    text-align: center;
+    font-size: 16px;
+    color: inherit;
+}

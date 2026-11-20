@@ -1,708 +1,436 @@
-
-
-
 // ========================================
 // INSTRUCTOR DASHBOARD JAVASCRIPT
+// Connected to Django REST Framework (/api/instructor/)
 // ========================================
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    const api = window.InstructorAPI;
+    if (!api || !api.enforceInstructorAuth()) return;
 
     // ========================================
-    // 1. MOBILE SIDEBAR
+    // 1. MOBILE SIDEBAR (MATCHES STUDENT DASHBOARD)
     // ========================================
-
-    const menuToggle = document.querySelector(".menu-toggle");
-    const sidebar = document.querySelector(".sidebar");
+    const menuToggle = document.getElementById("hamburger") || document.querySelector(".menu-toggle");
+    const sidebar = document.getElementById("sidebar") || document.querySelector(".sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
     const sidebarClose = document.getElementById("sidebarClose");
 
-    function closeInstructorSidebar() {
+    function setSidebarOpen(isOpen) {
         if (!sidebar) return;
-        sidebar.classList.remove("active");
-        sidebar.classList.remove("show");
-        document.body.classList.remove("menu-open");
-        const icon = menuToggle?.querySelector("i");
-        if (icon) icon.className = "fa-solid fa-bars";
+        sidebar.classList.toggle("active", isOpen);
+        sidebar.classList.toggle("open", isOpen);
+        sidebar.classList.toggle("show", isOpen);
+        if (overlay) {
+            overlay.classList.toggle("active", isOpen);
+            overlay.classList.toggle("show", isOpen);
+        }
+        menuToggle?.setAttribute("aria-expanded", String(isOpen));
+        document.body.classList.toggle("menu-open", isOpen);
     }
 
     if (menuToggle && sidebar) {
-        menuToggle.addEventListener("click", () => {
-            const isOpen = !sidebar.classList.contains("active");
-            sidebar.classList.toggle("active", isOpen);
-            sidebar.classList.toggle("show", isOpen);
-            document.body.classList.toggle("menu-open", isOpen);
-            const icon = menuToggle.querySelector("i");
-            if (icon) icon.className = isOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars";
+        menuToggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const isOpen = !(sidebar.classList.contains("active") || sidebar.classList.contains("open"));
+            setSidebarOpen(isOpen);
         });
     }
 
-    if (sidebarClose) {
-        sidebarClose.addEventListener("click", closeInstructorSidebar);
-    }
+    sidebarClose?.addEventListener("click", () => setSidebarOpen(false));
+    overlay?.addEventListener("click", () => setSidebarOpen(false));
 
-
-    // ========================================
-    // 2. CLOSE SIDEBAR ON MOBILE
-    // ========================================
-
-    const sidebarLinks =
-        document.querySelectorAll(".sidebar .menu-item");
-
-    sidebarLinks.forEach(link => {
-
+    document.querySelectorAll(".sidebar .nav-link, .sidebar .menu-item").forEach((link) => {
         link.addEventListener("click", () => {
-
-            if (window.innerWidth <= 768) {
-
-                sidebar.classList.remove("active");
-                sidebar.classList.remove("show");
-
-                document.body.classList.remove("menu-open");
-            }
-
+            if (window.innerWidth <= 768) setSidebarOpen(false);
         });
-
     });
 
-
     // ========================================
-    // 3. NOTIFICATION PANEL
+    // 2. NOTIFICATION PANEL (LIVE API)
     // ========================================
-
-    const notificationButton =
-        document.getElementById("notificationBtn");
-
-    const notificationPanel =
-        document.getElementById("notificationPanel");
-
-    const markAllRead =
-        document.getElementById("markAllRead");
-
-    const notificationDot =
-        document.querySelector(".notification-dot");
-
+    const notificationButton = document.getElementById("notificationBtn");
+    const notificationPanel = document.getElementById("notificationPanel");
+    const markAllRead = document.getElementById("markAllRead");
+    const notificationDot = document.querySelector(".notification-dot");
 
     if (notificationButton && notificationPanel) {
-
-        // Open / close notification panel
         notificationButton.addEventListener("click", (event) => {
-
             event.stopPropagation();
-
             notificationPanel.classList.toggle("show");
-
+            document.getElementById("profileDropdown")?.classList.remove("show");
         });
-
-
-        // Prevent panel click from closing itself
-        notificationPanel.addEventListener("click", (event) => {
-
-            event.stopPropagation();
-
-        });
-
-
-        // Close when clicking outside
-        document.addEventListener("click", () => {
-
-            notificationPanel.classList.remove("show");
-
-        });
-
+        notificationPanel.addEventListener("click", (event) => event.stopPropagation());
     }
 
+    async function loadNotifications() {
+        if (!notificationPanel) return;
+        try {
+            const data = await api.request("/instructor/notifications/");
+            const list = notificationPanel.querySelector(".notification-list");
+            const countSpan = notificationPanel.querySelector(".notification-header span");
+            const unread = data.unread_count || 0;
+            if (countSpan) countSpan.textContent = `${unread} unread notification${unread === 1 ? "" : "s"}`;
+            if (notificationDot) notificationDot.style.display = unread > 0 ? "block" : "none";
 
-    // ========================================
-    // MARK ALL NOTIFICATIONS AS READ
-    // ========================================
+            const items = data.results || [];
+            if (!list) return;
+            if (!items.length) {
+                list.innerHTML = `<div style="padding:18px;text-align:center;color:#64748b;font-size:13px;">No notifications yet.</div>`;
+                return;
+            }
+            list.innerHTML = items
+                .map(
+                    (n) => `
+                <div class="notification-item ${n.is_read ? "" : "unread"}" data-id="${n.id}">
+                    <div class="notification-icon blue"><i class="fa-solid fa-bell"></i></div>
+                    <div class="notification-content">
+                        <p><strong>${api.escapeHtml(n.title)}</strong><br>${api.escapeHtml(n.message)}</p>
+                        <span>${api.formatRelativeTime(n.created_at)}</span>
+                    </div>
+                </div>
+            `
+                )
+                .join("");
+
+            list.querySelectorAll(".notification-item.unread").forEach((el) => {
+                el.addEventListener("click", async () => {
+                    try {
+                        await api.request(`/instructor/notifications/${el.dataset.id}/read/`, { method: "POST" });
+                        loadNotifications();
+                    } catch {
+                        // ignore
+                    }
+                });
+            });
+        } catch {
+            // ignore
+        }
+    }
 
     if (markAllRead) {
-
-        markAllRead.addEventListener("click", () => {
-
-            const unreadNotifications =
-                document.querySelectorAll(
-                    ".notification-item.unread"
-                );
-
-            unreadNotifications.forEach(notification => {
-
-                notification.classList.remove("unread");
-
-            });
-
-
-            // Remove red notification dot
-            if (notificationDot) {
-
-                notificationDot.style.display = "none";
-
+        markAllRead.addEventListener("click", async () => {
+            try {
+                await api.request("/instructor/notifications/mark-all-read/", { method: "POST" });
+                loadNotifications();
+            } catch {
+                // ignore
             }
-
-
-            // Update notification count
-            const notificationCount =
-                document.querySelector(
-                    ".notification-header span"
-                );
-
-            if (notificationCount) {
-
-                notificationCount.textContent =
-                    "No new notifications";
-
-            }
-
         });
-
     }
 
-
     // ========================================
-    // 4. PROFILE DROPDOWN
+    // 3. PROFILE DROPDOWN & SETTINGS / LOGOUT
     // ========================================
+    const profileBtn = document.getElementById("profileBtn");
+    const profileDropdown = document.getElementById("profileDropdown");
 
-    const profileBtn =
-        document.getElementById("profileBtn");
-
-    const profileWrapper =
-        document.querySelector(".profile-wrapper");
-
-    const profileDropdown =
-        document.getElementById("profileDropdown");
-
-
-    if (profileBtn && profileWrapper) {
-
+    if (profileBtn && profileDropdown) {
         profileBtn.addEventListener("click", (event) => {
-
             event.stopPropagation();
-
-            profileWrapper.classList.toggle("open");
-
+            profileDropdown.classList.toggle("show");
+            notificationPanel?.classList.remove("show");
         });
-
+        profileDropdown.addEventListener("click", (event) => event.stopPropagation());
     }
-
-
-    if (profileDropdown) {
-
-        profileDropdown.addEventListener("click", (event) => {
-
-            event.stopPropagation();
-
-        });
-
-    }
-
 
     document.addEventListener("click", () => {
-
-        if (profileWrapper) {
-
-            profileWrapper.classList.remove("open");
-
-        }
-
+        notificationPanel?.classList.remove("show");
+        profileDropdown?.classList.remove("show");
     });
 
+    let currentProfile = null;
+    function openProfileEditor() {
+        let modal = document.getElementById("instructorProfileModal");
+        if (!modal) {
+            modal = document.createElement("div");
+            modal.id = "instructorProfileModal";
+            modal.className = "academy-modal";
+            modal.innerHTML = `
+                <div class="academy-modal-box">
+                    <div class="academy-modal-header">
+                        <h3>Instructor Profile & Settings</h3>
+                        <button type="button" class="academy-modal-close" id="closeInstProfileModal">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <form id="instructorProfileForm">
+                        <div class="academy-form-group">
+                            <label for="instFirstName">First Name</label>
+                            <input type="text" id="instFirstName" required>
+                        </div>
+                        <div class="academy-form-group">
+                            <label for="instLastName">Last Name</label>
+                            <input type="text" id="instLastName" required>
+                        </div>
+                        <div class="academy-form-group">
+                            <label for="instPhone">Phone</label>
+                            <input type="text" id="instPhone" placeholder="Optional">
+                        </div>
+                        <div class="academy-form-group">
+                            <label for="instSpecialization">Specialization</label>
+                            <input type="text" id="instSpecialization" placeholder="e.g. Backend Engineering">
+                        </div>
+                        <div class="academy-modal-actions">
+                            <button type="button" class="btn-secondary" id="cancelInstProfileModal">Cancel</button>
+                            <button type="submit" class="primary-button">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
 
-    // ========================================
-    // PROFILE MENU ACTIONS
-    // ========================================
-
-    const profileLinks =
-        document.querySelectorAll(
-            ".profile-dropdown-menu a"
-        );
-
-    profileLinks.forEach(link => {
-
-        link.addEventListener("click", (event) => {
-
-            const text =
-                link.textContent.trim();
-
-            if (text === "My Profile") {
-
-                event.preventDefault();
-
-                alert("Profile page coming soon.");
-
-            }
-
-            if (text === "Settings") {
-
-                event.preventDefault();
-
-                alert("Settings page coming soon.");
-
-            }
-
-            if (text === "Logout") {
-
-                event.preventDefault();
-
-                const confirmLogout =
-                    confirm("Are you sure you want to logout?");
-
-                if (confirmLogout) {
-
-                    alert("Logout will be connected to Django authentication.");
-
+            modal.querySelector("#closeInstProfileModal").addEventListener("click", () => modal.classList.remove("show"));
+            modal.querySelector("#cancelInstProfileModal").addEventListener("click", () => modal.classList.remove("show"));
+            modal.querySelector("#instructorProfileForm").addEventListener("submit", async (e) => {
+                e.preventDefault();
+                try {
+                    const updated = await api.request("/instructor/profile/", {
+                        method: "PATCH",
+                        body: JSON.stringify({
+                            first_name: modal.querySelector("#instFirstName").value.trim(),
+                            last_name: modal.querySelector("#instLastName").value.trim(),
+                            phone: modal.querySelector("#instPhone").value.trim(),
+                            specialization: modal.querySelector("#instSpecialization").value.trim(),
+                        }),
+                    });
+                    currentProfile = updated.instructor || updated;
+                    api.hydrateTopbarProfile(currentProfile);
+                    modal.classList.remove("show");
+                } catch (err) {
+                    alert(err.message || "Failed to update profile.");
                 }
-
-            }
-
-        });
-
-    });
-
-
-    // ========================================
-    // 5. VIEW ALL ACTIVITY
-    // ========================================
-
-    const cardLinks =
-        document.querySelectorAll(".card-header a");
-
-    cardLinks.forEach(link => {
-
-        link.addEventListener("click", (event) => {
-
-            event.preventDefault();
-
-            const text =
-                link.textContent.trim();
-
-            if (text === "View All") {
-
-                alert(
-                    "All recent activities will appear here."
-                );
-
-            }
-
-            if (text === "View Courses") {
-
-                window.location.href = "/instructor/courses/";
-
-            }
-
-        });
-
-    });
-
-
-    // ========================================
-    // 6. QUICK ACTIONS
-    // ========================================
-
-    const addStudentAction =
-        document.getElementById("addStudentAction");
-
-    const createCourseAction =
-        document.getElementById("createCourseAction");
-
-    const createAssignmentAction =
-        document.getElementById("createAssignmentAction");
-
-    const postAnnouncementAction =
-        document.getElementById("postAnnouncementAction");
-
-
-    // ADD STUDENT
-
-    if (addStudentAction) {
-
-        addStudentAction.addEventListener("click", () => {
-
-            window.location.href = "/instructor/students/";
-
-        });
-
-    }
-
-
-    // CREATE COURSE
-
-    if (createCourseAction) {
-
-        createCourseAction.addEventListener("click", () => {
-
-            window.location.href = "/instructor/courses/";
-
-        });
-
-    }
-
-
-    // CREATE ASSIGNMENT
-
-    if (createAssignmentAction) {
-
-        createAssignmentAction.addEventListener("click", () => {
-
-            window.location.href = "/instructor/assignments/";
-
-        });
-
-    }
-
-
-    // POST ANNOUNCEMENT
-
-    if (postAnnouncementAction) {
-
-        postAnnouncementAction.addEventListener("click", () => {
-
-            window.location.href = "/instructor/announcements/";
-
-        });
-
-    }
-
-
-    // ========================================
-    // 7. STAT CARD CLICK EFFECT
-    // ========================================
-
-    const statCards =
-        document.querySelectorAll(".stat-card");
-
-    statCards.forEach(card => {
-
-        card.addEventListener("click", () => {
-
-            card.style.transform = "scale(0.98)";
-
-            setTimeout(() => {
-
-                card.style.transform = "";
-
-            }, 150);
-
-        });
-
-    });
-
-
-    // ========================================
-    // 8. ESCAPE KEY
-    // ========================================
-
-    document.addEventListener("keydown", (event) => {
-
-        if (event.key === "Escape") {
-
-            if (sidebar) {
-
-                sidebar.classList.remove("active");
-                sidebar.classList.remove("show");
-
-            }
-
-            document.body.classList.remove("menu-open");
-
-        }
-
-
-
-        
-
-    });
-
-           // ========================================
-    // 10. LOAD STATS FROM STORAGE
-    // ========================================
-    function setStat(id, key, suffix = "") {
-        const el = document.getElementById(id);
-        if (!el) return;
-        const stored = localStorage.getItem(key);
-        if (stored !== null) {
-            el.textContent = stored + suffix;
-        }
-    }
-
-    setStat("totalCoursesCount", "totalCourses");
-    setStat("totalStudentsCount", "totalStudents");
-    setStat("totalAssignmentsCount", "totalAssignments");
-    
-
-
-
-    // ========================================
-    // 11. RECENT ACTIVITY
-    // ========================================
-    const activityList = document.getElementById("activityList");
-
-    function relativeTime(ts) {
-        const diff = Date.now() - ts;
-        const s = Math.floor(diff / 1000);
-        if (s < 60) return "just now";
-        const m = Math.floor(s / 60);
-        if (m < 60) return m + (m === 1 ? " minute ago" : " minutes ago");
-        const h = Math.floor(m / 60);
-        if (h < 24) return h + (h === 1 ? " hour ago" : " hours ago");
-        const d = Math.floor(h / 24);
-        if (d === 1) return "Yesterday";
-        if (d < 30) return d + " days ago";
-        return new Date(ts).toLocaleDateString("en-GB", {
-            day: "2-digit", month: "short", year: "numeric"
-        });
-    }
-
-        function iconFor(type) {
-        const map = {
-            student:      { icon: "fa-user-plus",        colorClass: "green"  },
-            course:       { icon: "fa-book",             colorClass: "blue"   },
-            assignment:   { icon: "fa-file-circle-plus", colorClass: "orange" },
-            announcement: { icon: "fa-bullhorn",         colorClass: "purple" },
-            edit:         { icon: "fa-pen",              colorClass: "blue"   },
-            delete:       { icon: "fa-trash",            colorClass: "red"    },
-            grade:        { icon: "fa-circle-check",     colorClass: "green"  },
-            schedule:     { icon: "fa-calendar-plus",    colorClass: "purple" }
-        };
-        return map[type] || { icon: "fa-circle-info", colorClass: "blue" };
-    }
-
-
-    function seedInitialActivity() {
-        if (!window.loadActivityLog) return;
-        const existing = window.loadActivityLog();
-        if (existing.length > 0) return;
-
-        const now = Date.now();
-        const seed = [
-            { type: "grade",      title: "Assignment graded",        description: "You graded 12 student assignments",                timestamp: now - 3 * 3600 * 1000 },
-            { type: "student",    title: "New student enrolled",     description: "JUNGLE MAN joined your Python Programming course",  timestamp: now - 1 * 3600 * 1000 },
-            { type: "assignment", title: "New assignment submitted", description: "JUNGLE MAN submitted Web Development Assignment",    timestamp: now - 10 * 60 * 1000 }
-        ];
-        localStorage.setItem("activityLog", JSON.stringify(seed));
-    }
-
-                function renderActivity() {
-        if (!activityList) return;
-        if (!window.loadActivityLog) {
-            console.warn("activity-log.js not loaded — Recent Activity will not work.");
-            return;
-        }
-
-        const entries = window.loadActivityLog().slice(0, 6);
-
-        if (entries.length === 0) {
-            activityList.innerHTML = `
-                <div class="activity-empty">
-                    <i class="fa-regular fa-clock"></i>
-                    <p>No activity yet. Start by adding a student or creating a course.</p>
-                </div>
-            `;
-            return;
-        }
-
-        activityList.innerHTML = entries.map(e => {
-            const meta = iconFor(e.type);
-            const link = e.link || "/instructor/";
-            return `
-                <a class="activity-item" href="${link}">
-                    <div class="activity-icon ${meta.colorClass}">
-                        <i class="fa-solid ${meta.icon}"></i>
-                    </div>
-                    <div class="activity-info">
-                        <h4>${e.title}</h4>
-                        <p>${e.description}</p>
-                        <span>${relativeTime(e.timestamp)}</span>
-                    </div>
-                    <i class="fa-solid fa-chevron-right activity-go"></i>
-                </a>
-            `;
-        }).join("");
-    }
-
-    seedInitialActivity();
-    renderActivity();
-
-    window.addEventListener("focus", renderActivity);
-
-
-
-
-
-        // Seed allStudents if the students page has never been visited
-    if (!localStorage.getItem("allStudents")) {
-        const seed = [
-            { name: "Moses Emenike",       course: "Web Development",      progress: 80 },
-            { name: "Nwachukwu Ikechukwu", course: "Python",               progress: 65 },
-            { name: "Ugonna",              course: "UI/UX Design",        progress: 45 },
-            { name: "Ezemma",              course: "Web Development",      progress: 92 }
-        ];
-        localStorage.setItem("allStudents", JSON.stringify(seed));
-    }
-  
-
-
-
-
-        // ========================================
-    // 13. VIEW ALL ACTIVITIES MODAL
-    // ========================================
-    const viewAllActivityBtn  = document.getElementById("viewAllActivityBtn");
-    const allActivityModal    = document.getElementById("allActivityModal");
-    const closeAllActivityBtn = document.getElementById("closeAllActivity");
-    const allActivityList     = document.getElementById("allActivityList");
-
-    function renderAllActivities() {
-        if (!allActivityList || !window.loadActivityLog) return;
-
-        const entries = window.loadActivityLog();
-
-        if (entries.length === 0) {
-            allActivityList.innerHTML = `
-                <div class="activity-empty">
-                    <i class="fa-regular fa-clock"></i>
-                    <p>No activity yet.</p>
-                </div>
-            `;
-            return;
-        }
-
-            // ========================================
-    // DELETE ACTIVITY CONFIRMATION
-    // ========================================
-    const deleteActivityModal    = document.getElementById("deleteActivityModal");
-    const deleteActivityNameEl   = document.getElementById("deleteActivityName");
-    const cancelDeleteActivity   = document.getElementById("cancelDeleteActivity");
-    const confirmDeleteActivity  = document.getElementById("confirmDeleteActivity");
-
-    let pendingActivityId = null;
-
-    function openDeleteActivityModal(id, itemEl) {
-        if (!deleteActivityModal) {
-            // Fallback to confirm if modal HTML is missing
-            if (!confirm("Delete this activity?")) return;
-            actuallyRemoveActivity(id);
-            return;
-        }
-
-        const title =
-            itemEl?.querySelector(".activity-info h4")?.textContent.trim() ||
-            "this activity";
-
-        if (deleteActivityNameEl) {
-            deleteActivityNameEl.textContent = `"${title}"`;
-        }
-
-        pendingActivityId = id;
-        deleteActivityModal.classList.add("show");
-    }
-
-    function closeDeleteActivityModal() {
-        if (deleteActivityModal) deleteActivityModal.classList.remove("show");
-        pendingActivityId = null;
-    }
-
-    function actuallyRemoveActivity(id) {
-        const entries = window.loadActivityLog ? window.loadActivityLog() : [];
-        const realEntry = entries.find(
-            x => (x.id || String(x.timestamp)) === id
-        );
-
-        if (realEntry && window.removeActivity) {
-            window.removeActivity(realEntry.id || realEntry.timestamp);
-        } else {
-            const filtered = entries.filter(
-                x => (x.id || String(x.timestamp)) !== id
-            );
-            localStorage.setItem("activityLog", JSON.stringify(filtered));
-        }
-
-        renderAllActivities();
-        renderActivity();
-    }
-
-    if (cancelDeleteActivity) {
-        cancelDeleteActivity.addEventListener("click", closeDeleteActivityModal);
-    }
-
-    if (confirmDeleteActivity) {
-        confirmDeleteActivity.addEventListener("click", () => {
-            if (!pendingActivityId) return;
-            const idToRemove = pendingActivityId;
-            closeDeleteActivityModal();
-            actuallyRemoveActivity(idToRemove);
-        });
-    }
-
-    if (deleteActivityModal) {
-        deleteActivityModal.addEventListener("click", (e) => {
-            if (e.target === deleteActivityModal) closeDeleteActivityModal();
-        });
-    }
-
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && deleteActivityModal?.classList.contains("show")) {
-            closeDeleteActivityModal();
-        }
-    });
-
-        allActivityList.innerHTML = entries.map(e => {
-            const meta = iconFor(e.type);
-            const link = e.link || "/instructor/";
-            const id   = e.id || String(e.timestamp);
-            return `
-                <div class="activity-item" data-id="${id}" data-link="${link}">
-                    <div class="activity-icon ${meta.colorClass}">
-                        <i class="fa-solid ${meta.icon}"></i>
-                    </div>
-                    <div class="activity-info">
-                        <h4>${e.title}</h4>
-                        <p>${e.description}</p>
-                        <span>${relativeTime(e.timestamp)}</span>
-                    </div>
-                    <button class="activity-delete" type="button" title="Delete">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-            `;
-        }).join("");
-
-        allActivityList.querySelectorAll(".activity-item").forEach(item => {
-            const id   = item.dataset.id;
-            const link = item.dataset.link;
-
-            item.addEventListener("click", (e) => {
-                if (e.target.closest(".activity-delete")) return;
-                if (link) window.location.href = link;
             });
+        }
 
-                       const delBtn = item.querySelector(".activity-delete");
-            if (delBtn) {
-                delBtn.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    openDeleteActivityModal(id, e.currentTarget.closest(".activity-item"));
-                });
-            }
+        if (currentProfile) {
+            modal.querySelector("#instFirstName").value = currentProfile.first_name || "";
+            modal.querySelector("#instLastName").value = currentProfile.last_name || "";
+            modal.querySelector("#instPhone").value = currentProfile.phone || "";
+            modal.querySelector("#instSpecialization").value = currentProfile.specialization || "";
+        }
+        modal.classList.add("show");
+    }
+
+    document.querySelectorAll("#profileDropdown a, #profileDropdown button, .Sidebar_down a, .sidebar-bottom .menu-item").forEach((item) => {
+        const text = (item.textContent || "").trim().toLowerCase();
+        if (text.includes("logout") || text.includes("log out") || item.classList.contains("logout") || item.classList.contains("logout-link") || item.classList.contains("logout-profile")) {
+            item.addEventListener("click", (e) => {
+                e.preventDefault();
+                api.logout();
+            });
+        } else if (text.includes("profile") || text.includes("setting")) {
+            item.addEventListener("click", (e) => {
+                e.preventDefault();
+                profileDropdown?.classList.remove("show");
+                openProfileEditor();
+            });
+        }
+    });
+
+    // ========================================
+    // 4. QUICK ACTIONS & VIEW COURSES LINKS
+    // ========================================
+    const quickLinks = {
+        addStudentAction: "/instructor/students/",
+        createCourseAction: "/instructor/courses/",
+        createAssignmentAction: "/instructor/assignments/",
+        postAnnouncementAction: "/instructor/announcements/",
+    };
+    Object.entries(quickLinks).forEach(([id, route]) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener("click", () => {
+                window.location.href = api.resolveInstructorRoute(route);
+            });
+        }
+    });
+
+    document.querySelectorAll(".card-header a").forEach((link) => {
+        if ((link.textContent || "").trim().toLowerCase().includes("view courses")) {
+            link.setAttribute("href", api.resolveInstructorRoute("/instructor/courses/"));
+        }
+    });
+
+    // ========================================
+    // 5. ACTIVITIES (RECENT + ALL + DELETE)
+    // ========================================
+    const activityListEl = document.getElementById("activityList");
+    const viewAllActivityBtn = document.getElementById("viewAllActivityBtn");
+    const allActivityModal = document.getElementById("allActivityModal");
+    const closeAllActivity = document.getElementById("closeAllActivity");
+    const allActivityListEl = document.getElementById("allActivityList");
+
+    const deleteActivityModal = document.getElementById("deleteActivityModal");
+    const deleteActivityName = document.getElementById("deleteActivityName");
+    const cancelDeleteActivity = document.getElementById("cancelDeleteActivity");
+    const confirmDeleteActivity = document.getElementById("confirmDeleteActivity");
+    let pendingDeleteActivityId = null;
+
+    function getActivityIcon(type) {
+        const icons = {
+            student: { icon: "fa-user-plus", color: "blue" },
+            course: { icon: "fa-book-open", color: "purple" },
+            assignment: { icon: "fa-file-lines", color: "green" },
+            announcement: { icon: "fa-bullhorn", color: "orange" },
+            schedule: { icon: "fa-calendar-days", color: "blue" },
+            grade: { icon: "fa-award", color: "green" },
+            edit: { icon: "fa-pen-to-square", color: "purple" },
+            delete: { icon: "fa-trash", color: "red" },
+        };
+        return icons[type] || { icon: "fa-bolt", color: "blue" };
+    }
+
+    function renderActivityItems(container, items) {
+        if (!container) return;
+        if (!items.length) {
+            container.innerHTML = `<div style="padding:18px;text-align:center;color:#64748b;font-size:13px;">No recent activity yet.</div>`;
+            return;
+        }
+        container.innerHTML = items
+            .map((item) => {
+                const meta = getActivityIcon(item.type || item.activity_type);
+                const href = api.resolveInstructorRoute(item.link || "/instructor/");
+                return `
+                    <div class="activity-item" data-id="${item.id}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                        <a href="${api.escapeHtml(href)}" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;flex:1;min-width:0;">
+                            <div class="activity-icon ${meta.color}"><i class="fa-solid ${meta.icon}"></i></div>
+                            <div class="activity-details" style="min-width:0;">
+                                <p><strong>${api.escapeHtml(item.title)}</strong>${item.description ? ` — ${api.escapeHtml(item.description)}` : ""}</p>
+                                <span>${api.formatRelativeTime(item.timestamp)}</span>
+                            </div>
+                        </a>
+                        <button type="button" class="delete-activity-btn" data-id="${item.id}" data-title="${api.escapeHtml(item.title)}" title="Remove activity" style="border:none;background:transparent;color:#94a3b8;cursor:pointer;padding:6px;">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            })
+            .join("");
+
+        container.querySelectorAll(".delete-activity-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                pendingDeleteActivityId = btn.dataset.id;
+                if (deleteActivityName) deleteActivityName.textContent = btn.dataset.title || "this activity";
+                deleteActivityModal?.classList.add("show");
+            });
         });
     }
 
-    if (viewAllActivityBtn) {
-        viewAllActivityBtn.addEventListener("click", () => {
-            renderAllActivities();
+    if (viewAllActivityBtn && allActivityModal) {
+        viewAllActivityBtn.addEventListener("click", async (e) => {
+            e.preventDefault();
             allActivityModal.classList.add("show");
-        });
-    }
-
-    if (closeAllActivityBtn) {
-        closeAllActivityBtn.addEventListener("click", () => {
-            allActivityModal.classList.remove("show");
-        });
-    }
-
-    if (allActivityModal) {
-        allActivityModal.addEventListener("click", (e) => {
-            if (e.target === allActivityModal) {
-                allActivityModal.classList.remove("show");
+            try {
+                const items = await api.loadActivityLog();
+                renderActivityItems(allActivityListEl, items);
+            } catch {
+                if (allActivityListEl) allActivityListEl.innerHTML = `<p style="padding:14px;color:#ef4444;">Failed to load activities.</p>`;
             }
         });
     }
 
+    closeAllActivity?.addEventListener("click", () => allActivityModal?.classList.remove("show"));
+    cancelDeleteActivity?.addEventListener("click", () => {
+        pendingDeleteActivityId = null;
+        deleteActivityModal?.classList.remove("show");
+    });
+    confirmDeleteActivity?.addEventListener("click", async () => {
+        if (!pendingDeleteActivityId) return;
+        try {
+            await api.removeActivity(pendingDeleteActivityId);
+            deleteActivityModal?.classList.remove("show");
+            pendingDeleteActivityId = null;
+            await loadDashboard();
+            if (allActivityModal?.classList.contains("show")) {
+                const items = await api.loadActivityLog();
+                renderActivityItems(allActivityListEl, items);
+            }
+        } catch (err) {
+            alert(err.message || "Failed to delete activity.");
+        }
+    });
+
+    // ========================================
+    // 6. DASHBOARD SEARCH FILTER
+    // ========================================
+    const dashboardSearch = document.getElementById("dashboardSearch");
+    if (dashboardSearch) {
+        dashboardSearch.addEventListener("input", () => {
+            const q = dashboardSearch.value.trim().toLowerCase();
+            const full = window.__instructorDashboardData;
+            if (!full) return;
+
+            const filteredCourses = q
+                ? (full.course_overview || []).filter(
+                      (c) =>
+                          (c.title || "").toLowerCase().includes(q) ||
+                          (c.code || "").toLowerCase().includes(q)
+                  )
+                : full.course_overview || [];
+
+            const filteredClasses = q
+                ? (full.upcoming_classes || []).filter(
+                      (cl) =>
+                          (cl.course || cl.subject || "").toLowerCase().includes(q) ||
+                          (cl.date || "").toLowerCase().includes(q)
+                  )
+                : full.upcoming_classes || [];
+
+            const filteredActivities = q
+                ? (full.recent_activities || []).filter(
+                      (a) =>
+                          (a.title || "").toLowerCase().includes(q) ||
+                          (a.description || "").toLowerCase().includes(q)
+                  )
+                : full.recent_activities || [];
+
+            renderActivityItems(activityListEl, filteredActivities);
+            window.dispatchEvent(
+                new CustomEvent("instructor:dashboardLoaded", {
+                    detail: {
+                        ...full,
+                        course_overview: filteredCourses,
+                        upcoming_classes: filteredClasses,
+                    },
+                })
+            );
+        });
+    }
+
+    // ========================================
+    // 7. LOAD DASHBOARD DATA FROM API
+    // ========================================
+    async function loadDashboard() {
+        try {
+            const data = await api.request("/instructor/dashboard/");
+            currentProfile = data.instructor;
+            api.hydrateTopbarProfile(currentProfile);
+
+            const stats = data.stats || {};
+            const coursesEl = document.getElementById("totalCoursesCount");
+            const studentsEl = document.getElementById("totalStudentsCount");
+            const assignmentsEl = document.getElementById("totalAssignmentsCount");
+            const avgPerfEl = document.getElementById("avgPerformanceStat");
+            const avgPerfBar = document.getElementById("avgPerformanceFill");
+            if (coursesEl) coursesEl.textContent = String(stats.total_courses ?? 0);
+            if (studentsEl) studentsEl.textContent = String(stats.total_students ?? 0);
+            if (assignmentsEl) assignmentsEl.textContent = String(stats.total_assignments ?? 0);
+            if (avgPerfEl) avgPerfEl.textContent = `${stats.average_performance ?? 0}%`;
+            if (avgPerfBar) avgPerfBar.style.width = `${Math.min(100, Math.max(0, stats.average_performance ?? 0))}%`;
+
+            renderActivityItems(activityListEl, data.recent_activities || []);
+
+            // Notify course-overview.js & upcoming-classes.js
+            window.__instructorDashboardData = data;
+            window.dispatchEvent(new CustomEvent("instructor:dashboardLoaded", { detail: data }));
+        } catch (err) {
+            console.error("Failed to load instructor dashboard:", err);
+        }
+    }
+
+    window.reloadInstructorDashboard = loadDashboard;
+    await loadDashboard();
+    await loadNotifications();
 });

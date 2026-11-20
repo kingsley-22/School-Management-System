@@ -725,3 +725,102 @@ td {
     }
 
 }
+
+
+/* =========================================================
+   UNIFIED ACADEMY THEME (STUDENT & ADMIN PALETTE) + RESPONSIVE
+========================================================= */
+:root {
+    --primary: #1769f5;
+    --primary-dark: #1052cf;
+    --sidebar: #0d1b38;
+    --sidebar-light: #14284c;
+    --bg: #f4f7fc;
+    --text: #152440;
+    --muted: #64748b;
+    --line: #e7edf5;
+    --white: #ffffff;
+    --orange: #f28b36;
+}
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.main-content {
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.sidebar {
+    background: var(--sidebar) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff;
+}
+
+.sidebar .logo i { color: var(--orange) !important; }
+.sidebar .logo img { filter: none !important; width: 155px !important; max-width: 100% !important; height: auto !important; object-fit: contain; display: block; }
+.sidebar .menu-item { color: #cbd5e1 !important; }
+.sidebar .menu-item i { color: #94a3b8 !important; }
+.sidebar .menu-item:hover { background: var(--sidebar-light) !important; color: #ffffff !important; }
+.sidebar .menu-item:hover i { color: #ffffff !important; }
+.sidebar .menu-item.active { background: var(--primary) !important; color: #ffffff !important; }
+.sidebar .menu-item.active i { color: #ffffff !important; }
+.sidebar .sidebar-bottom { border-top: 1px solid rgba(255, 255, 255, 0.1) !important; }
+.sidebar .menu-item.logout { color: #fca5a5 !important; }
+
+.topbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 900 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    background: var(--white) !important;
+    border-bottom: 1px solid var(--line) !important;
+}
+.topbar-left { display: flex !important; align-items: center !important; gap: 10px !important; min-width: 0 !important; flex: 1 1 auto !important; }
+.topbar-left > div { min-width: 0 !important; }
+.topbar-left h1, .topbar-left p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar-right { display: flex !important; align-items: center !important; gap: 10px !important; flex-shrink: 0 !important; }
+.profile-avatar { background: var(--sidebar) !important; color: #ffffff !important; }
+.stat-card { background: var(--white) !important; border: 1px solid var(--line) !important; }
+.create-assignment-btn, .view-btn { background: var(--primary) !important; color: #ffffff !important; border-color: var(--primary) !important; }
+.create-assignment-btn:hover, .view-btn:hover { background: var(--primary-dark) !important; }
+
+@media (max-width: 1024px) {
+    .assignment-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 260px !important;
+        max-width: 85vw !important;
+        height: 100dvh !important;
+        z-index: 1200 !important;
+        transform: translateX(-100%) !important;
+        overflow-y: auto !important;
+    }
+    .sidebar.show, .sidebar.active { transform: translateX(0) !important; }
+    .sidebar-close {
+        display: inline-flex !important;
+        border: 1px solid rgba(255, 255, 255, 0.24) !important;
+        background: rgba(255, 255, 255, 0.14) !important;
+        color: #ffffff !important;
+    }
+    .main-content { margin-left: 0 !important; width: 100% !important; padding: 14px !important; }
+    .assignment-stats { grid-template-columns: minmax(0, 1fr) !important; }
+    .assignment-actions { flex-direction: column !important; align-items: stretch !important; }
+    .table-container { overflow-x: auto !important; width: 100% !important; }
+    .profile-info { display: none !important; }
+}
