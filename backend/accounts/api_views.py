@@ -75,22 +75,62 @@ def register(request):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
 
-        verification_url = f"http://127.0.0.1:8000/api/verify-email/{uid}/{token}/"
+        from urllib.parse import urlencode
+        from django.conf import settings as django_settings
+        from_email = getattr(django_settings, 'DEFAULT_FROM_EMAIL', None) or 'mikelchisom127@gmail.com'
+
+        requested_dashboard = (request.data.get('dashboard_base_url') or '').strip()
+        verify_path = request.build_absolute_uri(f"/api/verify-email/{uid}/{token}/")
+        if requested_dashboard.startswith(('http://127.0.0.1:', 'http://localhost:', 'https://')):
+            verification_url = f"{verify_path}?{urlencode({'next': requested_dashboard.split('?', 1)[0]})}"
+        else:
+            verification_url = verify_path
+
         threading.Thread(
             target=send_mail,
             args=(
                 'Verify your Ifexa Academy account',
                 f'Hello {user.first_name},\n\n'
-                f'Click the link below to verify your email:\n\n'
+                f'Click the link below to verify your email and open your dashboard:\n\n'
                 f'{verification_url}\n\n'
                 f'If you did not create this account, you can ignore this email.',
-                'mikelchisom127@gmail.com',
+                from_email,
                 [user.email],
             ),
             kwargs={
                 'fail_silently': False,
             },
         ).start()
+
+        # Notify admins that a new user has registered
+        admin_emails = list(
+            User.objects.filter(role__in=['ADMIN', 'SUPER_ADMIN'], is_active=True)
+            .exclude(email='')
+            .values_list('email', flat=True)
+            .distinct()
+        )
+        if not admin_emails and from_email:
+            admin_emails = [from_email]
+
+        if admin_emails:
+            full_name = f"{user.first_name} {user.last_name}".strip() or user.email
+            threading.Thread(
+                target=send_mail,
+                args=(
+                    'New User Registered — Ifexa Academy',
+                    f'Hello Admin,\n\n'
+                    f'A new user has registered on Ifexa Academy:\n\n'
+                    f'Name: {full_name}\n'
+                    f'Email: {user.email}\n'
+                    f'Role: {user.role}\n\n'
+                    f'Log in to the Admin Dashboard to review or assign courses to this user.',
+                    from_email,
+                    admin_emails,
+                ),
+                kwargs={
+                    'fail_silently': True,
+                },
+            ).start()
 
         return Response(
             {
@@ -134,8 +174,18 @@ def verify_email(request, uid, token):
     access_token = str(refresh.access_token)
     refresh_token = str(refresh)
 
+    next_url = (request.query_params.get('next') or '').strip()
+    if next_url.startswith(('http://127.0.0.1:', 'http://localhost:', 'https://')):
+        dashboard_url = next_url.split('?', 1)[0]
+    elif user.role in ('ADMIN', 'SUPER_ADMIN'):
+        dashboard_url = 'http://127.0.0.1:8080/pages/admin/admin.html'
+    elif user.role == 'INSTRUCTOR':
+        dashboard_url = 'http://127.0.0.1:8080/pages/instructor/dashboard.html'
+    else:
+        dashboard_url = 'http://127.0.0.1:8080/pages/student/dashboard.html'
+
     return redirect(
-        f'http://127.0.0.1:8080/pages/student/dashboard.html'
+        f'{dashboard_url}'
         f'?verified=success&access={access_token}&refresh={refresh_token}'
     )
 
@@ -210,27 +260,42 @@ def forgot_password(request):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
 
-    reset_url = (
-        f"http://127.0.0.1:8080/pages/home/reset-password.html"
-        f"?uid={uid}&token={token}"
-    )
+    requested_base = (request.data.get('reset_base_url') or '').strip()
+    if requested_base.startswith(('http://127.0.0.1:', 'http://localhost:', 'https://')):
+        base_reset_url = requested_base.split('?', 1)[0]
+    else:
+        base_reset_url = "http://127.0.0.1:8080/pages/home/reset-password.html"
 
-    send_mail(
-        'Reset your Ifexa Academy password',
-        f"Hello {user.first_name},\n\n"
-        f"Click the link below to reset your password:\n\n"
-        f"{reset_url}\n\n"
-        f"If you did not request this, you can ignore this email.",
-        'mikelchisom127@gmail.com',
-        [user.email],
-        fail_silently=False,
-    )
+    reset_url = f"{base_reset_url}?uid={uid}&token={token}"
 
-    return Response(
-        {
-            'message': 'If an account with that email exists, a reset link has been sent.'
-        }
-    )
+    from django.conf import settings as django_settings
+    from_email = getattr(django_settings, 'DEFAULT_FROM_EMAIL', None) or 'mikelchisom127@gmail.com'
+
+    try:
+        send_mail(
+            'Reset your Ifexa Academy password',
+            f"Hello {user.first_name},\n\n"
+            f"Click the link below to reset your password:\n\n"
+            f"{reset_url}\n\n"
+            f"If you did not request this, you can ignore this email.",
+            from_email,
+            [user.email],
+            fail_silently=False,
+        )
+    except Exception as exc:
+        if not getattr(django_settings, 'DEBUG', False):
+            return Response(
+                {'error': 'Unable to send password reset email right now. Please try again later.'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    response_payload = {
+        'message': 'If an account with that email exists, a reset link has been sent.',
+    }
+    if getattr(django_settings, 'DEBUG', False):
+        response_payload['reset_url'] = reset_url
+
+    return Response(response_payload)
 
 
 @api_view(['POST'])
@@ -268,9 +333,22 @@ def reset_password(request, uid, token):
     user.set_password(new_password)
     user.save()
 
+    refresh = RefreshToken.for_user(user)
+
     return Response(
         {
-            'message': 'Password reset successful. You can now log in with your new password.'
+            'message': 'Password reset successfully.',
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'user': {
+                'id': user.id,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'role': user.role,
+                'is_verified': user.is_verified,
+                'is_approved': user.is_approved,
+            },
         }
     )
 
