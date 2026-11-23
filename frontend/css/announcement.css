@@ -1000,3 +1000,21 @@ footer {
         width: 100%;
     }
 }
+
+
+/* =========================================================
+   FIXED TOPBAR BOTTOM CLEARANCE (PREVENT HEADER OVERLAP)
+========================================================= */
+html {
+    scroll-padding-top: 104px;
+}
+
+.main {
+    padding-top: 98px !important;
+}
+
+@media (max-width: 760px) {
+    .main {
+        padding-top: 92px !important;
+    }
+}

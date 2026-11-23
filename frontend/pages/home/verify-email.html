@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email | IFEXA Academy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../../css/login.css">
+</head>
+<body>
+
+<main class="auth-page">
+    <div class="auth-card">
+
+        <!-- LEFT SIDE -->
+        <section class="auth-left">
+            <div class="logo">
+                <a href="./home.html">
+                    <img src="../../images/Top_Left-removebg-preview.png" alt="IFEXA Academy Logo">
+                </a>
+            </div>
+            <div class="auth-left-content">
+                <h1>Verify Your <span>Email.</span></h1>
+                <p>
+                    You're one step away from accessing your IFEXA Academy dashboard.
+                    Confirm your email address using the link we just sent you.
+                </p>
+                <div class="auth-benefits">
+                    <div class="auth-benefit">
+                        <div class="auth-benefit-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+                        <span>Open the verification email in your inbox</span>
+                    </div>
+                    <div class="auth-benefit">
+                        <div class="auth-benefit-icon"><i class="fa-solid fa-link"></i></div>
+                        <span>Click the secure verification link</span>
+                    </div>
+                    <div class="auth-benefit">
+                        <div class="auth-benefit-icon"><i class="fa-solid fa-gauge-high"></i></div>
+                        <span>Go straight into your Academy dashboard</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT SIDE -->
+        <section class="auth-right">
+            <a href="./login.html" class="back-home">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Login
+            </a>
+
+            <div class="reset-success" style="display:block;">
+                <div class="success-icon">
+                    <i class="fa-solid fa-envelope-circle-check"></i>
+                </div>
+
+                <h2>Check Your Email</h2>
+
+                <p>
+                    We have sent a verification link to
+                    <strong id="verificationEmailText">your email address</strong>.
+                </p>
+
+                <p class="success-note">
+                    Please open your inbox (and check your spam folder if needed) and click
+                    the verification link to activate your account and go directly to your dashboard.
+                </p>
+
+                <a href="./login.html" class="auth-btn">
+                    Go to Login
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<script>
+    (function () {
+        const params = new URLSearchParams(window.location.search);
+        const email = params.get("email") || localStorage.getItem("pendingVerificationEmail") || "";
+        const target = document.getElementById("verificationEmailText");
+        if (target && email) {
+            target.textContent = email;
+        }
+    })();
+</script>
+
+</body>
+</html>
+

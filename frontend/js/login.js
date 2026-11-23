@@ -272,6 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             try {
+                const dashboardBaseUrl = new URL("../student/dashboard.html", window.location.href).href;
                 const response = await fetch(`${API_BASE_URL}register/`, {
                     method: "POST",
                     headers: {
@@ -283,7 +284,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         last_name: lastName.value.trim(),
                         email: emailValue,
                         password: passwordValue,
-                        confirm_password: confirmPasswordValue
+                        confirm_password: confirmPasswordValue,
+                        dashboard_base_url: dashboardBaseUrl
                     })
                 });
 
@@ -339,10 +341,8 @@ document.addEventListener("DOMContentLoaded", () => {
                  
                 signupForm.reset();
 
-                showSignupMessage(
-                    data.message || "Registration successful. Please check your email.",
-                    "success"
-                );
+                localStorage.setItem("pendingVerificationEmail", emailValue);
+                window.location.href = `./verify-email.html?email=${encodeURIComponent(emailValue)}`;
 
                 
 

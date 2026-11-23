@@ -177,22 +177,44 @@ if (resetPasswordForm) {
             if (letterRequirement) letterRequirement.classList.remove("valid");
             if (numberRequirement) numberRequirement.classList.remove("valid");
 
-            showMessage(
-                data.message ||
-                "Password reset successful! You can now log in.",
-                "success"
-            );
+            if (data.access && data.refresh && data.user) {
+                sessionStorage.setItem("accessToken", data.access);
+                sessionStorage.setItem("refreshToken", data.refresh);
+                sessionStorage.setItem("user", JSON.stringify(data.user));
+                localStorage.setItem("accessToken", data.access);
+                localStorage.setItem("refreshToken", data.refresh);
+                localStorage.setItem("user", JSON.stringify(data.user));
+                sessionStorage.setItem(
+                    "postResetNotification",
+                    "Password has been reset successfully"
+                );
 
-            // Add a link back to login.
-            if (resetMessage) {
-                const loginLink = document.createElement("a");
-                loginLink.href = "./login.html";
-                loginLink.textContent = "Go to Login";
-                loginLink.style.display = "inline-block";
-                loginLink.style.marginTop = "12px";
+                let targetUrl = "./login.html";
+                if (data.user.role === "ADMIN" || data.user.role === "SUPER_ADMIN") {
+                    targetUrl = "../admin/admin.html";
+                } else if (data.user.role === "INSTRUCTOR") {
+                    targetUrl = "../instructor/dashboard.html";
+                } else if (data.user.role === "STUDENT") {
+                    targetUrl = "../student/dashboard.html";
+                }
 
-                resetMessage.appendChild(document.createElement("br"));
-                resetMessage.appendChild(loginLink);
+                window.location.replace(targetUrl);
+            } else {
+                showMessage(
+                    data.message || "Password reset successfully!",
+                    "success"
+                );
+
+                if (resetMessage) {
+                    const loginLink = document.createElement("a");
+                    loginLink.href = "./login.html";
+                    loginLink.textContent = "Go to Login";
+                    loginLink.style.display = "inline-block";
+                    loginLink.style.marginTop = "12px";
+
+                    resetMessage.appendChild(document.createElement("br"));
+                    resetMessage.appendChild(loginLink);
+                }
             }
 
         } catch (error) {

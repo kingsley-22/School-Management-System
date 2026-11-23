@@ -1185,3 +1185,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loadAdminDashboard();
 });
+
+
+// Top banner notification after password reset auto-login
+document.addEventListener("DOMContentLoaded", () => {
+    const msg = sessionStorage.getItem("postResetNotification");
+    if (!msg) return;
+    sessionStorage.removeItem("postResetNotification");
+
+    const banner = document.createElement("div");
+    banner.setAttribute("role", "status");
+    banner.style.cssText = `
+        position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9999;
+        display:flex;align-items:center;gap:10px;padding:13px 20px;border-radius:12px;
+        background:#10b981;color:#ffffff;font-family:Inter,sans-serif;font-size:14px;font-weight:600;
+        box-shadow:0 12px 30px rgba(16,185,129,0.35);max-width:calc(100vw - 24px);
+    `;
+    banner.innerHTML = `
+        <i class="fa-solid fa-circle-check" style="font-size:17px;"></i>
+        <span></span>
+        <button type="button" aria-label="Close notification" style="margin-left:8px;border:none;background:rgba(255,255,255,0.2);color:#fff;width:24px;height:24px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    `;
+    banner.querySelector("span").textContent = msg;
+    banner.querySelector("button").addEventListener("click", () => banner.remove());
+    document.body.appendChild(banner);
+    setTimeout(() => banner.remove(), 6000);
+});

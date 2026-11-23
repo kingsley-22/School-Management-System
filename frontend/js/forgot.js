@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Send a real request to Django.
     async function sendResetRequest(email) {
+        const resetBaseUrl = new URL("./reset-password.html", window.location.href).href;
         const response = await fetch(
             "http://127.0.0.1:8000/api/forgot-password/",
             {
@@ -53,7 +54,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ email })
+                body: JSON.stringify({
+                    email,
+                    reset_base_url: resetBaseUrl
+                })
             }
         );
 
@@ -70,6 +74,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return data;
     }
 
+    const continueResetLink = document.querySelector(".success-reset-password-btn");
+
     // Submit the form.
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -83,12 +89,22 @@ document.addEventListener("DOMContentLoaded", () => {
         resetButtonIcon.className = "fa-solid fa-spinner fa-spin";
 
         try {
-            await sendResetRequest(email);
+            const data = await sendResetRequest(email);
 
             sessionStorage.setItem("resetEmail", email);
 
             if (submittedEmail) {
                 submittedEmail.textContent = email;
+            }
+
+            if (continueResetLink) {
+                if (data.reset_url) {
+                    continueResetLink.href = data.reset_url;
+                    continueResetLink.hidden = false;
+                } else {
+                    continueResetLink.href = "./login.html";
+                    continueResetLink.innerHTML = 'Back to Login <i class="fa-solid fa-arrow-right"></i>';
+                }
             }
 
             if (forgotPasswordContent) {
@@ -133,7 +149,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             try {
-                await sendResetRequest(email);
+                const data = await sendResetRequest(email);
+
+                if (continueResetLink && data.reset_url) {
+                    continueResetLink.href = data.reset_url;
+                }
 
                 if (resendButtonText) {
                     resendButtonText.textContent = "Link Sent!";
